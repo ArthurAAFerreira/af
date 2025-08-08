@@ -48,8 +48,9 @@
           body: JSON.stringify({ message: message })
         });
 
-        const data = await response.json();
-        messagesDiv.innerHTML += `<p><strong>IA:</strong> ${data.answer}</p>`;
+        // Use response.text() para obter a resposta como texto bruto
+        const data = await response.text();
+        messagesDiv.innerHTML += `<p><strong>IA (Resposta Bruta):</strong> ${data}</p>`;
       } catch (error) {
         messagesDiv.innerHTML += `<p style="color:red"><strong>Erro:</strong> ${error.message}</p>`;
       }
