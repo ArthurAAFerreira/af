@@ -12,7 +12,52 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .chat-box::-webkit-scrollbar { width: 8px; }
-        .chat-box::-webkit-scrollbar-track { background: #2d3748; }
+        .chat-box::-webkit-scrollbar-track { background: #2<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ativar Webhook n8n</title>
+  <style>
+    body {
+      background: #0f1724;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+    button {
+      background: #06b6d4;
+      color: #052026;
+      border: none;
+      padding: 14px 22px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0891b2;
+    }
+  </style>
+</head>
+<body>
+  <button id="btn">Ativar Webhook</button>
+
+  <script>
+    const webhook = "https://n8n.arthuraaferreira.com.br/webhook-test/1a59f35f-63d6-423f-bed1-cc8d9d1abc51";
+    document.getElementById("btn").addEventListener("click", () => {
+      // Tenta disparar sem travar a página
+      fetch(webhook, { method: "GET", mode: "no-cors" })
+        .then(() => alert("Webhook acionado!"))
+        .catch(() => alert("Falha ao acionar, mas o clique foi registrado."));
+    });
+  </script>
+</body>
+</html>
+d3748; }
         .chat-box::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px; }
     </style>
 </head>
