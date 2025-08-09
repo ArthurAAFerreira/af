@@ -5,98 +5,41 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Ativar Webhook n8n</title>
   <style>
-    :root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--muted:#94a3b8}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
-    body{display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#071029 0%, #071a2b 100%);color:#e6eef6}
-    .card{width:min(720px,92vw);background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:28px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.7);border:1px solid rgba(255,255,255,0.03)}
-    h1{margin:0 0 6px;font-size:20px}
-    p{margin:0 0 18px;color:var(--muted)}
-    .controls{display:flex;gap:12px;flex-wrap:wrap}
-    button{background:var(--accent);color:#052026;border:0;padding:12px 18px;border-radius:10px;font-weight:600;cursor:pointer;box-shadow:0 6px 16px rgba(6,182,212,0.18)}
-    button:disabled{opacity:.6;cursor:not-allowed}
-    .secondary{background:transparent;color:#cfeff6;border:1px solid rgba(255,255,255,0.04)}
-    .status{margin-top:14px;padding:12px;border-radius:8px;background:rgba(255,255,255,0.02);font-size:14px}
-    code{background:rgba(255,255,255,0.02);padding:6px;border-radius:6px}
-    footer{margin-top:14px;font-size:13px;color:var(--muted)}
-    a.inline{color:var(--accent);text-decoration:none}
+    body {
+      background: #0f1724;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+    button {
+      background: #06b6d4;
+      color: #052026;
+      border: none;
+      padding: 14px 22px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0891b2;
+    }
   </style>
 </head>
 <body>
-  <main class="card" role="main">
-    <h1>Ativar webhook do n8n</h1>
-    <p>Ao clicar no botão abaixo será enviada uma requisição ao webhook do n8n. Ideal para acionar um fluxo simples direto do seu GitHub Pages.</p>
-
-    <div class="controls">
-      <button id="triggerBtn">Ativar webhook</button>
-      <button id="triggerGet" class="secondary">Ativar (GET)</button>
-    </div>
-
-    <div id="status" class="status" aria-live="polite">Pronto — nenhum disparo ainda.</div>
-
-    <footer>
-      Webhook alvo: <code id="webhook">https://n8n.arthuraaferreira.com.br/webhook-test/1a59f35f-63d6-423f-bed1-cc8d9d1abc51</code>
-    </footer>
-  </main>
+  <button id="btn">Ativar Webhook</button>
 
   <script>
-    const webhook = 'https://n8n.arthuraaferreira.com.br/webhook-test/1a59f35f-63d6-423f-bed1-cc8d9d1abc51';
-    const btn = document.getElementById('triggerBtn');
-    const btnGet = document.getElementById('triggerGet');
-    const status = document.getElementById('status');
-
-    function setStatus(text, isError=false){
-      status.textContent = text;
-      status.style.color = isError ? '#ffb4b4' : '';
-    }
-
-    async function fireWebhook(method='POST'){
-      btn.disabled = true;
-      btnGet.disabled = true;
-      setStatus('Enviando requisição...');
-
-      const payload = {
-        source: 'github-pages-button',
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent
-      };
-
-      try{
-        const opts = {
-          method,
-          mode: 'cors',
-          headers: {
-            'Accept': 'application/json'
-          }
-        };
-
-        if (method !== 'GET'){
-          opts.headers['Content-Type'] = 'application/json';
-          opts.body = JSON.stringify(payload);
-        }
-
-        const resp = await fetch(webhook, opts);
-        const text = await resp.text();
-
-        if (!resp.ok){
-          setStatus(`Erro ${resp.status}: ${text || resp.statusText}`, true);
-        } else {
-          setStatus(`Sucesso ${resp.status}. Resposta: ${text.substring(0, 200)}`);
-        }
-
-      } catch (err) {
-        setStatus('Falha ao enviar: ' + err.message, true);
-      } finally {
-        btn.disabled = false;
-        btnGet.disabled = false;
-      }
-    }
-
-    btn.addEventListener('click', () => fireWebhook('POST'));
-    btnGet.addEventListener('click', () => fireWebhook('GET'));
-
-    // dica: se o webhook do n8n exigir autenticação ou headers especiais,
-    // será necessário ajustar a função fireWebhook para enviar esses headers
-    // ou usar um endpoint intermediário (proxy) que adicione as credenciais.
+    const webhook = "https://n8n.arthuraaferreira.com.br/webhook-test/1a59f35f-63d6-423f-bed1-cc8d9d1abc51";
+    document.getElementById("btn").addEventListener("click", () => {
+      // Tenta disparar sem travar a página
+      fetch(webhook, { method: "GET", mode: "no-cors" })
+        .then(() => alert("Webhook acionado!"))
+        .catch(() => alert("Falha ao acionar, mas o clique foi registrado."));
+    });
   </script>
 </body>
 </html>
