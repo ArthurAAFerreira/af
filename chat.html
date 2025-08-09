@@ -1,45 +1,73 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Ativar Webhook n8n</title>
-  <style>
-    body {
-      background: #0f1724;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      font-family: Arial, sans-serif;
-      color: white;
-    }
-    button {
-      background: #06b6d4;
-      color: #052026;
-      border: none;
-      padding: 14px 22px;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #0891b2;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Webhook n8n</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
 </head>
-<body>
-  <button id="btn">Ativar Webhook</button>
+<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen p-4">
 
-  <script>
-    const webhook = "https://n8n.arthuraaferreira.com.br/webhook-test/1a59f35f-63d6-423f-bed1-cc8d9d1abc51";
-    document.getElementById("btn").addEventListener("click", () => {
-      // Tenta disparar sem travar a página
-      fetch(webhook, { method: "GET", mode: "no-cors" })
-        .then(() => alert("Webhook acionado!"))
-        .catch(() => alert("Falha ao acionar, mas o clique foi registrado."));
-    });
-  </script>
+    <div class="w-full max-w-xl bg-gray-800 rounded-lg shadow-lg p-8 text-center">
+        <h1 class="text-3xl font-bold mb-6">Teste de Conexão com Webhook</h1>
+        <p class="mb-6 text-gray-400">Clique no botão para enviar uma mensagem de teste para o n8n e ver o resultado da comunicação.</p>
+
+        <!-- Botão de Teste -->
+        <button id="test-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition-transform transform hover:scale-105">
+            Enviar Teste
+        </button>
+
+        <!-- Área de Status -->
+        <div class="mt-8 p-4 bg-gray-900 rounded-lg text-left">
+            <h2 class="text-xl font-semibold mb-2">Status:</h2>
+            <pre id="status-box" class="text-sm text-gray-300 whitespace-pre-wrap font-mono">Aguardando teste...</pre>
+        </div>
+    </div>
+
+    <script>
+        const testButton = document.getElementById('test-button');
+        const statusBox = document.getElementById('status-box');
+        const webhookUrl = 'https://n8n.arthuraaferreira.com.br/webhook/1a59f35f-63d6-423f-bed1-cc8d9d1abc51';
+
+        function logStatus(message, isError = false) {
+            console[isError ? 'error' : 'log'](message);
+            statusBox.textContent = typeof message === 'object' ? JSON.stringify(message, null, 2) : message;
+            statusBox.className = `text-sm whitespace-pre-wrap font-mono ${isError ? 'text-red-400' : 'text-green-400'}`;
+        }
+
+        async function sendTest() {
+            logStatus('Iniciando teste...');
+
+            try {
+                logStatus('Enviando requisição para: ' + webhookUrl);
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ testMessage: 'Olá, n8n!', timestamp: new Date().toISOString() }),
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Erro na resposta do servidor! Status: ${response.status}. Corpo: ${errorText}`);
+                }
+
+                // O workflow de teste não retorna um corpo, então uma resposta OK (200) já é um sucesso.
+                logStatus('SUCESSO! A comunicação com o webhook foi estabelecida. O n8n recebeu a mensagem.');
+
+                // Verifique a aba "Executions" no seu workflow do n8n para ver os dados que chegaram.
+
+            } catch (error) {
+                logStatus(`FALHA! Não foi possível comunicar com o webhook.\n\nDetalhes do Erro:\n${error.message}`, true);
+            }
+        }
+
+        testButton.addEventListener('click', sendTest);
+    </script>
 </body>
 </html>
