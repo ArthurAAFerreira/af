@@ -1,73 +1,102 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teste de Webhook n8n</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ativar Webhook n8n</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--muted:#94a3b8}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
+    body{display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#071029 0%, #071a2b 100%);color:#e6eef6}
+    .card{width:min(720px,92vw);background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:28px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.7);border:1px solid rgba(255,255,255,0.03)}
+    h1{margin:0 0 6px;font-size:20px}
+    p{margin:0 0 18px;color:var(--muted)}
+    .controls{display:flex;gap:12px;flex-wrap:wrap}
+    button{background:var(--accent);color:#052026;border:0;padding:12px 18px;border-radius:10px;font-weight:600;cursor:pointer;box-shadow:0 6px 16px rgba(6,182,212,0.18)}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    .secondary{background:transparent;color:#cfeff6;border:1px solid rgba(255,255,255,0.04)}
+    .status{margin-top:14px;padding:12px;border-radius:8px;background:rgba(255,255,255,0.02);font-size:14px}
+    code{background:rgba(255,255,255,0.02);padding:6px;border-radius:6px}
+    footer{margin-top:14px;font-size:13px;color:var(--muted)}
+    a.inline{color:var(--accent);text-decoration:none}
+  </style>
 </head>
-<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen p-4">
+<body>
+  <main class="card" role="main">
+    <h1>Ativar webhook do n8n</h1>
+    <p>Ao clicar no botão abaixo será enviada uma requisição ao webhook do n8n. Ideal para acionar um fluxo simples direto do seu GitHub Pages.</p>
 
-    <div class="w-full max-w-xl bg-gray-800 rounded-lg shadow-lg p-8 text-center">
-        <h1 class="text-3xl font-bold mb-6">Teste de Conexão com Webhook</h1>
-        <p class="mb-6 text-gray-400">Clique no botão para enviar uma mensagem de teste para o n8n e ver o resultado da comunicação.</p>
-
-        <!-- Botão de Teste -->
-        <button id="test-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition-transform transform hover:scale-105">
-            Enviar Teste
-        </button>
-
-        <!-- Área de Status -->
-        <div class="mt-8 p-4 bg-gray-900 rounded-lg text-left">
-            <h2 class="text-xl font-semibold mb-2">Status:</h2>
-            <pre id="status-box" class="text-sm text-gray-300 whitespace-pre-wrap font-mono">Aguardando teste...</pre>
-        </div>
+    <div class="controls">
+      <button id="triggerBtn">Ativar webhook</button>
+      <button id="triggerGet" class="secondary">Ativar (GET)</button>
     </div>
 
-    <script>
-        const testButton = document.getElementById('test-button');
-        const statusBox = document.getElementById('status-box');
-        const webhookUrl = 'https://n8n.arthuraaferreira.com.br/webhook/1a59f35f-63d6-423f-bed1-cc8d9d1abc51';
+    <div id="status" class="status" aria-live="polite">Pronto — nenhum disparo ainda.</div>
 
-        function logStatus(message, isError = false) {
-            console[isError ? 'error' : 'log'](message);
-            statusBox.textContent = typeof message === 'object' ? JSON.stringify(message, null, 2) : message;
-            statusBox.className = `text-sm whitespace-pre-wrap font-mono ${isError ? 'text-red-400' : 'text-green-400'}`;
+    <footer>
+      Webhook alvo: <code id="webhook">https://n8n.arthuraaferreira.com.br/webhook-test/1a59f35f-63d6-423f-bed1-cc8d9d1abc51</code>
+    </footer>
+  </main>
+
+  <script>
+    const webhook = 'https://n8n.arthuraaferreira.com.br/webhook-test/1a59f35f-63d6-423f-bed1-cc8d9d1abc51';
+    const btn = document.getElementById('triggerBtn');
+    const btnGet = document.getElementById('triggerGet');
+    const status = document.getElementById('status');
+
+    function setStatus(text, isError=false){
+      status.textContent = text;
+      status.style.color = isError ? '#ffb4b4' : '';
+    }
+
+    async function fireWebhook(method='POST'){
+      btn.disabled = true;
+      btnGet.disabled = true;
+      setStatus('Enviando requisição...');
+
+      const payload = {
+        source: 'github-pages-button',
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent
+      };
+
+      try{
+        const opts = {
+          method,
+          mode: 'cors',
+          headers: {
+            'Accept': 'application/json'
+          }
+        };
+
+        if (method !== 'GET'){
+          opts.headers['Content-Type'] = 'application/json';
+          opts.body = JSON.stringify(payload);
         }
 
-        async function sendTest() {
-            logStatus('Iniciando teste...');
+        const resp = await fetch(webhook, opts);
+        const text = await resp.text();
 
-            try {
-                logStatus('Enviando requisição para: ' + webhookUrl);
-                const response = await fetch(webhookUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ testMessage: 'Olá, n8n!', timestamp: new Date().toISOString() }),
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Erro na resposta do servidor! Status: ${response.status}. Corpo: ${errorText}`);
-                }
-
-                // O workflow de teste não retorna um corpo, então uma resposta OK (200) já é um sucesso.
-                logStatus('SUCESSO! A comunicação com o webhook foi estabelecida. O n8n recebeu a mensagem.');
-
-                // Verifique a aba "Executions" no seu workflow do n8n para ver os dados que chegaram.
-
-            } catch (error) {
-                logStatus(`FALHA! Não foi possível comunicar com o webhook.\n\nDetalhes do Erro:\n${error.message}`, true);
-            }
+        if (!resp.ok){
+          setStatus(`Erro ${resp.status}: ${text || resp.statusText}`, true);
+        } else {
+          setStatus(`Sucesso ${resp.status}. Resposta: ${text.substring(0, 200)}`);
         }
 
-        testButton.addEventListener('click', sendTest);
-    </script>
+      } catch (err) {
+        setStatus('Falha ao enviar: ' + err.message, true);
+      } finally {
+        btn.disabled = false;
+        btnGet.disabled = false;
+      }
+    }
+
+    btn.addEventListener('click', () => fireWebhook('POST'));
+    btnGet.addEventListener('click', () => fireWebhook('GET'));
+
+    // dica: se o webhook do n8n exigir autenticação ou headers especiais,
+    // será necessário ajustar a função fireWebhook para enviar esses headers
+    // ou usar um endpoint intermediário (proxy) que adicione as credenciais.
+  </script>
 </body>
 </html>
