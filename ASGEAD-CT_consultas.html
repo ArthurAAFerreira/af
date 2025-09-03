@@ -8,23 +8,72 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #f4f4f9;
         }
+
+        /* Estilo para o Título Geral */
         h1 {
-            margin-bottom: 20px;
+            text-align: center;
+            color: #2c3e50; /* Um tom de cinza escuro para o título */
+            margin-bottom: 30px;
         }
-        iframe {
+
+        /* O Contêiner Principal */
+        .chat-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        /* Cada item de chat individual */
+        .chat-item {
+            flex: 1 1 calc(50% - 10px);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-item h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .chat-item iframe {
             width: 100%;
             height: 600px;
             border: none;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            flex-grow: 1;
+        }
+
+        /* Media Query para telas pequenas (celulares) */
+        @media (max-width: 768px) {
+            .chat-item {
+                flex-basis: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Consulta Empenhos UTFPR-CT</h1>
-    <iframe src="https://n8n.arthuraaferreira.com.br/webhook/3d6ae613-07d4-45c2-876d-ac15a008ff54/chat"></iframe>
-    <h1>Calculo valor bruto de um Pagamento de PF</h1>
-    <iframe src="https://n8n.arthuraaferreira.com.br/webhook/abc7f4cd-3162-43e8-9bd0-c7804828f96f/chat"></iframe>
+
+    <h1>CHATS UTFPR-ASGEAD-CT</h1>
+
+    <div class="chat-container">
+
+        <div class="chat-item">
+            <h2>Consulta Empenhos UTFPR-CT</h2>
+            <iframe src="https://n8n.arthuraaferreira.com.br/webhook/3d6ae613-07d4-45c2-876d-ac15a008ff54/chat"></iframe>
+        </div>
+
+        <div class="chat-item">
+            <h2>Cálculo valor bruto de um Pagamento de PF</h2>
+            <iframe src="https://n8n.arthuraaferreira.com.br/webhook/abc7f4cd-3162-43e8-9bd0-c7804828f96f/chat"></iframe>
+        </div>
+
+        </div>
+
 </body>
 </html>
