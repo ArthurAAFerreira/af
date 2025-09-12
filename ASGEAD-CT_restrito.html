@@ -8,21 +8,72 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #f4f4f9;
         }
+
+        /* Estilo para o Título Geral */
         h1 {
-            margin-bottom: 20px;
+            text-align: center;
+            color: #2c3e50; /* Um tom de cinza escuro para o título */
+            margin-bottom: 30px;
         }
-        iframe {
+
+        /* O Contêiner Principal */
+        .chat-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        /* Cada item de chat individual */
+        .chat-item {
+            flex: 1 1 calc(50% - 10px);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-item h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .chat-item iframe {
             width: 100%;
-            height: 500px;
+            height: 600px;
             border: none;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            flex-grow: 1;
+        }
+
+        /* Media Query para telas pequenas (celulares) */
+        @media (max-width: 768px) {
+            .chat-item {
+                flex-basis: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Chats Internos ASGEAD-CT</h1>
-    <iframe src="https://n8n.arthuraaferreira.com.br/webhook/4146e976-f453-4f5f-a222-eec9fa2ae14b/chat"></iframe>
+
+    <h1>CHATS UTFPR-ASGEAD-CT</h1>
+
+    <div class="chat-container">
+
+        <div class="chat-item">
+            <h2>Liberar Requisição</h2>
+            <iframe src="https://n8n.arthuraaferreira.com.br/webhook/4146e976-f453-4f5f-a222-eec9fa2ae14b/chat"></iframe>
+        </div>
+
+        <div class="chat-item">
+            <h2>Liberar Requisição</h2>
+            <iframe src="https://n8n.arthuraaferreira.com.br/webhook/4146e976-f453-4f5f-a222-eec9fa2ae14b/chat"></iframe>
+        </div>
+
+        </div>
+
 </body>
 </html>
