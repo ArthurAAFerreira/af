@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chats Internos ASGEAD-CT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+
+        /* Estilo para o Título Geral */
+        h1 {
+            text-align: center;
+            color: #2c3e50; /* Um tom de cinza escuro para o título */
+            margin-bottom: 30px;
+        }
+
+        /* O Contêiner Principal */
+        .chat-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        /* Cada item de chat individual */
+        .chat-item {
+            flex: 1 1 calc(50% - 10px);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-item h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .chat-item iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            flex-grow: 1;
+        }
+
+        /* Media Query para telas pequenas (celulares) */
+        @media (max-width: 768px) {
+            .chat-item {
+                flex-basis: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>CHATS UTFPR-ASGEAD-CT</h1>
+
+    <div class="chat-container">
+
+        <div class="chat-item">
+            <h2>Consultas Projetos FUNTEF CT - EM TESTES</h2>
+            <iframe src="https://n8n.arthuraaferreira.com.br/webhook/7c0f9694-457b-44e6-b6b3-002468996798/chat"></iframe>
+        </div>
+
+        <div class="chat-item">
+            <h2>Consulta GRUs Arrecadadas por Departamento da UTFPR-CT</h2>
+            #<iframe src="https://n8n.arthuraaferreira.com.br/webhook/832e5b88-0993-4065-a472-89a5541c233b/chat"></iframe>
+        </div>
+
+        </div>
+
+</body>
+</html>
