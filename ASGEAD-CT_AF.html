@@ -1,79 +1,135 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Consultas UTFPR-CT</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f9;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Consultas UTFPR-CT</title>
 
-        /* Estilo para o Título Geral */
-        h1 {
-            text-align: center;
-            color: #2c3e50; /* Um tom de cinza escuro para o título */
-            margin-bottom: 30px;
-        }
+  <!-- Font Awesome para ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-        /* O Contêiner Principal */
-        .chat-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f9f9fb;
+      color: #333;
+    }
 
-        /* Cada item de chat individual */
-        .chat-item {
-            flex: 1 1 calc(50% - 10px);
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-        }
+    /* Banner */
+    header {
+      background: linear-gradient(135deg, #001f3f, #003366); /* azul escuro */
+      color: white;
+      padding: 50px 20px;
+      text-align: center;
+    }
 
-        .chat-item h2 {
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 1.2em;
-            color: #333;
-        }
+    header h1 {
+      font-size: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+    }
 
-        .chat-item iframe {
-            width: 100%;
-            height: 600px;
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            flex-grow: 1;
-        }
+    header p {
+      font-size: 1rem;
+      margin-top: 10px;
+      opacity: 0.9;
+    }
 
-        /* Media Query para telas pequenas (celulares) */
-        @media (max-width: 768px) {
-            .chat-item {
-                flex-basis: 100%;
-            }
-        }
-    </style>
+    /* Container dos chats */
+    .chat-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Cada chat individual */
+    .chat-item {
+      flex: 1 1 calc(50% - 10px);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-item h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 0.95em; /* fonte menor */
+      font-weight: bold;
+      color: #003366; /* azul escuro */
+    }
+
+    .chat-item iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
+      border-radius: 6px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+      flex-grow: 1;
+    }
+
+    /* Responsivo para celular */
+    @media (max-width: 768px) {
+      .chat-item {
+        flex-basis: 100%;
+      }
+    }
+
+    footer {
+      background: #001f3f;
+      color: #ccc;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.85rem;
+    }
+
+    footer a {
+      color: #66ccff;
+      margin: 0 8px;
+      font-size: 1.1rem;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    footer a:hover {
+      color: #fff;
+    }
+  </style>
 </head>
 <body>
 
-    <h1>ASGEAD-CT - AF</h1>
+  <header>
+    <h1><i class="fa-solid fa-comments"></i> Consultas UTFPR-CT</h1>
+    <p>Chats internos da ASGEAD-CT</p>
+  </header>
 
-    <div class="chat-container">
+  <div class="chat-container">
 
-        <div class="chat-item">
-            <h2>Encaminhamento DICONT-CT</h2>
-            <iframe src="https://n8n.arthuraaferreira.com.br/webhook/62e96f24-9db7-4e32-b127-f96b334f9dec/chat"></iframe>
-        </div>
+    <div class="chat-item">
+      <h2>Encaminhamento DICONT-CT</h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/62e96f24-9db7-4e32-b127-f96b334f9dec/chat"></iframe>
+    </div>
 
-        <div class="chat-item">
-            <h2>Encaminhamento DICONT-CT</h2>
-            <iframe src="https://n8n.arthuraaferreira.com.br/webhook/62e96f24-9db7-4e32-b127-f96b334f9dec/chat"></iframe>
-        </div>
+    <div class="chat-item">
+      <h2>Consulta Empenhos UTFPR-CT</h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/62e96f24-9db7-4e32-b127-f96b334f9dec/chat"></iframe>
+    </div>
 
-        </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Arthur Ferreira | ASGEAD-CT</p>
+    <div class="mt-2">
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
 
 </body>
 </html>

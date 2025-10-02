@@ -5,84 +5,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Alterações em Base de Dados</title>
 
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- Font Awesome -->
+  <!-- Font Awesome para ícones -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
     body {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: #f8f9fb;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f9f9fb;
+      color: #333;
     }
 
+    /* Banner */
     header {
-      background: linear-gradient(135deg, #0072ff, #004080);
+      background: linear-gradient(135deg, #001f3f, #003366); /* azul escuro */
       color: white;
       padding: 50px 20px;
       text-align: center;
     }
 
     header h1 {
-      font-size: 2.2rem;
-      font-weight: 600;
+      font-size: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
     }
 
     header p {
       font-size: 1rem;
+      margin-top: 10px;
       opacity: 0.9;
-      margin-top: 8px;
     }
 
-    .chat-card {
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid #e6e6e6;
-      background: white;
-      transition: 0.3s;
+    /* Container dos chats */
+    .chat-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
-    .chat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+    /* Cada chat individual */
+    .chat-item {
+      flex: 1 1 calc(50% - 10px);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
     }
 
-    .chat-card .card-body {
-      padding: 20px;
+    .chat-item h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 0.95em; /* fonte menor */
+      font-weight: bold;
+      color: #003366; /* azul escuro */
     }
 
-    .chat-card h5 {
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    iframe {
+    .chat-item iframe {
       width: 100%;
-      height: 520px;
+      height: 500px;
       border: none;
-      border-top: 1px solid #eee;
+      border-radius: 6px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+      flex-grow: 1;
+    }
+
+    /* Responsivo para celular */
+    @media (max-width: 768px) {
+      .chat-item {
+        flex-basis: 100%;
+      }
     }
 
     footer {
-      background: #002244;
+      background: #001f3f;
       color: #ccc;
-      padding: 25px 15px;
-      margin-top: 60px;
       text-align: center;
-      font-size: 0.9rem;
+      padding: 20px;
+      font-size: 0.85rem;
     }
 
     footer a {
       color: #66ccff;
-      margin: 0 10px;
+      margin: 0 8px;
       font-size: 1.1rem;
-      transition: 0.3s;
       text-decoration: none;
+      transition: 0.3s;
     }
 
     footer a:hover {
-      color: #ffffff;
+      color: #fff;
     }
   </style>
 </head>
@@ -90,58 +106,32 @@
 
   <header>
     <h1><i class="fa-solid fa-database"></i> Alterações em Base de Dados</h1>
-    <p>Gerenciamento e encaminhamentos internos</p>
+    <p>Gerenciamento e Encaminhamentos Internos</p>
   </header>
 
-  <main class="container my-5">
+  <div class="chat-container">
 
-    <div class="row g-4">
-
-      <!-- Card 1 -->
-      <div class="col-md-6">
-        <div class="card chat-card h-100">
-          <div class="card-body">
-            <h5 class="card-title text-primary">
-              <i class="fa-solid fa-database me-2"></i> Remanejamentos das Arrecadações
-            </h5>
-            <p class="card-text text-muted">
-              Gerencie alterações simplificadas nos dados de arrecadações.
-            </p>
-          </div>
-          <iframe src="https://n8n.arthuraaferreira.com.br/webhook/c2520582-149e-4a2a-8927-f9c7eb2f40af/chat"></iframe>
-        </div>
-      </div>
-
-      <!-- Card 2 -->
-      <div class="col-md-6">
-        <div class="card chat-card h-100">
-          <div class="card-body">
-            <h5 class="card-title text-success">
-              <i class="fa-solid fa-share-from-square me-2"></i> Encaminhamento DICONT-CT
-            </h5>
-            <p class="card-text text-muted">
-              Realize encaminhamentos internos vinculados ao DICONT-CT.
-            </p>
-          </div>
-          <iframe src="https://n8n.arthuraaferreira.com.br/webhook/b2455688-7adf-4ff5-87da-a61ad94e24af/chat"></iframe>
-        </div>
-      </div>
-      <!-- Card 3 -->
-      <div class="col-md-6">
-        <div class="card chat-card h-100">
-          <div class="card-body">
-            <h5 class="card-title text-success">
-              <i class="fa-solid fa-share-from-square me-2"></i> Alterção da Base de Dados dos Remanejamentos de Arrecadação própria
-            </h5>
-            <p class="card-text text-muted">
-              Realize encaminhamentos internos vinculados ao DICONT-CT.
-            </p>
-          </div>
-          <iframe src="https://n8n.arthuraaferreira.com.br/webhook/c2520582-149e-4a2a-8927-f9c7eb2f40af/chat"></iframe>
-        </div>
-      </div>
+    <div class="chat-item">
+      <h2>Remanejamentos das Arrecadações</h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/c2520582-149e-4a2a-8927-f9c7eb2f40af/chat"></iframe>
     </div>
-  </main>
+
+    <div class="chat-item">
+      <h2>Encaminhamento DICONT-CT</h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/b2455688-7adf-4ff5-87da-a61ad94e24af/chat"></iframe>
+    </div>
+
+    <div class="chat-item">
+      <h2>Alteração da Base de Dados de Remanejamentos</h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/c2520582-149e-4a2a-8927-f9c7eb2f40af/chat"></iframe>
+    </div>
+
+    <div class="chat-item">
+      <h2>Alteração da Base de Dados de Remanejamentos</h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/c2520582-149e-4a2a-8927-f9c7eb2f40af/chat"></iframe>
+    </div>
+
+  </div>
 
   <footer>
     <p>&copy; 2025 Arthur Ferreira | ASGEAD-CT</p>
@@ -151,6 +141,5 @@
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
