@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AF - Restrito</title>
+  <title>Consultas UTFPR-CT</title>
 
   <!-- Font Awesome para ícones -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -59,29 +59,20 @@
       transition: all 0.3s ease;
     }
 
-    .chat-header {
-      padding: 15px 20px;
-      background-color: #e6f0ff;
-      cursor: pointer;
-    }
-
-    .chat-header h2 {
+    .chat-item h2 {
       margin: 0;
+      padding: 15px 20px;
       font-size: 1.1em;
       font-weight: bold;
       color: #003366;
+      cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background-color: #e6f0ff;
     }
 
-    .chat-subtitle {
-      font-size: 0.9em;
-      color: #555;
-      margin-top: 5px;
-    }
-
-    .chat-header:hover {
+    .chat-item h2:hover {
       background-color: #cce0ff;
     }
 
@@ -116,30 +107,26 @@
 <body>
 
   <header>
-    <h1><i class="fa-solid fa-comments"></i> AF - Restrito</h1>
-    <p>Restrito - referente automações, scripts e comandos pessoais</p>
+    <h1><i class="fa-solid fa-comments"></i> Consultas UTFPR-CT</h1>
+    <p>Chats internos da ASGEAD-CT</p>
   </header>
 
   <div class="chat-container">
 
     <div class="chat-item">
-      <div class="chat-header">
-        <h2>Encaminhamento DICONT-CT <i class="fa-solid fa-chevron-down"></i></h2>
-        <div class="chat-subtitle">
-          Esta consulta retorna informações sobre encaminhamentos internos realizados pelo DICONT-CT.
-        </div>
-      </div>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/62e96f24-9db7-4e32-b127-f96b334f9dec/chat"></iframe>
+      <h2>
+        Consulta Empenhos UTFPR-CT
+        <i class="fa-solid fa-chevron-down"></i>
+      </h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/3d6ae613-07d4-45c2-876d-ac15a008ff54/chat"></iframe>
     </div>
 
     <div class="chat-item">
-      <div class="chat-header">
-        <h2>Consulta Empenhos UTFPR-CT <i class="fa-solid fa-chevron-down"></i></h2>
-        <div class="chat-subtitle">
-          Esta consulta exibe os empenhos registrados na UTFPR-CT, podendo filtrar por UGR, projeto ou serviço.
-        </div>
-      </div>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/62e96f24-9db7-4e32-b127-f96b334f9dec/chat"></iframe>
+      <h2>
+        Cálculo valor bruto de um Pagamento de PF
+        <i class="fa-solid fa-chevron-down"></i>
+      </h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/abc7f4cd-3162-43e8-9bd0-c7804828f96f/chat"></iframe>
     </div>
 
   </div>
@@ -153,14 +140,14 @@
   </footer>
 
   <script>
-    // Abrir/fechar chat ao clicar no cabeçalho
-    const chatHeaders = document.querySelectorAll('.chat-header');
+    // Script para abrir/fechar chat ao clicar no título
+    const chatHeaders = document.querySelectorAll('.chat-item h2');
     chatHeaders.forEach(header => {
       header.addEventListener('click', () => {
         const iframe = header.nextElementSibling;
         const icon = header.querySelector('i');
 
-        if (iframe.style.display === 'block') {
+        if(iframe.style.display === 'block') {
           iframe.style.display = 'none';
           icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
         } else {

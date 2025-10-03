@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chats Internos ASGEAD-CT</title>
+  <title>Consultas Projetos Funtef com UTFPR-CT</title>
 
   <!-- Font Awesome para ícones -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -59,20 +59,29 @@
       transition: all 0.3s ease;
     }
 
-    .chat-item h2 {
-      margin: 0;
+    .chat-header {
       padding: 15px 20px;
+      background-color: #e6f0ff;
+      cursor: pointer;
+    }
+
+    .chat-header h2 {
+      margin: 0;
       font-size: 1.1em;
       font-weight: bold;
       color: #003366;
-      cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background-color: #e6f0ff;
     }
 
-    .chat-item h2:hover {
+    .chat-subtitle {
+      font-size: 0.9em;
+      color: #555;
+      margin-top: 5px;
+    }
+
+    .chat-header:hover {
       background-color: #cce0ff;
     }
 
@@ -108,19 +117,61 @@
 
   <header>
     <h1><i class="fa-solid fa-comments"></i> CHATS UTFPR-ASGEAD-CT</h1>
-    <p>Consultas internas e testes</p>
+    <p>Esta página é para consultas de arrecadação, sendo dos projetos com a FUNTEF ou de demais serviços, organizados por UGR da UTFPR-CT, dos remanejamentos relacionados às arrecadações, os valores disponíveis, entre outros.</p>
   </header>
 
   <div class="chat-container">
 
     <div class="chat-item">
-      <h2>Consultas Projetos FUNTEF CT - EM TESTES <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-header">
+        <h2>
+          Consultas Projetos FUNTEF CT - EM TESTES
+          <i class="fa-solid fa-chevron-down"></i>
+        </h2>
+        <div class="chat-subtitle">
+          Esta consulta retorna os dados dos projetos da UTFPR com a FUNTEF, conforme templates pré definidos, individual ou lista de projetos com base em UGR, coordenador, vigência, valores, etc.
+        </div>
+      </div>
       <iframe src="https://n8n.arthuraaferreira.com.br/webhook/7c0f9694-457b-44e6-b6b3-002468996798/chat"></iframe>
     </div>
 
     <div class="chat-item">
-      <h2>Consulta GRUs Arrecadadas por Departamento da UTFPR-CT <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-header">
+        <h2>
+          Consulta GRUs Arrecadadas por Departamento da UTFPR-CT
+          <i class="fa-solid fa-chevron-down"></i>
+        </h2>
+        <div class="chat-subtitle">
+          Esta consulta retorna as GRUs recolhidas na UTFPR-CT com base no número de referência informado na GRU, que é vinculado ao projeto ou serviço da UTFPR-CT e de suas UGRs.
+        </div>
+      </div>
       <iframe src="https://n8n.arthuraaferreira.com.br/webhook/832e5b88-0993-4065-a472-89a5541c233b/chat"></iframe>
+    </div>
+
+    <div class="chat-item">
+      <div class="chat-header">
+        <h2>
+          Consulta Referências para GRUs
+          <i class="fa-solid fa-chevron-down"></i>
+        </h2>
+        <div class="chat-subtitle">
+          Esta consulta retorna as referências estabelecidas pela UTFPR/DIRPLAD-CT, caso queira estabelecer uma nova referência, utilizadas para organização das informações das arrecadações, entre em contato com o DEOFI-CT.
+        </div>
+      </div>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/ee1becae-0cae-4fdc-a64a-9e397c718316/chat"></iframe>
+    </div>
+
+    <div class="chat-item">
+      <div class="chat-header">
+        <h2>
+          Consulta Valores Repassados de Recurso Próprio
+          <i class="fa-solid fa-chevron-down"></i>
+        </h2>
+        <div class="chat-subtitle">
+          Esta consulta retorna os valores repassados ou utilizados por UGR referente os valores arrecadados, podem não ser iguais aos do SIORG, caso uma parte seja um acordo ou valor alheio ao arrecadado pela UGR.
+        </div>
+      </div>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/f001ef32-104a-4267-a788-069f6a60b59d/chat"></iframe>
     </div>
 
   </div>
@@ -134,8 +185,8 @@
   </footer>
 
   <script>
-    // Abrir/fechar chat ao clicar no título
-    const chatHeaders = document.querySelectorAll('.chat-item h2');
+    // Abrir/fechar chat ao clicar no cabeçalho
+    const chatHeaders = document.querySelectorAll('.chat-header');
     chatHeaders.forEach(header => {
       header.addEventListener('click', () => {
         const iframe = header.nextElementSibling;

@@ -1,35 +1,78 @@
+/* Reset */
+body, h1, h2, p {
+    margin: 0;
+    padding: 0;
+}
+
+/* Geral */
 body {
     font-family: Arial, sans-serif;
     background: #f7f9fc;
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
+    align-items: flex-start;
+    padding: 40px;
+    color: #333;
 }
 
+/* Container central */
 .container {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
-    text-align: center;
+    max-width: 900px;
+    width: 100%;
 }
 
-button {
-    background: #0074d9;
-    color: white;
-    border: none;
-    padding: 10px 20px;
+/* Título principal */
+h1 {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #004080; /* Azul UTFPR institucional */
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+h1::before {
+    content: "🔍";
+    font-size: 1.9rem;
+}
+
+/* Subtítulo */
+.subtitulo {
     font-size: 1rem;
-    border-radius: 5px;
-    cursor: pointer;
+    color: #555;
+    margin-bottom: 25px;
+    line-height: 1.5;
 }
 
-button:hover {
-    background: #005fa3;
+/* Cards de consulta */
+.card {
+    background: #eaf3ff;
+    border-left: 5px solid #004080;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
 }
 
-#status {
-    margin-top: 15px;
+.card:hover {
+    transform: translateY(-3px);
+}
+
+.card h2 {
+    font-size: 1.2rem;
+    color: #004080;
+    margin-bottom: 5px;
+}
+
+.card p {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+/* Status em destaque */
+.status {
+    color: #b30000;
     font-weight: bold;
 }
