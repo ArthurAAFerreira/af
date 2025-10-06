@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alterações em Base de Dados</title>
+
+  <!-- Font Awesome para ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f9f9fb;
+      color: #333;
+    }
+
+    /* Banner */
+    header {
+      background: linear-gradient(135deg, #001f3f, #003366);
+      color: white;
+      padding: 50px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+    }
+
+    header p {
+      font-size: 1rem;
+      margin-top: 10px;
+      opacity: 0.9;
+    }
+
+    /* Container dos chats */
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      padding: 30px 0;
+    }
+
+    /* Cada chat individual */
+    .chat-item {
+      width: 90%;
+      box-sizing: border-box;
+      border-radius: 6px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+      background-color: white;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .chat-item h2 {
+      margin: 0;
+      padding: 15px 20px;
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #003366;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #e6f0ff;
+    }
+
+    .chat-item h2:hover {
+      background-color: #cce0ff;
+    }
+
+    .chat-item iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
+      display: none; /* inicial escondido */
+    }
+
+    footer {
+      background: #001f3f;
+      color: #ccc;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.85rem;
+    }
+
+    footer a {
+      color: #66ccff;
+      margin: 0 8px;
+      font-size: 1.1rem;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    footer a:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1><i class="fa-solid fa-database"></i> Alterações em Base de Dados</h1>
+    <p>Gerenciamento e Encaminhamentos Internos</p>
+  </header>
+
+  <div class="chat-container">
+
+    <div class="chat-item">
+      <h2>Consulta de GRU por Referência <i class="fa-solid fa-chevron-down"></i></h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/27cfedb4-76c2-4d6b-92ca-35fe0766b4f2/chat"></iframe>
+    </div>
+
+    <div class="chat-item">
+      <h2>Consulta de GRU por CPF/CNPJ <i class="fa-solid fa-chevron-down"></i></h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/27cfedb4-76c2-4d6b-92ca-35fe0766b4f2/chat"></iframe>
+    </div>
+
+    <div class="chat-item">
+      <h2>Consulta de GRU por Código de Recolhimento <i class="fa-solid fa-chevron-down"></i></h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/27cfedb4-76c2-4d6b-92ca-35fe0766b4f2/chat"></iframe>
+    </div>
+
+    <div class="chat-item">
+      <h2>Consulta de GRU por mês <i class="fa-solid fa-chevron-down"></i></h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/27cfedb4-76c2-4d6b-92ca-35fe0766b4f2/chat"></iframe>
+    </div>
+
+    <div class="chat-item">
+      <h2>Consulta de GRU total - resultado por e-mail <i class="fa-solid fa-chevron-down"></i></h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/27cfedb4-76c2-4d6b-92ca-35fe0766b4f2/chat"></iframe>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Arthur Ferreira | ASGEAD-CT</p>
+    <div class="mt-2">
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script>
+    // Abrir/fechar chat ao clicar no título
+    const chatHeaders = document.querySelectorAll('.chat-item h2');
+    chatHeaders.forEach(header => {
+      header.addEventListener('click', () => {
+        const iframe = header.nextElementSibling;
+        const icon = header.querySelector('i');
+
+        if (iframe.style.display === 'block') {
+          iframe.style.display = 'none';
+          icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+        } else {
+          iframe.style.display = 'block';
+          icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
