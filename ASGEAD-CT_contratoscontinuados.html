@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Consultas e Planilha UTFPR-CT</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f9f9fb;
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(135deg, #001f3f, #003366);
+      color: white;
+      padding: 50px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+    }
+
+    header p {
+      font-size: 1rem;
+      margin-top: 10px;
+      opacity: 0.9;
+    }
+
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      padding: 30px 0;
+    }
+
+    .chat-item {
+      width: 90%;
+      border-radius: 6px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+      background-color: white;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .chat-item h2 {
+      margin: 0;
+      padding: 15px 20px;
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #003366;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #e6f0ff;
+    }
+
+    .chat-item h2:hover {
+      background-color: #cce0ff;
+    }
+
+    .chat-item iframe,
+    .chat-item .planilha-container {
+      width: 100%;
+      border: none;
+      display: none;
+      background-color: white;
+    }
+
+    .planilha-container {
+      padding: 20px;
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #003366;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #e6f0ff;
+    }
+
+    footer {
+      background: #001f3f;
+      color: #ccc;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.85rem;
+    }
+
+    footer a {
+      color: #66ccff;
+      margin: 0 8px;
+      font-size: 1.1rem;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    footer a:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1><i class="fa-solid fa-database"></i> Consultas e Planilha UTFPR-CT</h1>
+    <p>Chats e planilha integrados ao Supabase</p>
+  </header>
+
+  <div class="chat-container">
+
+    <!-- PLANILHA SUPABASE -->
+    <div class="chat-item">
+      <h2>
+        Planilha Continuados UTFPR-CT
+        <i class="fa-solid fa-chevron-down"></i>
+      </h2>
+      <div class="planilha-container">
+        <table id="tabela-supabase">
+          <thead>
+            <tr>
+              <th>Ano</th>
+              <th>UGR</th>
+              <th>Grupo de Despesa</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="4" style="text-align:center;">Carregando dados...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CHATS EXISTENTES -->
+    <div class="chat-item">
+      <h2>Consulta Empenhos UTFPR-CT por Número <i class="fa-solid fa-chevron-down"></i></h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/0a38394e-dd28-4270-b685-5b1b7672044c/chat"></iframe>
+    </div>
+
+    <div class="chat-item">
+      <h2>Consulta Empenhos UTFPR-CT por Processo <i class="fa-solid fa-chevron-down"></i></h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/d266f6d2-437d-45da-b927-7dbef2057e8c/chat"></iframe>
+    </div>
+
+    <div class="chat-item">
+      <h2>Consulta Empenhos UTFPR-CT por Favorecido <i class="fa-solid fa-chevron-down"></i></h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/bff20b35-3afa-4110-a09d-872e39704c17/chat"></iframe>
+    </div>
+
+    <div class="chat-item">
+      <h2>Cálculo valor bruto de um Pagamento de PF <i class="fa-solid fa-chevron-down"></i></h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/abc7f4cd-3162-43e8-9bd0-c7804828f96f/chat"></iframe>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Arthur Ferreira | ASGEAD-CT</p>
+    <div class="mt-2">
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <!-- Supabase -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+  <script>
+    // Abrir e fechar os blocos
+    const chatHeaders = document.querySelectorAll('.chat-item h2');
+    chatHeaders.forEach(header => {
+      header.addEventListener('click', async () => {
+        const content = header.nextElementSibling;
+        const icon = header.querySelector('i');
+
+        const isOpen = content.style.display === 'block';
+        document.querySelectorAll('.chat-item iframe, .planilha-container').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.chat-item h2 i').forEach(i => i.classList.replace('fa-chevron-up', 'fa-chevron-down'));
+
+        if (!isOpen) {
+          content.style.display = 'block';
+          icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+          if (content.classList.contains('planilha-container')) {
+            await carregarPlanilha();
+          }
+        }
+      });
+    });
+
+    // Configurar Supabase
+    const SUPABASE_URL = "https://SEU-PROJETO.supabase.co";
+    const SUPABASE_ANON_KEY = "SUA-CHAVE-ANON";
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Carregar dados
+    async function carregarPlanilha() {
+      const tabela = document.getElementById('tabela-supabase').querySelector('tbody');
+      tabela.innerHTML = `<tr><td colspan="4" style="text-align:center;">Atualizando dados...</td></tr>`;
+
+      const { data, error } = await supabase
+        .from('remanejamento_arrecadacao')
+        .select('*')
+        .order('ano', { ascending: false });
+
+      if (error) {
+        tabela.innerHTML = `<tr><td colspan="4" style="color:red;text-align:center;">Erro ao carregar dados: ${error.message}</td></tr>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        tabela.innerHTML = `<tr><td colspan="4" style="text-align:center;">Nenhum registro encontrado</td></tr>`;
+        return;
+      }
+
+      tabela.innerHTML = data.map(row => `
+        <tr>
+          <td>${row.ano}</td>
+          <td>${row.ugr}</td>
+          <td>${row.grupo_despesa}</td>
+          <td>R$ ${Number(row.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+        </tr>
+      `).join('');
+    }
+  </script>
+
+</body>
+</html>
