@@ -153,13 +153,64 @@
       <iframe src="https://n8n.arthuraaferreira.com.br/webhook/925a6233-5eac-4562-9671-1948b3be9aca/chat"></iframe>
     </div>
 
-    <div class="chat-item">
-      <h2>
-        Consulta Saldo Orçamentário
-        <i class="fa-solid fa-chevron-down"></i>
-      </h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/91a077b6-95be-4f1f-8045-a6b8aff2e810/chat"></iframe>
-    </div>
+<section id="saldo-orcamentario">
+  <h2>Consulta Saldo Orçamentário</h2>
+  <table id="resultadoSaldo">
+    <thead>
+      <tr>
+        <th>Fonte Detalhada</th>
+        <th>Programa</th>
+        <th>Ação</th>
+        <th>PI</th>
+        <th>PTRES</th>
+        <th>Categoria</th>
+        <th>Saldo Orçamentário (R$)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+  // substitua aqui pelos dados do seu projeto Supabase
+  const supabaseUrl = 'db.wycjvjlhabiyhusupivx.supabase.co'
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0'
+  const supabase = createClient(supabaseUrl, supabaseKey)
+
+  async function carregarSaldo() {
+    const { data, error } = await supabase
+      .from('utfpr_ct_saldo_orcamentario')
+      .select('fonte_detalhada, fonte_detalhada_nome, programa_governo_nome, acao_governo_nome, pi, ptres, categoria_gasto_nome, saldo_orcamentario')
+      .order('programa_governo_nome', { ascending: true })
+
+    if (error) {
+      console.error('Erro ao buscar dados:', error)
+      return
+    }
+
+    const tbody = document.querySelector('#resultadoSaldo tbody')
+    tbody.innerHTML = ''
+
+    data.forEach(item => {
+      const tr = document.createElement('tr')
+      tr.innerHTML = `
+        <td>${item.fonte_detalhada_nome || '-'}</td>
+        <td>${item.programa_governo_nome || '-'}</td>
+        <td>${item.acao_governo_nome || '-'}</td>
+        <td>${item.pi || '-'}</td>
+        <td>${item.ptres || '-'}</td>
+        <td>${item.categoria_gasto_nome || '-'}</td>
+        <td style="text-align:right">${Number(item.saldo_orcamentario || 0).toLocaleString('pt-BR', {minimumFractionDigits:2})}</td>
+      `
+      tbody.appendChild(tr)
+    })
+  }
+
+  carregarSaldo()
+</script>
+
 
     <div class="chat-item">
       <h2>
