@@ -7,6 +7,8 @@
 
   <!-- Font Awesome para ícones -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
 
   <style>
     body {
@@ -76,11 +78,35 @@
       background-color: #cce0ff;
     }
 
-    .chat-item iframe {
+    .chat-item iframe,
+    .saldo-orcamentario {
       width: 100%;
-      height: 500px;
       border: none;
       display: none; /* inicial escondido */
+      padding: 20px;
+    }
+
+    .saldo-orcamentario table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .saldo-orcamentario th, .saldo-orcamentario td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    .saldo-orcamentario th {
+      background-color: #f2f2f2;
+      text-align: left;
+    }
+
+    .saldo-orcamentario tr:nth-child(even){
+      background-color: #f9f9f9;
+    }
+
+    .saldo-orcamentario tr:hover {
+      background-color: #e6f0ff;
     }
 
     footer {
@@ -113,6 +139,7 @@
 
   <div class="chat-container">
 
+    <!-- Exemplos de consultas com iframe -->
     <div class="chat-item">
       <h2>
         Consulta Empenhos UTFPR-CT por Número
@@ -129,101 +156,16 @@
       <iframe src="https://n8n.arthuraaferreira.com.br/webhook/d266f6d2-437d-45da-b927-7dbef2057e8c/chat"></iframe>
     </div>
 
+    <!-- Consulta Saldo Orçamentário (com dados do Supabase) -->
     <div class="chat-item">
       <h2>
-        Consulta Empenhos UTFPR-CT por Favorecido
+        Consulta Saldo Orçamentário
         <i class="fa-solid fa-chevron-down"></i>
       </h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/bff20b35-3afa-4110-a09d-872e39704c17/chat"></iframe>
-    </div>
-
-    <div class="chat-item">
-      <h2>
-        Consulta Empenhos UTFPR-CT por Elemento de Despesa
-        <i class="fa-solid fa-chevron-down"></i>
-      </h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/c0d39a1f-346f-486d-912b-8a4a8a2ee50d/chat"></iframe>
-    </div>
-
-    <div class="chat-item">
-      <h2>
-        Consulta Saldo Financeiro
-        <i class="fa-solid fa-chevron-down"></i>
-      </h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/925a6233-5eac-4562-9671-1948b3be9aca/chat"></iframe>
-    </div>
-
-<section id="saldo-orcamentario">
-  <h2>Consulta Saldo Orçamentário</h2>
-  <table id="resultadoSaldo">
-    <thead>
-      <tr>
-        <th>Fonte Detalhada</th>
-        <th>Programa</th>
-        <th>Ação</th>
-        <th>PI</th>
-        <th>PTRES</th>
-        <th>Categoria</th>
-        <th>Saldo Orçamentário (R$)</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</section>
-
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-  // substitua aqui pelos dados do seu projeto Supabase
-  const supabaseUrl = 'db.wycjvjlhabiyhusupivx.supabase.co'
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0'
-  const supabase = createClient(supabaseUrl, supabaseKey)
-
-  async function carregarSaldo() {
-    const { data, error } = await supabase
-      .from('utfpr_ct_saldo_orcamentario')
-      .select('fonte_detalhada, fonte_detalhada_nome, programa_governo_nome, acao_governo_nome, pi, ptres, categoria_gasto_nome, saldo_orcamentario')
-      .order('programa_governo_nome', { ascending: true })
-
-    if (error) {
-      console.error('Erro ao buscar dados:', error)
-      return
-    }
-
-    const tbody = document.querySelector('#resultadoSaldo tbody')
-    tbody.innerHTML = ''
-
-    data.forEach(item => {
-      const tr = document.createElement('tr')
-      tr.innerHTML = `
-        <td>${item.fonte_detalhada_nome || '-'}</td>
-        <td>${item.programa_governo_nome || '-'}</td>
-        <td>${item.acao_governo_nome || '-'}</td>
-        <td>${item.pi || '-'}</td>
-        <td>${item.ptres || '-'}</td>
-        <td>${item.categoria_gasto_nome || '-'}</td>
-        <td style="text-align:right">${Number(item.saldo_orcamentario || 0).toLocaleString('pt-BR', {minimumFractionDigits:2})}</td>
-      `
-      tbody.appendChild(tr)
-    })
-  }
-
-  carregarSaldo()
-</script>
-
-
-    <div class="chat-item">
-      <h2>
-        Consulta Saldo e Valor Gasto SIORG
-        <i class="fa-solid fa-chevron-down"></i>
-      </h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/2da3bf4c-5be3-49cf-b0ca-545d62bf0587/chat"></iframe>
+      <div class="saldo-orcamentario"></div>
     </div>
 
   </div>
-
-
-
 
   <footer>
     <p>&copy; 2025 Arthur Ferreira | ASGEAD-CT</p>
@@ -234,19 +176,79 @@
   </footer>
 
   <script>
-    // Script para abrir/fechar chat ao clicar no título
+    // Configuração do Supabase
+    const supabaseUrl = 'https://db.wycjvjlhabiyhusupivx.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function carregarSaldoOrcamentario() {
+      const { data, error } = await supabase
+        .from('utfpr_ct_saldo_orcamentario')
+        .select('*')
+        .limit(100);
+
+      const container = document.querySelector('.saldo-orcamentario');
+
+      if (error) {
+        container.innerHTML = `<p style="color:red;">Erro ao carregar dados: ${error.message}</p>`;
+        return;
+      }
+
+      if (!data.length) {
+        container.innerHTML = '<p>Nenhum dado encontrado.</p>';
+        return;
+      }
+
+      let tabela = `<table>
+        <thead>
+          <tr>
+            <th>Fonte</th>
+            <th>Programa Governo</th>
+            <th>Ação Governo</th>
+            <th>PT</th>
+            <th>PI</th>
+            <th>PTRES</th>
+            <th>Categoria Gasto</th>
+            <th>Saldo Orçamentário</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+      data.forEach(row => {
+        tabela += `<tr>
+          <td>${row.fonte_detalhada_nome || row.fonte_detalhada || ''}</td>
+          <td>${row.programa_governo_nome || row.programa_governo || ''}</td>
+          <td>${row.acao_governo_nome || row.acao_governo || ''}</td>
+          <td>${row.pt || ''}</td>
+          <td>${row.pi_nome || row.pi || ''}</td>
+          <td>${row.ptres || ''}</td>
+          <td>${row.categoria_gasto_nome || row.categoria_gasto || ''}</td>
+          <td style="text-align:right;">${row.saldo_orcamentario?.toLocaleString('pt-BR', { style:'currency', currency:'BRL' }) || '0,00'}</td>
+        </tr>`;
+      });
+
+      tabela += '</tbody></table>';
+      container.innerHTML = tabela;
+    }
+
+    // Script para abrir/fechar chats
     const chatHeaders = document.querySelectorAll('.chat-item h2');
     chatHeaders.forEach(header => {
-      header.addEventListener('click', () => {
+      header.addEventListener('click', async () => {
         const iframe = header.nextElementSibling;
         const icon = header.querySelector('i');
 
-        if(iframe.style.display === 'block') {
+        if (iframe.style.display === 'block') {
           iframe.style.display = 'none';
           icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
         } else {
           iframe.style.display = 'block';
           icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+
+          // Se for saldo orçamentário e ainda não carregou, busca os dados
+          if (iframe.classList.contains('saldo-orcamentario') && !iframe.innerHTML.trim()) {
+            await carregarSaldoOrcamentario();
+          }
         }
       });
     });
