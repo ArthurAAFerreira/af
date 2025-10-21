@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Consultas UTFPR-CT</title>
 
-  <!-- Font Awesome para ícones -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
@@ -83,6 +82,25 @@
       display: none; /* inicial escondido */
     }
 
+    /* Estilos específicos para a tabela orçamentária */
+    .saldo-orcamentario table {
+        border-spacing: 0;
+    }
+    .saldo-orcamentario th, .saldo-orcamentario td {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+        font-size: 0.85rem; /* Fonte menor para caber mais dados */
+    }
+    .saldo-orcamentario th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+    .saldo-orcamentario tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+
     footer {
       background: #001f3f;
       color: #ccc;
@@ -158,7 +176,7 @@
         Consulta Saldo Orçamentário
         <i class="fa-solid fa-chevron-down"></i>
       </h2>
-      <div class="saldo-orcamentario" style="display:none; padding: 20px;"></div>
+      <div class="saldo-orcamentario" style="display:none; padding: 20px; overflow-x: auto;"></div>
     </div>
 
 
@@ -184,104 +202,87 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+
   <script>
-    // Script para abrir/fechar chat ao clicar no título
+    // Supabase - configurar
+    const SUPABASE_URL = 'https://db.wycjvjlhabiyhusupivx.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function carregarSaldoOrcamentario() {
+      const { data, error } = await supabase
+        .from('utfpr_ct_saldo_orcamentario')
+        .select('*')
+        .limit(100);
+
+      const container = document.querySelector('.saldo-orcamentario');
+
+      if (error) {
+        container.innerHTML = `<p style="color:red;">Erro ao carregar dados: ${error.message}</p>`;
+        return;
+      }
+
+      if (!data.length) {
+        container.innerHTML = '<p>Nenhum dado encontrado.</p>';
+        return;
+      }
+
+      let tabela = `<table style="width:100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th>Fonte</th>
+            <th>Programa Governo</th>
+            <th>Ação Governo</th>
+            <th>PT</th>
+            <th>PI</th>
+            <th>PTRES</th>
+            <th>Categoria Gasto</th>
+            <th>Saldo Orçamentário</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+      data.forEach(row => {
+        tabela += `<tr>
+          <td>${row.fonte_detalhada_nome || row.fonte_detalhada || ''}</td>
+          <td>${row.programa_governo_nome || row.programa_governo || ''}</td>
+          <td>${row.acao_governo_nome || row.acao_governo || ''}</td>
+          <td>${row.pt || ''}</td>
+          <td>${row.pi_nome || row.pi || ''}</td>
+          <td>${row.ptres || ''}</td>
+          <td>${row.categoria_gasto_nome || row.categoria_gasto || ''}</td>
+          <td style="text-align:right;">${row.saldo_orcamentario?.toLocaleString('pt-BR', { style:'currency', currency:'BRL' }) || '0,00'}</td>
+        </tr>`;
+      });
+
+      tabela += '</tbody></table>';
+      container.innerHTML = tabela;
+    }
+
+    // Script para abrir/fechar todos os chats (UNIFICADO E COMPLETO)
     const chatHeaders = document.querySelectorAll('.chat-item h2');
     chatHeaders.forEach(header => {
-      header.addEventListener('click', () => {
-        const iframe = header.nextElementSibling;
+      header.addEventListener('click', async () => {
+        const content = header.nextElementSibling; // pode ser iframe ou div
         const icon = header.querySelector('i');
 
-        if(iframe.style.display === 'block') {
-          iframe.style.display = 'none';
+        // Toggle do Display
+        if (content.style.display === 'block') {
+          content.style.display = 'none';
           icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
         } else {
-          iframe.style.display = 'block';
+          content.style.display = 'block';
           icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+
+          // Se for saldo orçamentário e ainda não carregou os dados, carrega
+          if (content.classList.contains('saldo-orcamentario') && !content.innerHTML.trim()) {
+            await carregarSaldoOrcamentario();
+          }
         }
       });
     });
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
-
-<script>
-  // Supabase - configurar
-  const SUPABASE_URL = 'https://db.wycjvjlhabiyhusupivx.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-  async function carregarSaldoOrcamentario() {
-    const { data, error } = await supabase
-      .from('utfpr_ct_saldo_orcamentario')
-      .select('*')
-      .limit(100);
-
-    const container = document.querySelector('.saldo-orcamentario');
-
-    if (error) {
-      container.innerHTML = `<p style="color:red;">Erro ao carregar dados: ${error.message}</p>`;
-      return;
-    }
-
-    if (!data.length) {
-      container.innerHTML = '<p>Nenhum dado encontrado.</p>';
-      return;
-    }
-
-    let tabela = `<table style="width:100%; border-collapse: collapse;">
-      <thead>
-        <tr>
-          <th>Fonte</th>
-          <th>Programa Governo</th>
-          <th>Ação Governo</th>
-          <th>PT</th>
-          <th>PI</th>
-          <th>PTRES</th>
-          <th>Categoria Gasto</th>
-          <th>Saldo Orçamentário</th>
-        </tr>
-      </thead>
-      <tbody>`;
-
-    data.forEach(row => {
-      tabela += `<tr>
-        <td>${row.fonte_detalhada_nome || row.fonte_detalhada || ''}</td>
-        <td>${row.programa_governo_nome || row.programa_governo || ''}</td>
-        <td>${row.acao_governo_nome || row.acao_governo || ''}</td>
-        <td>${row.pt || ''}</td>
-        <td>${row.pi_nome || row.pi || ''}</td>
-        <td>${row.ptres || ''}</td>
-        <td>${row.categoria_gasto_nome || row.categoria_gasto || ''}</td>
-        <td style="text-align:right;">${row.saldo_orcamentario?.toLocaleString('pt-BR', { style:'currency', currency:'BRL' }) || '0,00'}</td>
-      </tr>`;
-    });
-
-    tabela += '</tbody></table>';
-    container.innerHTML = tabela;
-  }
-
-  // Script para abrir/fechar todos os chats
-  const chatHeaders = document.querySelectorAll('.chat-item h2');
-  chatHeaders.forEach(header => {
-    header.addEventListener('click', async () => {
-      const content = header.nextElementSibling; // pode ser iframe ou div
-      const icon = header.querySelector('i');
-
-      if (content.style.display === 'block') {
-        content.style.display = 'none';
-        icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
-      } else {
-        content.style.display = 'block';
-        icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
-
-        // Se for saldo orçamentário e ainda não carregou os dados, carrega
-        if (content.classList.contains('saldo-orcamentario') && !content.innerHTML.trim()) {
-          await carregarSaldoOrcamentario();
-        }
-      }
-    });
-  });
-</script>
 
 
 
