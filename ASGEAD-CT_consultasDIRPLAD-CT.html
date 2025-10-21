@@ -267,11 +267,9 @@
         const content = header.nextElementSibling; // pode ser iframe ou div
         const icon = header.querySelector('i');
 
-        // Toggle do Display
-        if (content.style.display === 'block') {
-          content.style.display = 'none';
-          icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
-        } else {
+        // Lógica de abertura/fechamento mais robusta
+        // Verifica se o elemento está fechado (display: none ou string vazia)
+        if (content.style.display === 'none' || content.style.display === '') {
           content.style.display = 'block';
           icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
 
@@ -279,6 +277,10 @@
           if (content.classList.contains('saldo-orcamentario') && !content.innerHTML.trim()) {
             await carregarSaldoOrcamentario();
           }
+        } else {
+          // Se está aberto (display: block), então fecha
+          content.style.display = 'none';
+          icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
         }
       });
     });
