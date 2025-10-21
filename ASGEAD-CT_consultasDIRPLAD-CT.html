@@ -206,28 +206,27 @@
 <script>
   // Supabase - configurar
   const SUPABASE_URL = 'https://db.wycjvjlhabiyhusupivx.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0'; // use anon para front-end público
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
   const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   async function carregarSaldoOrcamentario() {
     const { data, error } = await supabase
       .from('utfpr_ct_saldo_orcamentario')
       .select('*')
-      .limit(100); // pode ajustar limite
-
-    if (error) {
-      console.error(error);
-      return;
-    }
+      .limit(100);
 
     const container = document.querySelector('.saldo-orcamentario');
+
+    if (error) {
+      container.innerHTML = `<p style="color:red;">Erro ao carregar dados: ${error.message}</p>`;
+      return;
+    }
 
     if (!data.length) {
       container.innerHTML = '<p>Nenhum dado encontrado.</p>';
       return;
     }
 
-    // Montar a tabela
     let tabela = `<table style="width:100%; border-collapse: collapse;">
       <thead>
         <tr>
@@ -245,14 +244,14 @@
 
     data.forEach(row => {
       tabela += `<tr>
-        <td>${row.fonte_detalhada_nome || row.fonte_detalhada}</td>
-        <td>${row.programa_governo_nome || row.programa_governo}</td>
-        <td>${row.acao_governo_nome || row.acao_governo}</td>
+        <td>${row.fonte_detalhada_nome || row.fonte_detalhada || ''}</td>
+        <td>${row.programa_governo_nome || row.programa_governo || ''}</td>
+        <td>${row.acao_governo_nome || row.acao_governo || ''}</td>
         <td>${row.pt || ''}</td>
-        <td>${row.pi_nome || row.pi}</td>
+        <td>${row.pi_nome || row.pi || ''}</td>
         <td>${row.ptres || ''}</td>
-        <td>${row.categoria_gasto_nome || row.categoria_gasto}</td>
-        <td style="text-align:right;">${row.saldo_orcamentario.toLocaleString('pt-BR', { style:'currency', currency:'BRL' })}</td>
+        <td>${row.categoria_gasto_nome || row.categoria_gasto || ''}</td>
+        <td style="text-align:right;">${row.saldo_orcamentario?.toLocaleString('pt-BR', { style:'currency', currency:'BRL' }) || '0,00'}</td>
       </tr>`;
     });
 
@@ -260,24 +259,29 @@
     container.innerHTML = tabela;
   }
 
-  // abrir/fechar com toggle e carregar dados
-  const chatSaldo = document.querySelector('.chat-item h2');
-  const saldoDiv = document.querySelector('.saldo-orcamentario');
+  // Script para abrir/fechar todos os chats
+  const chatHeaders = document.querySelectorAll('.chat-item h2');
+  chatHeaders.forEach(header => {
+    header.addEventListener('click', async () => {
+      const content = header.nextElementSibling; // pode ser iframe ou div
+      const icon = header.querySelector('i');
 
-  chatSaldo.addEventListener('click', async () => {
-    const icon = chatSaldo.querySelector('i');
-    if (saldoDiv.style.display === 'block') {
-      saldoDiv.style.display = 'none';
-      icon.classList.replace('fa-chevron-up','fa-chevron-down');
-    } else {
-      saldoDiv.style.display = 'block';
-      icon.classList.replace('fa-chevron-down','fa-chevron-up');
-      if (!saldoDiv.innerHTML) { // só carrega uma vez
-        await carregarSaldoOrcamentario();
+      if (content.style.display === 'block') {
+        content.style.display = 'none';
+        icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+      } else {
+        content.style.display = 'block';
+        icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+
+        // Se for saldo orçamentário e ainda não carregou os dados, carrega
+        if (content.classList.contains('saldo-orcamentario') && !content.innerHTML.trim()) {
+          await carregarSaldoOrcamentario();
+        }
       }
-    }
+    });
   });
 </script>
+
 
 
 </body>
