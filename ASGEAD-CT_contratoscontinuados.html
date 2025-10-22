@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Consultas e Planilha UTFPR-CT</title>
+  <title>Consultas UTFPR-CT</title>
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- DataTables -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css">
 
   <style>
     body {
@@ -48,7 +51,8 @@
 
     .chat-item {
       width: 90%;
-      border-radius: 6px;
+      box-sizing: border-box;
+      border-radius: 1px;
       box-shadow: 0 3px 10px rgba(0,0,0,0.12);
       background-color: white;
       overflow: hidden;
@@ -72,27 +76,27 @@
       background-color: #cce0ff;
     }
 
-    .chat-item iframe,
-    .chat-item .planilha-container {
-      width: 100%;
-      border: none;
+    .chat-content {
       display: none;
-      background-color: white;
-    }
-
-    .planilha-container {
-      padding: 20px;
+      padding: 0px;
       overflow-x: auto;
     }
 
-    table {
-      border-collapse: collapse;
+    .chat-content iframe {
       width: 100%;
+      height: 500px;
+      border: none;
+      display: block;
+    }
+
+    table {
+      width: 100% !important;
+      border-collapse: collapse;
     }
 
     th, td {
       border: 1px solid #ddd;
-      padding: 10px;
+      padding: 8px;
       text-align: left;
     }
 
@@ -130,57 +134,40 @@
     }
   </style>
 </head>
-<body>
 
+<body>
   <header>
-    <h1><i class="fa-solid fa-database"></i> Consultas e Planilha UTFPR-CT</h1>
+    <h1><i class="fa-solid fa-database"></i> Consultas UTFPR-CT</h1>
     <p>Chats e planilha integrados ao Supabase</p>
   </header>
 
   <div class="chat-container">
 
-    <!-- PLANILHA SUPABASE -->
-    <div class="chat-item">
-      <h2>
-        Planilha Continuados UTFPR-CT
-        <i class="fa-solid fa-chevron-down"></i>
-      </h2>
-      <div class="planilha-container">
-        <table id="tabela-supabase">
-          <thead>
-            <tr>
-              <th>Ano</th>
-              <th>UGR</th>
-              <th>Grupo de Despesa</th>
-              <th>Valor</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td colspan="4" style="text-align:center;">Carregando dados...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- CHATS EXISTENTES -->
     <div class="chat-item">
       <h2>Consulta Empenhos UTFPR-CT por Número <i class="fa-solid fa-chevron-down"></i></h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/0a38394e-dd28-4270-b685-5b1b7672044c/chat"></iframe>
+      <div class="chat-content">
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/0a38394e-dd28-4270-b685-5b1b7672044c/chat"></iframe>
+      </div>
     </div>
 
     <div class="chat-item">
       <h2>Consulta Empenhos UTFPR-CT por Processo <i class="fa-solid fa-chevron-down"></i></h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/d266f6d2-437d-45da-b927-7dbef2057e8c/chat"></iframe>
+      <div class="chat-content">
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/d266f6d2-437d-45da-b927-7dbef2057e8c/chat"></iframe>
+      </div>
     </div>
 
     <div class="chat-item">
-      <h2>Consulta Empenhos UTFPR-CT por Favorecido <i class="fa-solid fa-chevron-down"></i></h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/bff20b35-3afa-4110-a09d-872e39704c17/chat"></iframe>
-    </div>
-
-    <div class="chat-item">
-      <h2>Cálculo valor bruto de um Pagamento de PF <i class="fa-solid fa-chevron-down"></i></h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/abc7f4cd-3162-43e8-9bd0-c7804828f96f/chat"></iframe>
+      <h2>Continuados – Executado por Mês de Referência <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <p id="loading-continuados" style="text-align:center;">Carregando dados...</p>
+        <table id="tabela-continuados" class="display">
+          <thead>
+            <tr id="continuados-header"></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
 
   </div>
@@ -193,66 +180,78 @@
     </div>
   </footer>
 
-  <!-- Supabase -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
 
   <script>
-    // Abrir e fechar os blocos
-    const chatHeaders = document.querySelectorAll('.chat-item h2');
-    chatHeaders.forEach(header => {
-      header.addEventListener('click', async () => {
+    const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let continuadosTableInitialized = false;
+
+    async function loadContinuados() {
+      const loading = document.getElementById('loading-continuados');
+      loading.style.display = 'block';
+
+      const { data, error } = await supabase
+        .from('vw_contratoscontinuados_fluxo_completo')
+        .select('*')
+        .limit(500);
+
+      loading.style.display = 'none';
+
+      const header = document.getElementById('continuados-header');
+      const tbody = document.querySelector('#tabela-continuados tbody');
+
+      if (error) {
+        tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;">Nenhum registro encontrado</td></tr>`;
+        return;
+      }
+
+      header.innerHTML = Object.keys(data[0]).map(c => `<th>${c}</th>`).join('');
+
+      const tableData = data.map(row => Object.values(row));
+
+      if (!continuadosTableInitialized) {
+        $('#tabela-continuados').DataTable({
+          data: tableData,
+          columns: Object.keys(data[0]).map(c => ({ title: c })),
+          language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
+          scrollX: true,
+          pageLength: 20
+        });
+        continuadosTableInitialized = true;
+      } else {
+        const table = $('#tabela-continuados').DataTable();
+        table.clear().rows.add(tableData).draw();
+      }
+    }
+
+    document.querySelectorAll('.chat-item h2').forEach(header => {
+      header.addEventListener('click', () => {
         const content = header.nextElementSibling;
         const icon = header.querySelector('i');
+        const isContinuados = header.textContent.includes('Continuados');
 
         const isOpen = content.style.display === 'block';
-        document.querySelectorAll('.chat-item iframe, .planilha-container').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.chat-content').forEach(c => c.style.display = 'none');
         document.querySelectorAll('.chat-item h2 i').forEach(i => i.classList.replace('fa-chevron-up', 'fa-chevron-down'));
 
         if (!isOpen) {
           content.style.display = 'block';
           icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
-          if (content.classList.contains('planilha-container')) {
-            await carregarPlanilha();
-          }
+
+          if (isContinuados) loadContinuados();
         }
       });
     });
-
-    // Configurar Supabase
-    const SUPABASE_URL = "https://SEU-PROJETO.supabase.co";
-    const SUPABASE_ANON_KEY = "SUA-CHAVE-ANON";
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // Carregar dados
-    async function carregarPlanilha() {
-      const tabela = document.getElementById('tabela-supabase').querySelector('tbody');
-      tabela.innerHTML = `<tr><td colspan="4" style="text-align:center;">Atualizando dados...</td></tr>`;
-
-      const { data, error } = await supabase
-        .from('remanejamento_arrecadacao')
-        .select('*')
-        .order('ano', { ascending: false });
-
-      if (error) {
-        tabela.innerHTML = `<tr><td colspan="4" style="color:red;text-align:center;">Erro ao carregar dados: ${error.message}</td></tr>`;
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        tabela.innerHTML = `<tr><td colspan="4" style="text-align:center;">Nenhum registro encontrado</td></tr>`;
-        return;
-      }
-
-      tabela.innerHTML = data.map(row => `
-        <tr>
-          <td>${row.ano}</td>
-          <td>${row.ugr}</td>
-          <td>${row.grupo_despesa}</td>
-          <td>R$ ${Number(row.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
-        </tr>
-      `).join('');
-    }
   </script>
-
 </body>
 </html>
