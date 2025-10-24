@@ -200,71 +200,72 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
 
-  <script>
-    const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+<script>
+  const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let tablesInitialized = {};
+  let tablesInitialized = {};
 
-    async function loadTable(viewName) {
-      const loading = document.getElementById(`loading-${viewName}`);
-      const header = document.getElementById(`header-${viewName}`);
-      const tbody = document.querySelector(`#tabela-${viewName} tbody`);
+  async function loadTable(viewName) {
+    const loading = document.getElementById(`loading-${viewName}`);
+    const header = document.getElementById(`header-${viewName}`);
+    const tbody = document.querySelector(`#tabela-${viewName} tbody`);
 
-      loading.style.display = 'block';
+    loading.style.display = 'block';
 
-      const { data, error } = await supabase.from(viewName).select('*').limit(500);
-      loading.style.display = 'none';
+    const { data, error } = await supabase.from(viewName).select('*').limit(500);
+    loading.style.display = 'none';
 
-      if (error) {
-        tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`;
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;">Nenhum registro encontrado</td></tr>`;
-        return;
-      }
-
-      header.innerHTML = Object.keys(data[0]).map(c => `<th>${c}</th>`).join('');
-      const tableData = data.map(row => Object.values(row));
-
-      if (!tablesInitialized[viewName]) {
-        $(`#tabela-${viewName}`).DataTable({
-          data: tableData,
-          columns: Object.keys(data[0]).map(c => ({ title: c })),
-          language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
-          scrollX: true,
-          pageLength: 20
-        });
-        tablesInitialized[viewName] = true;
-      } else {
-        const table = $(`#tabela-${viewName}`).DataTable();
-        table.clear().rows.add(tableData).draw();
-      }
+    if (error) {
+      tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`;
+      return;
     }
 
-    document.querySelectorAll('.chat-item h2').forEach(header => {
-      header.addEventListener('click', () => {
-        const content = header.nextElementSibling;
-        const icon = header.querySelector('i');
-        const title = header.textContent;
+    if (!data || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;">Nenhum registro encontrado</td></tr>`;
+      return;
+    }
 
-        const isOpen = content.style.display === 'block';
-        document.querySelectorAll('.chat-content').forEach(c => c.style.display = 'none');
-        document.querySelectorAll('.chat-item h2 i').forEach(i => i.classList.replace('fa-chevron-up', 'fa-chevron-down'));
+    header.innerHTML = Object.keys(data[0]).map(c => `<th>${c}</th>`).join('');
+    const tableData = data.map(row => Object.values(row));
 
-        if (!isOpen) {
-          content.style.display = 'block';
-          icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
-
-          if (title.includes('Necessidade')) loadTable('af_asgead_continuados_necessidade_orcamentaria');
-          if (title.includes('Executado')) loadTable('af_asgead_continuados_executados_por_mes');
-          if (title.includes('Previsto')) loadTable('af_asgead_continuados_previstos_por_mes');
-        }
+    if (!tablesInitialized[viewName]) {
+      $(`#tabela-${viewName}`).DataTable({
+        data: tableData,
+        columns: Object.keys(data[0]).map(c => ({ title: c })),
+        language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
+        scrollX: true,
+        pageLength: 20
       });
+      tablesInitialized[viewName] = true;
+    } else {
+      const table = $(`#tabela-${viewName}`).DataTable();
+      table.clear().rows.add(tableData).draw();
+    }
+  }
+
+  document.querySelectorAll('.chat-item h2').forEach(header => {
+    header.addEventListener('click', () => {
+      const content = header.nextElementSibling;
+      const icon = header.querySelector('i');
+      const title = header.textContent;
+
+      // Alterna visibilidade apenas do item clicado
+      const isOpen = content.style.display === 'block';
+      content.style.display = isOpen ? 'none' : 'block';
+      icon.classList.toggle('fa-chevron-up', !isOpen);
+      icon.classList.toggle('fa-chevron-down', isOpen);
+
+      // Carrega dados apenas na primeira abertura
+      if (!isOpen) {
+        if (title.includes('Necessidade')) loadTable('af_asgead_continuados_necessidade_orcamentaria');
+        if (title.includes('Executado')) loadTable('af_asgead_continuados_executados_por_mes');
+        if (title.includes('Previsto')) loadTable('af_asgead_continuados_previstos_por_mes');
+      }
     });
-  </script>
+  });
+</script>
+
 </body>
 </html>
