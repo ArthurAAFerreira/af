@@ -50,8 +50,7 @@
     }
 
     .chat-item {
-      width: 90%;
-      max-width: 1200px;
+      width: 95%;
       border-radius: 1px;
       box-shadow: 0 3px 10px rgba(0,0,0,0.12);
       background-color: white;
@@ -88,13 +87,13 @@
       border: none;
     }
 
-    /* Tabela */
-    #saldoOrcamentarioTable {
+    /* Tabelas */
+    table.display {
       width: 100% !important;
       margin: 0 auto;
     }
 
-    #loading-saldo {
+    #loading-saldo, #loading-financeiro {
       text-align: center;
       color: #003366;
       padding: 20px;
@@ -154,7 +153,7 @@
     <div class="chat-item">
       <h2>Consulta Empenhos UTFPR-CT por Elemento de Despesa <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/c0d39a1f-346f-486d-912b-8a4a8a2ee50d/chat"></iframe>
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/27ac0384-69c8-49e6-8f75-1cdbd5c57d24/chat"></iframe>
       </div>
     </div>
 
@@ -165,13 +164,27 @@
       </div>
     </div>
 
-    <div class="chat-item">
+    <!-- Novo bloco: Saldo Financeiro -->
+    <div class="chat-item" id="saldo-financeiro-item">
       <h2>Consulta Saldo Financeiro <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/925a6233-5eac-4562-9671-1948b3be9aca/chat"></iframe>
+      <div class="chat-content" id="saldo-financeiro-content">
+        <p id="loading-financeiro">Carregando dados do Saldo Financeiro...</p>
+        <table id="saldoFinanceiroTable" class="display">
+          <thead>
+            <tr>
+              <th>Fonte</th>
+              <th>Descrição da Fonte</th>
+              <th>Vinculação</th>
+              <th>Descrição da Vinculação</th>
+              <th>Saldo (R$)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
     </div>
 
+    <!-- Saldo Orçamentário -->
     <div class="chat-item" id="saldo-orcamentario-item">
       <h2>Consulta Saldo Orçamentário <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content" id="saldo-orcamentario-content">
@@ -224,7 +237,9 @@
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let dataTableInitialized = false;
+    let dataTableFinanceiroInitialized = false;
 
+    // -------- SALDO ORÇAMENTÁRIO --------
     async function loadSaldoOrcamentario() {
       const loading = document.getElementById('loading-saldo');
       loading.style.display = 'block';
@@ -247,7 +262,7 @@
 
       if (error) {
         console.error(error);
-        $('#saldoOrcamentarioTable tbody').html(`<tr><td colspan="8" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`);
+        $('#saldoOrcamentarioTable tbody').html(`<tr><td colspan="9" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`);
         return;
       }
 
@@ -277,16 +292,71 @@
           table.clear().rows.add(formattedData).draw();
         }
       } else {
-        $('#saldoOrcamentarioTable tbody').html(`<tr><td colspan="8" style="text-align:center;">Nenhum dado encontrado.</td></tr>`);
+        $('#saldoOrcamentarioTable tbody').html(`<tr><td colspan="9" style="text-align:center;">Nenhum dado encontrado.</td></tr>`);
       }
     }
 
-    // Acordeão
+    // -------- SALDO FINANCEIRO --------
+    async function loadSaldoFinanceiro() {
+      const loading = document.getElementById('loading-financeiro');
+      loading.style.display = 'block';
+
+      const { data, error } = await supabase
+        .from('utfpr_saldo_financeiro')
+        .select(`
+          fonte_recursos_detalhada_codigo,
+          fonte_recursos_detalhada_descricao,
+          vinculacao_pagamento_cod,
+          vinculacao_pagamento_descricao,
+          saldo_financeiro
+        `)
+        .eq('ug_executora', 154358);
+
+      loading.style.display = 'none';
+
+      if (error) {
+        console.error(error);
+        $('#saldoFinanceiroTable tbody').html(
+          `<tr><td colspan="5" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`
+        );
+        return;
+      }
+
+      if (data && data.length > 0) {
+        const formattedData = data.map(row => [
+          row.fonte_recursos_detalhada_codigo,
+          row.fonte_recursos_detalhada_descricao,
+          row.vinculacao_pagamento_cod || '-',
+          row.vinculacao_pagamento_descricao || '-',
+          `R$ ${parseFloat(row.saldo_financeiro).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+        ]);
+
+        if (!dataTableFinanceiroInitialized) {
+          $('#saldoFinanceiroTable').DataTable({
+            data: formattedData,
+            language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
+            scrollX: true,
+            paging: true
+          });
+          dataTableFinanceiroInitialized = true;
+        } else {
+          const table = $('#saldoFinanceiroTable').DataTable();
+          table.clear().rows.add(formattedData).draw();
+        }
+      } else {
+        $('#saldoFinanceiroTable tbody').html(
+          `<tr><td colspan="5" style="text-align:center;">Nenhum dado encontrado.</td></tr>`
+        );
+      }
+    }
+
+    // -------- Acordeão --------
     document.querySelectorAll('.chat-item h2').forEach(header => {
       header.addEventListener('click', () => {
         const content = header.nextElementSibling;
         const icon = header.querySelector('i');
         const isSaldoOrcamentario = header.closest('.chat-item').id === 'saldo-orcamentario-item';
+        const isSaldoFinanceiro = header.closest('.chat-item').id === 'saldo-financeiro-item';
 
         const isOpen = content.style.display === 'block';
         // Fecha todos
@@ -298,9 +368,8 @@
           content.style.display = 'block';
           icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
 
-          if (isSaldoOrcamentario) {
-            loadSaldoOrcamentario();
-          }
+          if (isSaldoOrcamentario) loadSaldoOrcamentario();
+          if (isSaldoFinanceiro) loadSaldoFinanceiro();
         }
       });
     });
