@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Consultas de GRUs UTFPR-CT</title>
 
-  <!-- Font Awesome para ícones -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- DataTables -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css">
 
   <style>
     body {
@@ -16,7 +19,6 @@
       color: #333;
     }
 
-    /* Banner */
     header {
       background: linear-gradient(135deg, #001f3f, #003366);
       color: white;
@@ -39,7 +41,6 @@
       opacity: 0.9;
     }
 
-    /* Container dos chats */
     .chat-container {
       display: flex;
       flex-direction: column;
@@ -48,11 +49,10 @@
       padding: 30px 0;
     }
 
-    /* Cada chat individual */
     .chat-item {
       width: 90%;
       box-sizing: border-box;
-      border-radius: 6px;
+      border-radius: 1px;
       box-shadow: 0 3px 10px rgba(0,0,0,0.12);
       background-color: white;
       overflow: hidden;
@@ -76,11 +76,43 @@
       background-color: #cce0ff;
     }
 
-    .chat-item iframe {
+    .chat-content {
+      display: none;
+      padding: 0;
+      overflow-x: auto;
+    }
+
+    /* iframes (primeiros painéis) */
+    .chat-content iframe {
       width: 100%;
       height: 500px;
       border: none;
-      display: none; /* inicial escondido */
+      display: block;
+    }
+
+    /* tabela (Resumo) */
+    table {
+      width: 100% !important;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #003366;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #e6f0ff;
     }
 
     footer {
@@ -104,8 +136,8 @@
     }
   </style>
 </head>
-<body>
 
+<body>
   <header>
     <h1><i class="fa-solid fa-database"></i> Consultas de GRUs UTFPR-CT</h1>
     <p>Busque as GRUs pagas por vários agrupadores e filtros</p>
@@ -113,29 +145,56 @@
 
   <div class="chat-container">
 
+    <!-- 🔹 Consulta de GRU por Referência -->
     <div class="chat-item">
       <h2>Consulta de GRU por Referência <i class="fa-solid fa-chevron-down"></i></h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/27cfedb4-76c2-4d6b-92ca-35fe0766b4f2/chat"></iframe>
+      <div class="chat-content">
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/27cfedb4-76c2-4d6b-92ca-35fe0766b4f2/chat"></iframe>
+      </div>
     </div>
 
+    <!-- 🔹 Consulta de GRU por CPF/CNPJ -->
     <div class="chat-item">
       <h2>Consulta de GRU por CPF/CNPJ <i class="fa-solid fa-chevron-down"></i></h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/c894df5c-dd72-4473-8332-9c42f6429067/chat"></iframe>
+      <div class="chat-content">
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/c894df5c-dd72-4473-8332-9c42f6429067/chat"></iframe>
+      </div>
     </div>
 
+    <!-- 🔹 Consulta de GRU por Código de Recolhimento -->
     <div class="chat-item">
       <h2>Consulta de GRU por Código de Recolhimento <i class="fa-solid fa-chevron-down"></i></h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/4721d40c-4c64-4758-80f9-2a8942f1e61b/chat"></iframe>
+      <div class="chat-content">
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/4721d40c-4c64-4758-80f9-2a8942f1e61b/chat"></iframe>
+      </div>
     </div>
 
+    <!-- 🔹 Consulta de GRU por mês - em desenvolvimento -->
     <div class="chat-item">
-      <h2>Consulta de GRU por mês - em desenvolvimento<i class="fa-solid fa-chevron-down"></i></h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/27cfedb4-76c2-4d6b-92ca-35fe0766b4f2/chat"></iframe>
+      <h2>Consulta de GRU por mês - em desenvolvimento <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/27cfedb4-76c2-4d6b-92ca-35fe0766b4f2/chat"></iframe>
+      </div>
     </div>
 
+    <!-- 🔹 Consulta de GRU total - em desenvolvimento -->
     <div class="chat-item">
-      <h2>Consulta de GRU total - resultado por e-mail - em desenvolvimento<i class="fa-solid fa-chevron-down"></i></h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/27cfedb4-76c2-4d6b-92ca-35fe0766b4f2/chat"></iframe>
+      <h2>Consulta de GRU total - resultado por e-mail - em desenvolvimento <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/27cfedb4-76c2-4d6b-92ca-35fe0766b4f2/chat"></iframe>
+      </div>
+    </div>
+
+    <!-- 🔹 Novo: Resumo GRU por Referência (Supabase/DataTable) -->
+    <div class="chat-item">
+      <h2>Resumo GRU por Referência <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <p id="loading-af_asgead_resumo_sisgru" style="text-align:center;">Carregando dados...</p>
+        <table id="tabela-af_asgead_resumo_sisgru" class="display">
+          <thead><tr id="header-af_asgead_resumo_sisgru"></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
 
   </div>
@@ -148,24 +207,72 @@
     </div>
   </footer>
 
-  <script>
-    // Abrir/fechar chat ao clicar no título
-    const chatHeaders = document.querySelectorAll('.chat-item h2');
-    chatHeaders.forEach(header => {
-      header.addEventListener('click', () => {
-        const iframe = header.nextElementSibling;
-        const icon = header.querySelector('i');
+  <!-- libs -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
 
-        if (iframe.style.display === 'block') {
-          iframe.style.display = 'none';
-          icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
-        } else {
-          iframe.style.display = 'block';
-          icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+  <script>
+    // 👉 novo projeto Supabase
+    const SUPABASE_URL = 'https://xqoutviueorajuremsrh.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhxb3V0dml1ZW9yYWp1cmVtc3JoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NjAwNDQsImV4cCI6MjA3MDIzNjA0NH0.U_3WDVRGG8o39cfehMnBUGs0HOEi7Di-LueXw_sD7U0';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let tablesInitialized = {};
+
+    async function loadTable(viewName) {
+      const loading = document.getElementById(`loading-${viewName}`);
+      const header = document.getElementById(`header-${viewName}`);
+      const tbody = document.querySelector(`#tabela-${viewName} tbody`);
+
+      loading.style.display = 'block';
+      const { data, error } = await supabase.from(viewName).select('*').limit(500);
+      loading.style.display = 'none';
+
+      if (error) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`;
+        return;
+      }
+      if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;">Nenhum registro encontrado</td></tr>`;
+        return;
+      }
+
+      header.innerHTML = Object.keys(data[0]).map(c => `<th>${c}</th>`).join('');
+      const tableData = data.map(row => Object.values(row));
+
+      if (!tablesInitialized[viewName]) {
+        $(`#tabela-${viewName}`).DataTable({
+          data: tableData,
+          columns: Object.keys(data[0]).map(c => ({ title: c })),
+          language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
+          scrollX: true,
+          pageLength: 20
+        });
+        tablesInitialized[viewName] = true;
+      } else {
+        const table = $(`#tabela-${viewName}`).DataTable();
+        table.clear().rows.add(tableData).draw();
+      }
+    }
+
+    // toggle independente por painel
+    document.querySelectorAll('.chat-item h2').forEach(header => {
+      header.addEventListener('click', () => {
+        const content = header.nextElementSibling;
+        const icon = header.querySelector('i');
+        const isOpen = content.style.display === 'block';
+
+        content.style.display = isOpen ? 'none' : 'block';
+        icon.classList.toggle('fa-chevron-up', !isOpen);
+        icon.classList.toggle('fa-chevron-down', isOpen);
+
+        // carregamento sob demanda só para o painel "Resumo GRU por Referência"
+        if (!isOpen && header.textContent.includes('Resumo GRU')) {
+          loadTable('af_asgead_resumo_sisgru');
         }
       });
     });
   </script>
-
 </body>
 </html>
