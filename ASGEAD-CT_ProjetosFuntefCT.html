@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Consultas Projetos Funtef com UTFPR-CT</title>
 
-  <!-- Font Awesome para ícones -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css">
 
   <style>
     body {
@@ -16,7 +17,6 @@
       color: #333;
     }
 
-    /* Banner */
     header {
       background: linear-gradient(135deg, #001f3f, #003366);
       color: white;
@@ -39,7 +39,6 @@
       opacity: 0.9;
     }
 
-    /* Container dos chats */
     .chat-container {
       display: flex;
       flex-direction: column;
@@ -48,49 +47,63 @@
       padding: 30px 0;
     }
 
-    /* Cada chat individual */
     .chat-item {
       width: 90%;
       box-sizing: border-box;
-      border-radius: 6px;
+      border-radius: 1px;
       box-shadow: 0 3px 10px rgba(0,0,0,0.12);
       background-color: white;
       overflow: hidden;
       transition: all 0.3s ease;
     }
 
-    .chat-header {
-      padding: 15px 20px;
-      background-color: #e6f0ff;
-      cursor: pointer;
-    }
-
-    .chat-header h2 {
+    .chat-item h2 {
       margin: 0;
+      padding: 15px 20px;
       font-size: 1.1em;
       font-weight: bold;
       color: #003366;
+      cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background-color: #e6f0ff;
     }
 
-    .chat-subtitle {
-      font-size: 0.9em;
-      color: #555;
-      margin-top: 5px;
-    }
-
-    .chat-header:hover {
+    .chat-item h2:hover {
       background-color: #cce0ff;
     }
 
-    .chat-item iframe {
+    .chat-content {
+      display: none;
+      padding: 0;
+      overflow-x: auto;
+    }
+
+    iframe {
       width: 100%;
       height: 500px;
       border: none;
-      display: none; /* inicial escondido */
     }
+
+    table {
+      width: 100% !important;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #003366;
+      color: white;
+    }
+
+    tr:nth-child(even) { background-color: #f2f2f2; }
+    tr:hover { background-color: #e6f0ff; }
 
     footer {
       background: #001f3f;
@@ -108,108 +121,71 @@
       transition: 0.3s;
     }
 
-    footer a:hover {
-      color: #fff;
-    }
+    footer a:hover { color: #fff; }
   </style>
 </head>
-<body>
 
+<body>
   <header>
-    <h1><i class="fa-solid fa-comments"></i> Consultas Projetos Funtef com UTFPR-CT</h1>
-    <p>Esta página é para consultas de arrecadação, sendo dos projetos com a FUNTEF ou de demais serviços, organizados por UGR da UTFPR-CT, dos remanejamentos relacionados às arrecadações, os valores disponíveis, entre outros.</p>
+    <h1><i class="fa-solid fa-database"></i> Consultas Projetos Funtef com UTFPR-CT</h1>
+    <p>Esta página permite consultar informações sobre arrecadações, repasses e projetos FUNTEF/UTFPR-CT.</p>
   </header>
 
   <div class="chat-container">
 
+    <!-- 🔹 Consultas padrões -->
     <div class="chat-item">
-      <div class="chat-header">
-        <h2>
-          Consultas Projetos FUNTEF CT por número
-          <i class="fa-solid fa-chevron-down"></i>
-        </h2>
-        <div class="chat-subtitle">
-          Esta consulta retorna os dados dos projetos da UTFPR com a FUNTEF pelo número, agilizando a consulta do Conveniar e verificando se o projeto esta na base de dados das consultas deste site
-        </div>
+      <h2>Consultas Projetos FUNTEF CT por número <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/c75c40d0-9aeb-4223-94eb-e0c0cffa32ef/chat"></iframe>
       </div>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/c75c40d0-9aeb-4223-94eb-e0c0cffa32ef/chat"></iframe>
     </div>
 
     <div class="chat-item">
-      <div class="chat-header">
-        <h2>
-          Consultas Projetos FUNTEF CT por departamento
-          <i class="fa-solid fa-chevron-down"></i>
-        </h2>
-        <div class="chat-subtitle">
-          Esta consulta retorna os dados dos projetos da UTFPR com a FUNTEF, por UGR, porém vigente em algum momento de 2025, devido alta quantidade de processos.
-        </div>
+      <h2>Consultas Projetos FUNTEF CT por departamento <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/29446529-ff88-4bc5-be32-24794326ee35/chat"></iframe>
       </div>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/29446529-ff88-4bc5-be32-24794326ee35/chat"></iframe>
     </div>
 
     <div class="chat-item">
-      <div class="chat-header">
-        <h2>
-          Consultas Projetos FUNTEF CT Vigentes
-          <i class="fa-solid fa-chevron-down"></i>
-        </h2>
-        <div class="chat-subtitle">
-          Esta consulta retorna os projetos da UTFPR com a FUNTEF vigentes numa data específica.
-        </div>
+      <h2>Consultas Projetos FUNTEF CT Vigentes <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/c7a895c2-6e79-4109-b72e-a979ab2e8f92/chat"></iframe>
       </div>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/c7a895c2-6e79-4109-b72e-a979ab2e8f92/chat"></iframe>
-    </div>
-    <div class="chat-item">
-      <div class="chat-header">
-        <h2>
-          Consulta GRUs Arrecadadas por Departamento da UTFPR-CT
-          <i class="fa-solid fa-chevron-down"></i>
-        </h2>
-        <div class="chat-subtitle">
-          Esta consulta retorna as GRUs recolhidas na UTFPR-CT com base no número de referência informado na GRU, que é vinculado ao projeto ou serviço da UTFPR-CT e de suas UGRs.
-        </div>
-      </div>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/832e5b88-0993-4065-a472-89a5541c233b/chat"></iframe>
     </div>
 
     <div class="chat-item">
-      <div class="chat-header">
-        <h2>
-          Consulta Referências para GRUs
-          <i class="fa-solid fa-chevron-down"></i>
-        </h2>
-        <div class="chat-subtitle">
-          Esta consulta retorna as referências estabelecidas pela UTFPR/DIRPLAD-CT, caso queira estabelecer uma nova referência, utilizadas para organização das informações das arrecadações, entre em contato com o DEOFI-CT.
-        </div>
+      <h2>Consulta GRUs Arrecadadas por Departamento da UTFPR-CT <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/832e5b88-0993-4065-a472-89a5541c233b/chat"></iframe>
       </div>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/ee1becae-0cae-4fdc-a64a-9e397c718316/chat"></iframe>
     </div>
 
     <div class="chat-item">
-      <div class="chat-header">
-        <h2>
-          Consulta Valores Repassados de Recurso Próprio
-          <i class="fa-solid fa-chevron-down"></i>
-        </h2>
-        <div class="chat-subtitle">
-          Esta consulta retorna os valores repassados ou utilizados por UGR referente os valores arrecadados, podem não ser iguais aos do SIORG, caso uma parte seja um acordo ou valor alheio ao arrecadado pela UGR.
-        </div>
+      <h2>Consulta Referências para GRUs <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/ee1becae-0cae-4fdc-a64a-9e397c718316/chat"></iframe>
       </div>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/f001ef32-104a-4267-a788-069f6a60b59d/chat"></iframe>
+    </div>
+
+    <!-- 🔹 NOVA SEÇÃO: Valores Repassados -->
+    <div class="chat-item">
+      <h2>Consulta Valores Repassados de Recurso Próprio <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <p id="loading-af_asgead_remanejamento_arrecadacao_propria" style="text-align:center;">Carregando dados...</p>
+        <table id="tabela-af_asgead_remanejamento_arrecadacao_propria" class="display">
+          <thead><tr id="header-af_asgead_remanejamento_arrecadacao_propria"></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
 
     <div class="chat-item">
-      <div class="chat-header">
-        <h2>
-          Consultas Projetos FUNTEF CT - IA - Instável
-          <i class="fa-solid fa-chevron-down"></i>
-        </h2>
-        <div class="chat-subtitle">
-          Esta consulta retorna os dados dos projetos da UTFPR com a FUNTEF, conforme templates pré definidos, individual ou lista de projetos com base em UGR, coordenador, vigência, valores, etc.
-        </div>
+      <h2>Consultas Projetos FUNTEF CT - IA - Instável <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/7c0f9694-457b-44e6-b6b3-002468996798/chat"></iframe>
       </div>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/7c0f9694-457b-44e6-b6b3-002468996798/chat"></iframe>
     </div>
   </div>
 
@@ -221,24 +197,71 @@
     </div>
   </footer>
 
-  <script>
-    // Abrir/fechar chat ao clicar no cabeçalho
-    const chatHeaders = document.querySelectorAll('.chat-header');
-    chatHeaders.forEach(header => {
-      header.addEventListener('click', () => {
-        const iframe = header.nextElementSibling;
-        const icon = header.querySelector('i');
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
 
-        if (iframe.style.display === 'block') {
-          iframe.style.display = 'none';
-          icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
-        } else {
-          iframe.style.display = 'block';
-          icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+  <script>
+    const SUPABASE_URL = 'https://xqoutviueorajuremsrh.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhxb3V0dml1ZW9yYWp1cmVtc3JoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NjAwNDQsImV4cCI6MjA3MDIzNjA0NH0.U_3WDVRGG8o39cfehMnBUGs0HOEi7Di-LueXw_sD7U0';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let tablesInitialized = {};
+
+    async function loadTable(viewName) {
+      const loading = document.getElementById(`loading-${viewName}`);
+      const header = document.getElementById(`header-${viewName}`);
+      const tbody = document.querySelector(`#tabela-${viewName} tbody`);
+      loading.style.display = 'block';
+
+      const { data, error } = await supabase.from(viewName).select('*').limit(500);
+      loading.style.display = 'none';
+
+      if (error) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;">Nenhum registro encontrado</td></tr>`;
+        return;
+      }
+
+      header.innerHTML = Object.keys(data[0]).map(c => `<th>${c}</th>`).join('');
+      const tableData = data.map(row => Object.values(row));
+
+      if (!tablesInitialized[viewName]) {
+        $(`#tabela-${viewName}`).DataTable({
+          data: tableData,
+          columns: Object.keys(data[0]).map(c => ({ title: c })),
+          language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
+          scrollX: true,
+          pageLength: 20
+        });
+        tablesInitialized[viewName] = true;
+      } else {
+        const table = $(`#tabela-${viewName}`).DataTable();
+        table.clear().rows.add(tableData).draw();
+      }
+    }
+
+    // Abre e fecha individualmente
+    document.querySelectorAll('.chat-item h2').forEach(header => {
+      header.addEventListener('click', () => {
+        const content = header.nextElementSibling;
+        const icon = header.querySelector('i');
+        const title = header.textContent;
+        const isOpen = content.style.display === 'block';
+        content.style.display = isOpen ? 'none' : 'block';
+        icon.classList.toggle('fa-chevron-up', !isOpen);
+        icon.classList.toggle('fa-chevron-down', isOpen);
+
+        if (!isOpen && title.includes('Recurso Próprio')) {
+          loadTable('af_asgead_remanejamento_arrecadacao_propria');
         }
       });
     });
   </script>
-
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Consultas de GRUs UTFPR-CT</title>
+  <title>Consultas de GRUs e Arrecadação Própria da UTFPR-CT</title>
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -50,8 +50,7 @@
     }
 
     .chat-item {
-      width: 90%;
-      box-sizing: border-box;
+      width: 95%;
       border-radius: 1px;
       box-shadow: 0 3px 10px rgba(0,0,0,0.12);
       background-color: white;
@@ -79,40 +78,17 @@
     .chat-content {
       display: none;
       padding: 0;
-      overflow-x: auto;
     }
 
-    /* iframes (primeiros painéis) */
-    .chat-content iframe {
+    table.display {
+      width: 100% !important;
+      margin: 0 auto;
+    }
+
+    iframe {
       width: 100%;
       height: 500px;
       border: none;
-      display: block;
-    }
-
-    /* tabela (Resumo) */
-    table {
-      width: 100% !important;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
-
-    th {
-      background-color: #003366;
-      color: white;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
-
-    tr:hover {
-      background-color: #e6f0ff;
     }
 
     footer {
@@ -139,8 +115,8 @@
 
 <body>
   <header>
-    <h1><i class="fa-solid fa-database"></i> Consultas de GRUs UTFPR-CT</h1>
-    <p>Busque as GRUs pagas por vários agrupadores e filtros</p>
+    <h1><i class="fa-solid fa-database"></i> Consultas de GRUs e Arrecadação Própria da UTFPR-CT</h1>
+    <p>Busque as GRUs pagas e dados de arrecadação própria por filtros e agrupadores.</p>
   </header>
 
   <div class="chat-container">
@@ -169,7 +145,7 @@
       </div>
     </div>
 
-    <!-- 🔹 Consulta de GRU por mês - em desenvolvimento -->
+    <!-- 🔹 Consulta de GRU por mês -->
     <div class="chat-item">
       <h2>Consulta de GRU por mês - em desenvolvimento <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
@@ -177,7 +153,7 @@
       </div>
     </div>
 
-    <!-- 🔹 Consulta de GRU total - em desenvolvimento -->
+    <!-- 🔹 Consulta de GRU total -->
     <div class="chat-item">
       <h2>Consulta de GRU total - resultado por e-mail - em desenvolvimento <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
@@ -185,13 +161,61 @@
       </div>
     </div>
 
-    <!-- 🔹 Novo: Resumo GRU por Referência (Supabase/DataTable) -->
+    <!-- 🔹 Resumo GRU por Referência -->
     <div class="chat-item">
       <h2>Resumo GRU por Referência <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
         <p id="loading-af_asgead_resumo_sisgru" style="text-align:center;">Carregando dados...</p>
         <table id="tabela-af_asgead_resumo_sisgru" class="display">
           <thead><tr id="header-af_asgead_resumo_sisgru"></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 🔹 Resultado Valores Arrecadados e Repassados por UGR -->
+    <div class="chat-item">
+      <h2>Resultado Valores Arrecadados e Repassados por UGR <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <p id="loading-af_asgead__resultado_arrecadado_remanejado" style="text-align:center;">Carregando dados...</p>
+        <table id="tabela-af_asgead__resultado_arrecadado_remanejado" class="display">
+          <thead><tr id="header-af_asgead__resultado_arrecadado_remanejado"></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 🔹 Arrecadação por Projeto/Referência -->
+    <div class="chat-item">
+      <h2>Arrecadação por Projeto/Referência com Valores Detalhados <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <p id="loading-af_asgead__arrecadacao_ugr_completo" style="text-align:center;">Carregando dados...</p>
+        <table id="tabela-af_asgead__arrecadacao_ugr_completo" class="display">
+          <thead><tr id="header-af_asgead__arrecadacao_ugr_completo"></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 🔹 Arrecadação por UGR -->
+    <div class="chat-item">
+      <h2>Arrecadação por UGR com Valores Detalhados <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <p id="loading-af_asgead__arrecadacao_ugr_completo_agrupado" style="text-align:center;">Carregando dados...</p>
+        <table id="tabela-af_asgead__arrecadacao_ugr_completo_agrupado" class="display">
+          <thead><tr id="header-af_asgead__arrecadacao_ugr_completo_agrupado"></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 🔹 Valores Repassados -->
+    <div class="chat-item">
+      <h2>Valores Repassados de Recurso Próprio <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <p id="loading-af_asgead_remanejamento_arrecadacao_propria" style="text-align:center;">Carregando dados...</p>
+        <table id="tabela-af_asgead_remanejamento_arrecadacao_propria" class="display">
+          <thead><tr id="header-af_asgead_remanejamento_arrecadacao_propria"></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -207,13 +231,12 @@
     </div>
   </footer>
 
-  <!-- libs -->
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
 
   <script>
-    // 👉 novo projeto Supabase
     const SUPABASE_URL = 'https://xqoutviueorajuremsrh.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhxb3V0dml1ZW9yYWp1cmVtc3JoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NjAwNDQsImV4cCI6MjA3MDIzNjA0NH0.U_3WDVRGG8o39cfehMnBUGs0HOEi7Di-LueXw_sD7U0';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -226,15 +249,16 @@
       const tbody = document.querySelector(`#tabela-${viewName} tbody`);
 
       loading.style.display = 'block';
-      const { data, error } = await supabase.from(viewName).select('*').limit(500);
+      const { data, error } = await supabase.from(viewName).select('*').limit(1000);
       loading.style.display = 'none';
 
       if (error) {
-        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`;
         return;
       }
+
       if (!data || data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;">Nenhum registro encontrado</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;">Nenhum registro encontrado</td></tr>`;
         return;
       }
 
@@ -247,7 +271,7 @@
           columns: Object.keys(data[0]).map(c => ({ title: c })),
           language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
           scrollX: true,
-          pageLength: 20
+          pageLength: 50
         });
         tablesInitialized[viewName] = true;
       } else {
@@ -256,20 +280,23 @@
       }
     }
 
-    // toggle independente por painel
     document.querySelectorAll('.chat-item h2').forEach(header => {
       header.addEventListener('click', () => {
         const content = header.nextElementSibling;
         const icon = header.querySelector('i');
+        const title = header.textContent;
         const isOpen = content.style.display === 'block';
 
         content.style.display = isOpen ? 'none' : 'block';
         icon.classList.toggle('fa-chevron-up', !isOpen);
         icon.classList.toggle('fa-chevron-down', isOpen);
 
-        // carregamento sob demanda só para o painel "Resumo GRU por Referência"
-        if (!isOpen && header.textContent.includes('Resumo GRU')) {
-          loadTable('af_asgead_resumo_sisgru');
+        if (!isOpen) {
+          if (title.includes('Resumo GRU')) loadTable('af_asgead_resumo_sisgru');
+          if (title.includes('Resultado Valores')) loadTable('af_asgead__resultado_arrecadado_remanejado');
+          if (title.includes('Projeto/Referência')) loadTable('af_asgead__arrecadacao_ugr_completo');
+          if (title.includes('UGR com Valores')) loadTable('af_asgead__arrecadacao_ugr_completo_agrupado');
+          if (title.includes('Repassados')) loadTable('af_asgead_remanejamento_arrecadacao_propria');
         }
       });
     });
