@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Consultas Projetos Funtef com UTFPR-CT</title>
+  <title>Consultas Projetos FUNTEF com UTFPR-CT</title>
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -48,8 +48,7 @@
     }
 
     .chat-item {
-      width: 90%;
-      box-sizing: border-box;
+      width: 95%;
       border-radius: 1px;
       box-shadow: 0 3px 10px rgba(0,0,0,0.12);
       background-color: white;
@@ -77,7 +76,6 @@
     .chat-content {
       display: none;
       padding: 0;
-      overflow-x: auto;
     }
 
     iframe {
@@ -86,24 +84,10 @@
       border: none;
     }
 
-    table {
+    table.display {
       width: 100% !important;
-      border-collapse: collapse;
+      margin: 0 auto;
     }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
-
-    th {
-      background-color: #003366;
-      color: white;
-    }
-
-    tr:nth-child(even) { background-color: #f2f2f2; }
-    tr:hover { background-color: #e6f0ff; }
 
     footer {
       background: #001f3f;
@@ -121,13 +105,15 @@
       transition: 0.3s;
     }
 
-    footer a:hover { color: #fff; }
+    footer a:hover {
+      color: #fff;
+    }
   </style>
 </head>
 
 <body>
   <header>
-    <h1><i class="fa-solid fa-database"></i> Consultas Projetos Funtef com UTFPR-CT</h1>
+    <h1><i class="fa-solid fa-database"></i> Consultas Projetos FUNTEF com UTFPR-CT</h1>
     <p>Esta página permite consultar informações sobre arrecadações, repasses e projetos FUNTEF/UTFPR-CT.</p>
   </header>
 
@@ -155,36 +141,70 @@
       </div>
     </div>
 
+    <!-- 🔹 DAMEC: Tabelas Supabase -->
     <div class="chat-item">
-      <h2>Consulta GRUs Arrecadadas por Departamento da UTFPR-CT <i class="fa-solid fa-chevron-down"></i></h2>
+      <h2>DAMEC - Valores Comparados <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/832e5b88-0993-4065-a472-89a5541c233b/chat"></iframe>
-      </div>
-    </div>
-
-    <div class="chat-item">
-      <h2>Consulta Referências para GRUs <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/ee1becae-0cae-4fdc-a64a-9e397c718316/chat"></iframe>
-      </div>
-    </div>
-
-    <!-- 🔹 NOVA SEÇÃO: Valores Repassados -->
-    <div class="chat-item">
-      <h2>Consulta Valores Repassados de Recurso Próprio <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <p id="loading-af_asgead_remanejamento_arrecadacao_propria" style="text-align:center;">Carregando dados...</p>
-        <table id="tabela-af_asgead_remanejamento_arrecadacao_propria" class="display">
-          <thead><tr id="header-af_asgead_remanejamento_arrecadacao_propria"></tr></thead>
+        <p id="loading-damec_valores_comparados" style="text-align:center;">Carregando dados...</p>
+        <table id="tabela-damec_valores_comparados" class="display">
+          <thead><tr id="header-damec_valores_comparados"></tr></thead>
           <tbody></tbody>
         </table>
       </div>
     </div>
 
     <div class="chat-item">
-      <h2>Consultas Projetos FUNTEF CT - IA - Instável <i class="fa-solid fa-chevron-down"></i></h2>
+      <h2>DAMEC - Valores Antigos <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/7c0f9694-457b-44e6-b6b3-002468996798/chat"></iframe>
+        <p id="loading-damec_valores_antigos" style="text-align:center;">Carregando dados...</p>
+        <table id="tabela-damec_valores_antigos" class="display">
+          <thead><tr id="header-damec_valores_antigos"></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="chat-item">
+      <h2>DAMEC - Simulação 1 <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <p id="loading-damec_valores_simulacao1" style="text-align:center;">Carregando dados...</p>
+        <table id="tabela-damec_valores_simulacao1" class="display">
+          <thead><tr id="header-damec_valores_simulacao1"></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="chat-item">
+      <h2>DAMEC - Simulação 2 <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <p id="loading-damec_valores_simulacao2" style="text-align:center;">Carregando dados...</p>
+        <table id="tabela-damec_valores_simulacao2" class="display">
+          <thead><tr id="header-damec_valores_simulacao2"></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="chat-item">
+      <h2>DAMEC - Simulação 3 <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <p id="loading-damec_valores_simulacao3" style="text-align:center;">Carregando dados...</p>
+        <table id="tabela-damec_valores_simulacao3" class="display">
+          <thead><tr id="header-damec_valores_simulacao3"></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="chat-item">
+      <h2>DAMEC - Simulação 4 <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <p id="loading-damec_valores_simulacao4" style="text-align:center;">Carregando dados...</p>
+        <table id="tabela-damec_valores_simulacao4" class="display">
+          <thead><tr id="header-damec_valores_simulacao4"></tr></thead>
+          <tbody></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -213,18 +233,18 @@
       const loading = document.getElementById(`loading-${viewName}`);
       const header = document.getElementById(`header-${viewName}`);
       const tbody = document.querySelector(`#tabela-${viewName} tbody`);
-      loading.style.display = 'block';
 
-      const { data, error } = await supabase.from(viewName).select('*').limit(500);
+      loading.style.display = 'block';
+      const { data, error } = await supabase.from(viewName).select('*').limit(1000);
       loading.style.display = 'none';
 
       if (error) {
-        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`;
         return;
       }
 
       if (!data || data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;">Nenhum registro encontrado</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;">Nenhum registro encontrado</td></tr>`;
         return;
       }
 
@@ -237,7 +257,7 @@
           columns: Object.keys(data[0]).map(c => ({ title: c })),
           language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
           scrollX: true,
-          pageLength: 20
+          pageLength: 50
         });
         tablesInitialized[viewName] = true;
       } else {
@@ -246,19 +266,24 @@
       }
     }
 
-    // Abre e fecha individualmente
     document.querySelectorAll('.chat-item h2').forEach(header => {
       header.addEventListener('click', () => {
         const content = header.nextElementSibling;
         const icon = header.querySelector('i');
         const title = header.textContent;
         const isOpen = content.style.display === 'block';
+
         content.style.display = isOpen ? 'none' : 'block';
         icon.classList.toggle('fa-chevron-up', !isOpen);
         icon.classList.toggle('fa-chevron-down', isOpen);
 
-        if (!isOpen && title.includes('Recurso Próprio')) {
-          loadTable('af_asgead_remanejamento_arrecadacao_propria');
+        if (!isOpen) {
+          if (title.includes('Comparados')) loadTable('damec_valores_comparados');
+          if (title.includes('Antigos')) loadTable('damec_valores_antigos');
+          if (title.includes('Simulação 1')) loadTable('damec_valores_simulacao1');
+          if (title.includes('Simulação 2')) loadTable('damec_valores_simulacao2');
+          if (title.includes('Simulação 3')) loadTable('damec_valores_simulacao3');
+          if (title.includes('Simulação 4')) loadTable('damec_valores_simulacao4');
         }
       });
     });
