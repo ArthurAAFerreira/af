@@ -236,70 +236,95 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
 
-  <script>
-    const SUPABASE_URL = 'https://xqoutviueorajuremsrh.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhxb3V0dml1ZW9yYWp1cmVtc3JoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NjAwNDQsImV4cCI6MjA3MDIzNjA0NH0.U_3WDVRGG8o39cfehMnBUGs0HOEi7Di-LueXw_sD7U0';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+<!-- trecho alterado do script ao final do seu arquivo -->
+<script>
+  const SUPABASE_URL = 'https://xqoutviueorajuremsrh.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhxb3V0dml1ZW9yYWp1cmVtc3JoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NjAwNDQsImV4cCI6MjA3MDIzNjA0NH0.U_3WDVRGG8o39cfehMnBUGs0HOEi7Di-LueXw_sD7U0';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let tablesInitialized = {};
+  let tablesInitialized = {};
 
-    async function loadTable(viewName) {
-      const loading = document.getElementById(`loading-${viewName}`);
-      const header = document.getElementById(`header-${viewName}`);
-      const tbody = document.querySelector(`#tabela-${viewName} tbody`);
+  async function loadTable(viewName) {
+    const loading = document.getElementById(`loading-${viewName}`);
+    const header = document.getElementById(`header-${viewName}`);
+    const tbody = document.querySelector(`#tabela-${viewName} tbody`);
 
-      loading.style.display = 'block';
-      const { data, error } = await supabase.from(viewName).select('*').limit(1000);
-      loading.style.display = 'none';
+    loading.style.display = 'block';
+    const { data, error } = await supabase.from(viewName).select('*').limit(1000);
+    loading.style.display = 'none';
 
-      if (error) {
-        tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`;
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;">Nenhum registro encontrado</td></tr>`;
-        return;
-      }
-
-      header.innerHTML = Object.keys(data[0]).map(c => `<th>${c}</th>`).join('');
-      const tableData = data.map(row => Object.values(row));
-
-      if (!tablesInitialized[viewName]) {
-        $(`#tabela-${viewName}`).DataTable({
-          data: tableData,
-          columns: Object.keys(data[0]).map(c => ({ title: c })),
-          language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
-          scrollX: true,
-          pageLength: 50
-        });
-        tablesInitialized[viewName] = true;
-      } else {
-        const table = $(`#tabela-${viewName}`).DataTable();
-        table.clear().rows.add(tableData).draw();
-      }
+    if (error) {
+      tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`;
+      return;
     }
 
-    document.querySelectorAll('.chat-item h2').forEach(header => {
-      header.addEventListener('click', () => {
-        const content = header.nextElementSibling;
-        const icon = header.querySelector('i');
-        const title = header.textContent;
-        const isOpen = content.style.display === 'block';
+    if (!data || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;">Nenhum registro encontrado</td></tr>`;
+      return;
+    }
 
-        content.style.display = isOpen ? 'none' : 'block';
-        icon.classList.toggle('fa-chevron-up', !isOpen);
-        icon.classList.toggle('fa-chevron-down', isOpen);
+    header.innerHTML = Object.keys(data[0]).map(c => `<th>${c}</th>`).join('');
 
-        if (!isOpen) {
-          if (title.includes('Resumo GRU')) loadTable('af_asgead_resumo_sisgru');
-          if (title.includes('Resultado Valores')) loadTable('af_asgead__resultado_arrecadado_remanejado');
-          if (title.includes('Projeto/Referência')) loadTable('af_asgead__arrecadacao_ugr_completo');
-          if (title.includes('UGR com Valores')) loadTable('af_asgead__arrecadacao_ugr_completo_agrupado');
-          if (title.includes('Repassados')) loadTable('af_asgead_remanejamento_arrecadacao_propria');
-        }
-      });
+    // 🔹 Transformar a coluna "Consulta FUNTEF" em link clicável
+    const tableData = data.map(row => {
+      const newRow = { ...row };
+      if (viewName === 'af_asgead__arrecadacao_ugr_completo' && row["Consulta FUNTEF"]) {
+        newRow["Consulta FUNTEF"] = `<a href="${row["Consulta FUNTEF"]}" target="_blank" style="color:#004080;font-weight:bold;text-decoration:none;">Projeto FUNTEF</a>`;
+      }
+      return newRow;
     });
-  </script>
+
+    if (!tablesInitialized[viewName]) {
+      $(`#tabela-${viewName}`).DataTable({
+        data: tableData,
+        columns: Object.keys(data[0]).map(c => ({
+          title: c,
+          data: c,
+          render: function (data, type, row) {
+            if (type === 'display') return data;
+            return data;
+          }
+        })),
+        language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
+        scrollX: true,
+        pageLength: 50,
+        columnDefs: [
+          {
+            targets: Object.keys(data[0]).indexOf("Consulta FUNTEF"),
+            render: function (data) {
+              return data || '';
+            }
+          }
+        ]
+      });
+      tablesInitialized[viewName] = true;
+    } else {
+      const table = $(`#tabela-${viewName}`).DataTable();
+      table.clear().rows.add(tableData).draw();
+    }
+  }
+
+  document.querySelectorAll('.chat-item h2').forEach(header => {
+    header.addEventListener('click', () => {
+      const content = header.nextElementSibling;
+      const icon = header.querySelector('i');
+      const title = header.textContent;
+      const isOpen = content.style.display === 'block';
+
+      content.style.display = isOpen ? 'none' : 'block';
+      icon.classList.toggle('fa-chevron-up', !isOpen);
+      icon.classList.toggle('fa-chevron-down', isOpen);
+
+      if (!isOpen) {
+        if (title.includes('Resumo GRU')) loadTable('af_asgead_resumo_sisgru');
+        if (title.includes('Resultado Valores')) loadTable('af_asgead__resultado_arrecadado_remanejado');
+        if (title.includes('Projeto/Referência')) loadTable('af_asgead__arrecadacao_ugr_completo');
+        if (title.includes('UGR com Valores')) loadTable('af_asgead__arrecadacao_ugr_completo_agrupado');
+        if (title.includes('Repassados')) loadTable('af_asgead_remanejamento_arrecadacao_propria');
+      }
+    });
+  });
+</script>
+
 </body>
 </html>
