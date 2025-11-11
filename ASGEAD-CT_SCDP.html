@@ -186,6 +186,18 @@
       </div>
     </div>
 
+    <!-- 🔹 Despesas Pagas por UGR - Valores Agrupados -->
+    <div class="chat-item">
+      <h2>Despesas Pagas por UGR - Valores Agrupados <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <p id="loading-af_asgead_despesaspagas_ugr_agrupado" style="text-align:center;">Carregando dados...</p>
+        <table id="tabela-af_asgead_despesaspagas_ugr_agrupado" class="display">
+          <thead><tr id="header-af_asgead_despesaspagas_ugr_agrupado"></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- 🔹 Processos SEI por UGR -->
     <div class="chat-item">
       <h2>Processos SEI por UGR <i class="fa-solid fa-chevron-down"></i></h2>
@@ -273,6 +285,7 @@
           if (title.includes('UGRs')) loadTable('af_asgead_ugr_utfpr_ct_scdp');
           if (title.includes('Saldos por UGR')) loadTable('af_asgead_saldo_ne_ugr_agrupado');
           if (title.includes('Detalhados')) loadTable('af_asgead_saldo_ne_ugr_detalhado');
+          if (title.includes('Despesas Pagas')) loadTable('af_asgead_despesaspagas_ugr_agrupado');
           if (title.includes('Processos SEI')) loadTable('af_asgead_processos_ugr_sei');
         }
       });
