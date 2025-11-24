@@ -33,6 +33,18 @@
       margin: 0;
     }
 
+    /* 🔹 Título clicável (voltar ao index) */
+    header h1 a {
+      color: white;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    header h1 a:hover {
+      color: #66ccff;
+      text-decoration: underline;
+    }
+
     header p {
       font-size: 1rem;
       margin-top: 10px;
@@ -102,12 +114,22 @@
     footer a:hover {
       color: #fff;
     }
+
+    /* 🔹 Ajuste especial para iframes de formulário (100% da altura real) */
+    .form-iframe iframe {
+      width: 100%;
+      height: 100vh; /* ocupa a tela inteira verticalmente */
+      display: none;
+    }
   </style>
 </head>
 <body>
 
   <header>
-    <h1><i class="fa-solid fa-comments"></i> Consultas UTFPR-CT</h1>
+    <h1>
+      <i class="fa-solid fa-comments"></i>
+      <a href="index.html">Consultas UTFPR-CT</a>
+    </h1>
     <p>Chats internos da ASGEAD-CT</p>
   </header>
 
@@ -161,6 +183,15 @@
       <iframe src="https://n8n.arthuraaferreira.com.br/webhook/abc7f4cd-3162-43e8-9bd0-c7804828f96f/chat"></iframe>
     </div>
 
+    <!-- 🔹 Novo bloco: Consulta Ordem Bancária UTFPR-CT -->
+    <div class="chat-item form-iframe">
+      <h2>
+        Consulta Ordem Bancária UTFPR-CT
+        <i class="fa-solid fa-chevron-down"></i>
+      </h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/form/6d72e203-bebc-4377-bae3-192e48fed0e1"></iframe>
+    </div>
+
   </div>
 
   <footer>
@@ -179,7 +210,7 @@
         const iframe = header.nextElementSibling;
         const icon = header.querySelector('i');
 
-        if(iframe.style.display === 'block') {
+        if (iframe.style.display === 'block') {
           iframe.style.display = 'none';
           icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
         } else {
