@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Despesas SCDP - Diárias, Passagens e Ressarcimentos</title>
 
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <!-- DataTables -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css">
 
   <style>
@@ -19,6 +19,7 @@
       color: #333;
     }
 
+    /* Banner */
     header {
       background: linear-gradient(135deg, #001f3f, #003366);
       color: white;
@@ -35,6 +36,7 @@
       margin: 0;
     }
 
+    /* Título clicável */
     header h1 a {
       color: white;
       text-decoration: none;
@@ -52,6 +54,7 @@
       opacity: 0.9;
     }
 
+    /* Container dos chats */
     .chat-container {
       display: flex;
       flex-direction: column;
@@ -60,11 +63,12 @@
       padding: 30px 0;
     }
 
+    /* Cada chat */
     .chat-item {
       width: 90%;
       box-sizing: border-box;
       border-radius: 1px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
       background-color: white;
       overflow: hidden;
       transition: all 0.3s ease;
@@ -87,34 +91,16 @@
       background-color: #cce0ff;
     }
 
-    .chat-content {
+    .chat-item iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
       display: none;
-      padding: 0px;
-      overflow-x: auto;
     }
 
-    table {
-      width: 100% !important;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
-
-    th {
-      background-color: #003366;
-      color: white;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
-
-    tr:hover {
-      background-color: #e6f0ff;
+    /* Iframes de formulário ocupando a altura da tela */
+    .form-iframe iframe {
+      height: 100vh;
     }
 
     footer {
@@ -136,6 +122,34 @@
     footer a:hover {
       color: #fff;
     }
+
+    /* Estilos para a Tabela de Dados */
+    .chat-content {
+      display: none; /* Começa oculto */
+      padding: 10px;
+      overflow-x: auto; /* Barra de rolagem se a tabela for grande */
+      background-color: #fff;
+    }
+
+    table.dataTable {
+      width: 100% !important;
+      border-collapse: collapse;
+    }
+
+    /* Ajuste visual para combinar com seu tema azul */
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_processing,
+    .dataTables_wrapper .dataTables_paginate {
+        color: #333;
+        padding: 10px;
+    }
+
+    table th {
+        background-color: #003366 !important; /* Azul do seu cabeçalho */
+        color: white !important;
+    }
   </style>
 </head>
 
@@ -151,60 +165,105 @@
   <div class="chat-container">
 
     <!-- 🔹 UGRs UTFPR-CT no SCDP -->
-    <div class="chat-item">
-      <h2>UGRs UTFPR-CT no SCDP <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <p id="loading-af_asgead_ugr_utfpr_ct_scdp" style="text-align:center;">Carregando dados...</p>
-        <table id="tabela-af_asgead_ugr_utfpr_ct_scdp" class="display">
-          <thead><tr id="header-af_asgead_ugr_utfpr_ct_scdp"></tr></thead>
+    <div class="chat-item" id="chat-item-supabase">
+		<h2 onclick="toggleSupabase('utfpr_ct_ugr_scdp')">
+			UGRs UTFPR-CT no SCDP
+			<i class="fa-solid fa-chevron-down"></i>
+		</h2>
+
+      <div class="chat-content" id="container-utfpr_ct_ugr_scdp">
+        <p id="loading-utfpr_ct_ugr_scdp" style="text-align:center; padding:20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+        </p>
+
+        <table id="tabela-utfpr_ct_ugr_scdp" class="display" style="width:100%">
+          <thead>
+              <tr id="header-utfpr_ct_ugr_scdp"></tr>
+          </thead>
           <tbody></tbody>
         </table>
       </div>
     </div>
 
     <!-- 🔹 Empenhos SCDP - Saldos por UGR -->
-    <div class="chat-item">
-      <h2>Empenhos SCDP - Saldos por UGR <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <p id="loading-af_asgead_saldo_ne_ugr_agrupado" style="text-align:center;">Carregando dados...</p>
-        <table id="tabela-af_asgead_saldo_ne_ugr_agrupado" class="display">
-          <thead><tr id="header-af_asgead_saldo_ne_ugr_agrupado"></tr></thead>
+    <div class="chat-item" id="chat-item-supabase">
+		<h2 onclick="toggleSupabase('af_asgead_saldo_ne_ugr_agrupado')">
+			Empenhos SCDP - Saldos por UGR
+			<i class="fa-solid fa-chevron-down"></i>
+		</h2>
+
+      <div class="chat-content" id="container-af_asgead_saldo_ne_ugr_agrupado">
+        <p id="loading-af_asgead_saldo_ne_ugr_agrupado" style="text-align:center; padding:20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+        </p>
+
+        <table id="tabela-af_asgead_saldo_ne_ugr_agrupado" class="display" style="width:100%">
+          <thead>
+              <tr id="header-af_asgead_saldo_ne_ugr_agrupado"></tr>
+          </thead>
           <tbody></tbody>
         </table>
       </div>
     </div>
 
-    <!-- 🔹 Empenhos SCDP - Saldos Detalhados por UGR -->
-    <div class="chat-item">
-      <h2>Empenhos SCDP - Saldos Detalhados por UGR <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <p id="loading-af_asgead_saldo_ne_ugr_detalhado" style="text-align:center;">Carregando dados...</p>
-        <table id="tabela-af_asgead_saldo_ne_ugr_detalhado" class="display">
-          <thead><tr id="header-af_asgead_saldo_ne_ugr_detalhado"></tr></thead>
+    <!-- 🔹 UGRs Empenhos SCDP - Saldos Detalhados por UGR -->
+    <div class="chat-item" id="chat-item-supabase">
+		<h2 onclick="toggleSupabase('af_asgead_saldo_ne_ugr_detalhado')">
+			Empenhos SCDP - Saldos Detalhados por UGR
+			<i class="fa-solid fa-chevron-down"></i>
+		</h2>
+
+      <div class="chat-content" id="container-af_asgead_saldo_ne_ugr_detalhado">
+        <p id="loading-af_asgead_saldo_ne_ugr_detalhado" style="text-align:center; padding:20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+        </p>
+
+        <table id="tabela-af_asgead_saldo_ne_ugr_detalhado" class="display" style="width:100%">
+          <thead>
+              <tr id="header-af_asgead_saldo_ne_ugr_detalhado"></tr>
+          </thead>
           <tbody></tbody>
         </table>
       </div>
     </div>
 
-    <!-- 🔹 Despesas Pagas por UGR - Valores Agrupados -->
-    <div class="chat-item">
-      <h2>Despesas Pagas por UGR - Valores Agrupados <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <p id="loading-af_asgead_despesaspagas_ugr_agrupado" style="text-align:center;">Carregando dados...</p>
-        <table id="tabela-af_asgead_despesaspagas_ugr_agrupado" class="display">
-          <thead><tr id="header-af_asgead_despesaspagas_ugr_agrupado"></tr></thead>
+    <!-- 🔹 Despesas Pagas por UGR, por Subelemento -->
+    <div class="chat-item" id="chat-item-supabase">
+		<h2 onclick="toggleSupabase('as_asgead_ugr_scdp_executado_mes_detalhado')">
+			Despesas Pagas por UGR, por Subelemento
+			<i class="fa-solid fa-chevron-down"></i>
+		</h2>
+
+      <div class="chat-content" id="container-as_asgead_ugr_scdp_executado_mes_detalhado">
+        <p id="loading-as_asgead_ugr_scdp_executado_mes_detalhado" style="text-align:center; padding:20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+        </p>
+
+        <table id="tabela-as_asgead_ugr_scdp_executado_mes_detalhado" class="display" style="width:100%">
+          <thead>
+              <tr id="header-as_asgead_ugr_scdp_executado_mes_detalhado"></tr>
+          </thead>
           <tbody></tbody>
         </table>
       </div>
     </div>
 
     <!-- 🔹 Processos SEI por UGR -->
-    <div class="chat-item">
-      <h2>Processos SEI por UGR <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <p id="loading-af_asgead_processos_ugr_sei" style="text-align:center;">Carregando dados...</p>
-        <table id="tabela-af_asgead_processos_ugr_sei" class="display">
-          <thead><tr id="header-af_asgead_processos_ugr_sei"></tr></thead>
+    <div class="chat-item" id="chat-item-supabase">
+		<h2 onclick="toggleSupabase('ugr_processos_sei')">
+			Processos SEI por UGR
+			<i class="fa-solid fa-chevron-down"></i>
+		</h2>
+
+      <div class="chat-content" id="container-ugr_processos_sei">
+        <p id="loading-ugr_processos_sei" style="text-align:center; padding:20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+        </p>
+
+        <table id="tabela-ugr_processos_sei" class="display" style="width:100%">
+          <thead>
+              <tr id="header-ugr_processos_sei"></tr>
+          </thead>
           <tbody></tbody>
         </table>
       </div>
@@ -214,82 +273,152 @@
 
   <footer>
     <p>&copy; 2025 Arthur Ferreira | ASGEAD-CT</p>
-    <div class="mt-2">
-      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
-      <a href="https://instagram.com/arthuraaferreira" target="_blank"><i class="fab fa-instagram"></i></a>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br">
+        <i class="fa-solid fa-envelope"></i>
+      </a>
+      <a
+        href="https://instagram.com/arthuraaferreira"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <i class="fab fa-instagram"></i>
+      </a>
     </div>
   </footer>
 
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
 
   <script>
-    const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    /* --- PARTE A: Lógica para os Iframes (Empenhos e Ordem Bancária) --- */
+    const iframeHeaders = document.querySelectorAll(".chat-item h2:not([onclick])");
 
-    let tablesInitialized = {};
+    iframeHeaders.forEach((header) => {
+      header.addEventListener("click", () => {
+        const card = header.parentElement;
+        const iframe = card.querySelector("iframe");
+        const icon = header.querySelector("i");
 
-    async function loadTable(viewName) {
-      const loading = document.getElementById(`loading-${viewName}`);
-      const header = document.getElementById(`header-${viewName}`);
-      const tbody = document.querySelector(`#tabela-${viewName} tbody`);
-
-      loading.style.display = 'block';
-
-      const { data, error } = await supabase.from(viewName).select('*').limit(500);
-      loading.style.display = 'none';
-
-      if (error) {
-        tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`;
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;">Nenhum registro encontrado</td></tr>`;
-        return;
-      }
-
-      header.innerHTML = Object.keys(data[0]).map(c => `<th>${c}</th>`).join('');
-      const tableData = data.map(row => Object.values(row));
-
-      if (!tablesInitialized[viewName]) {
-        $(`#tabela-${viewName}`).DataTable({
-          data: tableData,
-          columns: Object.keys(data[0]).map(c => ({ title: c })),
-          language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
-          scrollX: true,
-          pageLength: 20
-        });
-        tablesInitialized[viewName] = true;
-      } else {
-        const table = $(`#tabela-${viewName}`).DataTable();
-        table.clear().rows.add(tableData).draw();
-      }
-    }
-
-    document.querySelectorAll('.chat-item h2').forEach(header => {
-      header.addEventListener('click', () => {
-        const content = header.nextElementSibling;
-        const icon = header.querySelector('i');
-        const title = header.textContent;
-
-        const isOpen = content.style.display === 'block';
-        content.style.display = isOpen ? 'none' : 'block';
-        icon.classList.toggle('fa-chevron-up', !isOpen);
-        icon.classList.toggle('fa-chevron-down', isOpen);
-
-        if (!isOpen) {
-          if (title.includes('UGRs')) loadTable('af_asgead_ugr_utfpr_ct_scdp');
-          if (title.includes('Saldos por UGR')) loadTable('af_asgead_saldo_ne_ugr_agrupado');
-          if (title.includes('Detalhados')) loadTable('af_asgead_saldo_ne_ugr_detalhado');
-          if (title.includes('Despesas Pagas')) loadTable('af_asgead_despesaspagas_ugr_agrupado');
-          if (title.includes('Processos SEI')) loadTable('af_asgead_processos_ugr_sei');
+        if (iframe) {
+          if (iframe.style.display === "block") {
+            iframe.style.display = "none";
+            icon.classList.replace("fa-chevron-up", "fa-chevron-down");
+          } else {
+            iframe.style.display = "block";
+            icon.classList.replace("fa-chevron-down", "fa-chevron-up");
+          }
         }
       });
     });
+
+    /* --- PARTE B: Lógica para o Supabase (Saldo Financeiro) --- */
+    const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let tabelasCarregadas = {};
+
+    async function toggleSupabase(viewName) {
+        const container = document.getElementById(`container-${viewName}`);
+        const header = document.querySelector(`h2[onclick*="${viewName}"]`);
+        const icon = header.querySelector("i");
+
+        // 1. Abrir ou Fechar visualmente
+        if (container.style.display === 'block') {
+            container.style.display = 'none';
+            icon.classList.replace("fa-chevron-up", "fa-chevron-down");
+            return;
+        } else {
+            container.style.display = 'block';
+            icon.classList.replace("fa-chevron-down", "fa-chevron-up");
+        }
+
+        // 2. Se já carregou antes, não busca de novo
+        if (tabelasCarregadas[viewName]) return;
+
+        // 3. Buscar dados
+        const loading = document.getElementById(`loading-${viewName}`);
+        const tableId = `tabela-${viewName}`;
+
+        loading.style.display = 'block';
+
+        const { data, error } = await supabaseClient
+            .from(viewName)
+            .select('*')
+            .limit(500);
+
+        loading.style.display = 'none';
+
+        const tbody = document.querySelector(`#${tableId} tbody`);
+        const thead = document.querySelector(`#header-${viewName}`);
+
+        if (error) {
+            tbody.innerHTML = `<tr><td colspan="10" style="color:red; text-align:center">Erro: ${error.message}</td></tr>`;
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center">Nenhum dado encontrado.</td></tr>`;
+            return;
+        }
+
+        // 4. Montar Tabela e Configurar Colunas
+        const colunas = Object.keys(data[0]);
+        thead.innerHTML = colunas.map(c => `<th>${c}</th>`).join('');
+
+        const valores = data.map(row => Object.values(row));
+
+        // --- AQUI ESTÁ A MUDANÇA DA FORMATAÇÃO R$ ---
+        const configColunas = colunas.map(c => {
+            // Verifica se a coluna é "Saldo" para aplicar R$
+            if (c === 'Saldo') {
+                return {
+                    title: c,
+                    className: "dt-body-right", // Alinha números à direita
+                    render: function (data, type, row) {
+                        // Se for para exibir na tela, formata como Real
+                        if (type === 'display') {
+                            return parseFloat(data).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                        }
+                        // Para ordenar, mantém o número puro
+                        return data;
+                    }
+                };
+            }
+            // Outras colunas normais
+            return { title: c };
+        });
+        // --------------------------------------------
+
+        // Inicia plugin com TRADUÇÃO MANUAL
+        $(`#${tableId}`).DataTable({
+            data: valores,
+            columns: configColunas,
+            scrollX: true,
+            pageLength: 10,
+            language: {
+                "sEmptyTable": "Nenhum registro encontrado",
+                "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+                "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+                "sLengthMenu": "_MENU_ resultados por página",
+                "sLoadingRecords": "Carregando...",
+                "sProcessing": "Processando...",
+                "sZeroRecords": "Nenhum registro encontrado",
+                "sSearch": "Pesquisar:",
+                "oPaginate": {
+                    "sNext": "Próximo",
+                    "sPrevious": "Anterior",
+                    "sFirst": "Primeiro",
+                    "sLast": "Último"
+                }
+            }
+        });
+
+        tabelasCarregadas[viewName] = true;
+    }
   </script>
 </body>
 </html>
