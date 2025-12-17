@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Consultas UTFPR-CT</title>
+  <title>Consultas UTFPR-CT - Específico DIRPLAD</title>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css">
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css">
 
   <style>
     body {
@@ -17,7 +19,7 @@
       color: #333;
     }
 
-    /* --- Header --- */
+    /* Banner */
     header {
       background: linear-gradient(135deg, #001f3f, #003366);
       color: white;
@@ -34,14 +36,16 @@
       margin: 0;
     }
 
+    /* Título clicável */
     header h1 a {
       color: white;
       text-decoration: none;
-      transition: opacity 0.3s;
+      transition: 0.3s;
     }
 
     header h1 a:hover {
-      opacity: 0.8;
+      color: #66ccff;
+      text-decoration: underline;
     }
 
     header p {
@@ -50,24 +54,24 @@
       opacity: 0.9;
     }
 
-    /* --- Container Principal --- */
+    /* Container dos chats */
     .chat-container {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 15px;
       padding: 30px 0;
-      min-height: 60vh;
     }
 
-    /* --- Cards do Acordeão --- */
+    /* Cada chat */
     .chat-item {
-      width: 95%;
-      max-width: 1200px; /* Limite para telas muito grandes */
-      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+      width: 90%;
+      box-sizing: border-box;
+      border-radius: 1px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
       background-color: white;
-      border-radius: 4px;
       overflow: hidden;
+      transition: all 0.3s ease;
     }
 
     .chat-item h2 {
@@ -81,83 +85,118 @@
       justify-content: space-between;
       align-items: center;
       background-color: #e6f0ff;
-      transition: background 0.2s;
-      user-select: none; /* Evita selecionar o texto ao clicar rápido */
     }
 
     .chat-item h2:hover {
       background-color: #cce0ff;
     }
 
-    /* --- Animação do Conteúdo --- */
-    .chat-content {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.4s ease-out; /* Suave ao abrir */
-      background-color: #fff;
-    }
-
-    .chat-content.open {
-      max-height: 2000px; /* Altura suficiente para acomodar o iframe */
-      transition: max-height 0.5s ease-in;
-    }
-
-    /* --- Iframes e Tabelas --- */
-    iframe {
+    .chat-item iframe {
       width: 100%;
-      height: 520px;
+      height: 500px;
       border: none;
-      display: block; /* Remove espaços extras embaixo */
+      display: none;
     }
 
-    table.display {
-      width: 100% !important;
+    /* Iframes de formulário ocupando a altura da tela */
+    .form-iframe iframe {
+      height: 100vh;
     }
 
-    /* --- Footer --- */
     footer {
       background: #001f3f;
       color: #ccc;
       text-align: center;
       padding: 20px;
       font-size: 0.85rem;
-      margin-top: auto;
+    }
+
+    footer a {
+      color: #66ccff;
+      margin: 0 8px;
+      font-size: 1.1rem;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    footer a:hover {
+      color: #fff;
+    }
+
+    /* Estilos para a Tabela de Dados */
+    .chat-content {
+      display: none; /* Começa oculto */
+      padding: 10px;
+      overflow-x: auto; /* Barra de rolagem se a tabela for grande */
+      background-color: #fff;
+    }
+
+    table.dataTable {
+      width: 100% !important;
+      border-collapse: collapse;
+    }
+
+    /* Ajuste visual para combinar com seu tema azul */
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_processing,
+    .dataTables_wrapper .dataTables_paginate {
+        color: #333;
+        padding: 10px;
+    }
+
+    table th {
+        background-color: #003366 !important; /* Azul do seu cabeçalho */
+        color: white !important;
     }
   </style>
 </head>
 
 <body>
+  <header>
+    <h1>
+      <i class="fa-solid fa-comments"></i>
+      <a href="index.html">Consultas UTFPR-CT</a>
+    </h1>
+    <p>Chats internos da ASGEAD-CT</p>
+  </header>
 
-<header>
-  <h1>
-    <i class="fa-solid fa-comments"></i>
-    <a href="index.html">Consultas UTFPR-CT</a>
-  </h1>
-  <p>Consultas e ferramentas da ASGEAD-CT</p>
-</header>
-
-<div class="chat-container">
-
-  <div class="chat-item">
-    <h2>Consulta Empenhos UTFPR-CT <i class="fa-solid fa-chevron-down"></i></h2>
-    <div class="chat-content">
-      <iframe loading="lazy" src="https://n8n.arthuraaferreira.com.br/form/34a67783-3867-4c0a-a233-a03cbf67703d"></iframe>
+  <div class="chat-container">
+    <div class="chat-item">
+      <h2>
+        Consulta Empenhos UTFPR-CT
+        <i class="fa-solid fa-chevron-down"></i>
+      </h2>
+      <iframe
+        src="https://n8n.arthuraaferreira.com.br/form/34a67783-3867-4c0a-a233-a03cbf67703d"
+      ></iframe>
     </div>
-  </div>
 
-  <div class="chat-item">
-    <h2>Saldo Financeiro <i class="fa-solid fa-chevron-down"></i></h2>
-    <div class="chat-content">
-      <div style="padding: 10px;">
-        <p id="loading-saldofinanceiro" style="text-align:center;">Carregando dados...</p>
-        <table id="tabela-saldofinanceiro" class="display" style="width:100%">
+    <div class="chat-item form-iframe">
+      <h2>
+        Consulta Ordem Bancária UTFPR-CT
+        <i class="fa-solid fa-chevron-down"></i>
+      </h2>
+      <iframe
+        src="https://n8n.arthuraaferreira.com.br/form/6d72e203-bebc-4377-bae3-192e48fed0e1"
+      ></iframe>
+    </div>
+
+    <div class="chat-item" id="chat-item-supabase">
+      <h2 onclick="toggleSupabase('af_asgead_saldofinanceiro')">
+        Consulta Saldo Financeiro
+        <i class="fa-solid fa-chevron-down"></i>
+      </h2>
+
+      <div class="chat-content" id="container-af_asgead_saldofinanceiro">
+        <p id="loading-af_asgead_saldofinanceiro" style="text-align:center; padding:20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+        </p>
+
+        <table id="tabela-af_asgead_saldofinanceiro" class="display" style="width:100%">
           <thead>
-            <tr>
-              <th>UGR</th>
-              <th>Fonte</th>
-              <th>Vinculação</th>
-              <th>Saldo (R$)</th>
-            </tr>
+              <tr id="header-af_asgead_saldofinanceiro"></tr>
           </thead>
           <tbody></tbody>
         </table>
@@ -165,111 +204,154 @@
     </div>
   </div>
 
-  <div class="chat-item">
-    <h2>Consulta Saldo Orçamentário <i class="fa-solid fa-chevron-down"></i></h2>
-    <div class="chat-content">
-      <iframe loading="lazy" src="ASGEAD-CT_saldo_orcamentario.html"></iframe>
+  <footer>
+    <p>&copy; 2025 Arthur Ferreira | ASGEAD-CT</p>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br">
+        <i class="fa-solid fa-envelope"></i>
+      </a>
+      <a
+        href="https://instagram.com/arthuraaferreira"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <i class="fab fa-instagram"></i>
+      </a>
     </div>
-  </div>
+  </footer>
 
-  <div class="chat-item">
-    <h2>Consulta Saldo e Valor Gasto SIORG <i class="fa-solid fa-chevron-down"></i></h2>
-    <div class="chat-content">
-      <iframe loading="lazy" src="ASGEAD-CT_siorg.html"></iframe>
-    </div>
-  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
 
-</div>
+  <script>
+    /* --- PARTE A: Lógica para os Iframes (Empenhos e Ordem Bancária) --- */
+    const iframeHeaders = document.querySelectorAll(".chat-item h2:not([onclick])");
 
-<footer>
-  <p>&copy; 2025 Arthur Ferreira | ASGEAD-CT</p>
-</footer>
+    iframeHeaders.forEach((header) => {
+      header.addEventListener("click", () => {
+        const card = header.parentElement;
+        const iframe = card.querySelector("iframe");
+        const icon = header.querySelector("i");
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
-
-<script>
-  /* --- Configuração do Supabase --- */
-  const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
-
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  let tabelaSaldo;
-
-  // Função para carregar dados do Saldo Financeiro
-  async function loadSaldoFinanceiro() {
-    // Se já carregou uma vez, não carrega de novo para economizar recursos
-    if (tabelaSaldo) return;
-
-    const loading = document.getElementById('loading-saldofinanceiro');
-    loading.style.display = 'block';
-
-    const { data, error } = await supabase
-      .from('af_asgead_saldofinanceiro')
-      .select('*');
-
-    loading.style.display = 'none';
-
-    if (error) {
-      document.querySelector('#tabela-saldofinanceiro tbody').innerHTML =
-        `<tr><td colspan="4" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`;
-      return;
-    }
-
-    const rows = data.map(r => [
-      r["UGR"],
-      r["Fonte"],
-      r["Vinculação"],
-      Number(r["Saldo"]).toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL'
-      })
-    ]);
-
-    tabelaSaldo = $('#tabela-saldofinanceiro').DataTable({
-      data: rows,
-      language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
-      scrollX: true,
-      pageLength: 20
-    });
-  }
-
-  /* =====================================================
-     ✅ Lógica do Acordeão (Corrigida para Desktop)
-     ===================================================== */
-
-  document.querySelectorAll('.chat-item h2').forEach(h => {
-    h.addEventListener('click', () => {
-      const content = h.nextElementSibling;
-      const icon = h.querySelector('i');
-      const isOpen = content.classList.contains('open');
-
-      // 1. Fecha TODAS as outras abas primeiro
-      document.querySelectorAll('.chat-content').forEach(c => {
-        c.classList.remove('open');
-      });
-      // Reseta todos os ícones para "para baixo"
-      document.querySelectorAll('.chat-item h2 i').forEach(i => {
-        i.className = 'fa-solid fa-chevron-down';
-      });
-
-      // 2. Se a aba clicada não estava aberta, abre ela agora
-      if (!isOpen) {
-        content.classList.add('open');
-        icon.className = 'fa-solid fa-chevron-up';
-
-        // 3. Verifica se precisa carregar a tabela do Supabase
-        if (h.textContent.includes('Saldo Financeiro')) {
-          loadSaldoFinanceiro();
+        if (iframe) {
+          if (iframe.style.display === "block") {
+            iframe.style.display = "none";
+            icon.classList.replace("fa-chevron-up", "fa-chevron-down");
+          } else {
+            iframe.style.display = "block";
+            icon.classList.replace("fa-chevron-down", "fa-chevron-up");
+          }
         }
-      }
-
-      // OBS: Não forçamos mais o recarregamento do iframe (src = src).
-      // Isso resolve o problema da tela branca no PC.
+      });
     });
-  });
-</script>
 
+    /* --- PARTE B: Lógica para o Supabase (Saldo Financeiro) --- */
+    const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let tabelasCarregadas = {};
+
+    async function toggleSupabase(viewName) {
+        const container = document.getElementById(`container-${viewName}`);
+        const header = document.querySelector(`h2[onclick*="${viewName}"]`);
+        const icon = header.querySelector("i");
+
+        // 1. Abrir ou Fechar visualmente
+        if (container.style.display === 'block') {
+            container.style.display = 'none';
+            icon.classList.replace("fa-chevron-up", "fa-chevron-down");
+            return;
+        } else {
+            container.style.display = 'block';
+            icon.classList.replace("fa-chevron-down", "fa-chevron-up");
+        }
+
+        // 2. Se já carregou antes, não busca de novo
+        if (tabelasCarregadas[viewName]) return;
+
+        // 3. Buscar dados
+        const loading = document.getElementById(`loading-${viewName}`);
+        const tableId = `tabela-${viewName}`;
+
+        loading.style.display = 'block';
+
+        const { data, error } = await supabaseClient
+            .from(viewName)
+            .select('*')
+            .limit(500);
+
+        loading.style.display = 'none';
+
+        const tbody = document.querySelector(`#${tableId} tbody`);
+        const thead = document.querySelector(`#header-${viewName}`);
+
+        if (error) {
+            tbody.innerHTML = `<tr><td colspan="10" style="color:red; text-align:center">Erro: ${error.message}</td></tr>`;
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center">Nenhum dado encontrado.</td></tr>`;
+            return;
+        }
+
+        // 4. Montar Tabela e Configurar Colunas
+        const colunas = Object.keys(data[0]);
+        thead.innerHTML = colunas.map(c => `<th>${c}</th>`).join('');
+
+        const valores = data.map(row => Object.values(row));
+
+        // --- AQUI ESTÁ A MUDANÇA DA FORMATAÇÃO R$ ---
+        const configColunas = colunas.map(c => {
+            // Verifica se a coluna é "Saldo" para aplicar R$
+            if (c === 'Saldo') {
+                return {
+                    title: c,
+                    className: "dt-body-right", // Alinha números à direita
+                    render: function (data, type, row) {
+                        // Se for para exibir na tela, formata como Real
+                        if (type === 'display') {
+                            return parseFloat(data).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                        }
+                        // Para ordenar, mantém o número puro
+                        return data;
+                    }
+                };
+            }
+            // Outras colunas normais
+            return { title: c };
+        });
+        // --------------------------------------------
+
+        // Inicia plugin com TRADUÇÃO MANUAL
+        $(`#${tableId}`).DataTable({
+            data: valores,
+            columns: configColunas,
+            scrollX: true,
+            pageLength: 10,
+            language: {
+                "sEmptyTable": "Nenhum registro encontrado",
+                "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+                "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+                "sLengthMenu": "_MENU_ resultados por página",
+                "sLoadingRecords": "Carregando...",
+                "sProcessing": "Processando...",
+                "sZeroRecords": "Nenhum registro encontrado",
+                "sSearch": "Pesquisar:",
+                "oPaginate": {
+                    "sNext": "Próximo",
+                    "sPrevious": "Anterior",
+                    "sFirst": "Primeiro",
+                    "sLast": "Último"
+                }
+            }
+        });
+
+        tabelasCarregadas[viewName] = true;
+    }
+  </script>
 </body>
 </html>
