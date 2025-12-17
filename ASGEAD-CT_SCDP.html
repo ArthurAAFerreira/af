@@ -164,12 +164,11 @@
 
   <div class="chat-container">
 
-    <!-- 🔹 UGRs UTFPR-CT no SCDP -->
     <div class="chat-item" id="chat-item-supabase">
-		<h2 onclick="toggleSupabase('utfpr_ct_ugr_scdp')">
-			UGRs UTFPR-CT no SCDP
-			<i class="fa-solid fa-chevron-down"></i>
-		</h2>
+       <h2 onclick="toggleSupabase('utfpr_ct_ugr_scdp')">
+          UGRs UTFPR-CT no SCDP
+          <i class="fa-solid fa-chevron-down"></i>
+       </h2>
 
       <div class="chat-content" id="container-utfpr_ct_ugr_scdp">
         <p id="loading-utfpr_ct_ugr_scdp" style="text-align:center; padding:20px;">
@@ -185,12 +184,11 @@
       </div>
     </div>
 
-    <!-- 🔹 Empenhos SCDP - Saldos por UGR -->
     <div class="chat-item" id="chat-item-supabase">
-		<h2 onclick="toggleSupabase('af_asgead_saldo_ne_ugr_agrupado')">
-			Empenhos SCDP - Saldos por UGR
-			<i class="fa-solid fa-chevron-down"></i>
-		</h2>
+       <h2 onclick="toggleSupabase('af_asgead_saldo_ne_ugr_agrupado')">
+          Empenhos SCDP - Saldos por UGR
+          <i class="fa-solid fa-chevron-down"></i>
+       </h2>
 
       <div class="chat-content" id="container-af_asgead_saldo_ne_ugr_agrupado">
         <p id="loading-af_asgead_saldo_ne_ugr_agrupado" style="text-align:center; padding:20px;">
@@ -206,12 +204,11 @@
       </div>
     </div>
 
-    <!-- 🔹 UGRs Empenhos SCDP - Saldos Detalhados por UGR -->
     <div class="chat-item" id="chat-item-supabase">
-		<h2 onclick="toggleSupabase('af_asgead_saldo_ne_ugr_detalhado')">
-			Empenhos SCDP - Saldos Detalhados por UGR
-			<i class="fa-solid fa-chevron-down"></i>
-		</h2>
+       <h2 onclick="toggleSupabase('af_asgead_saldo_ne_ugr_detalhado')">
+          Empenhos SCDP - Saldos Detalhados por UGR
+          <i class="fa-solid fa-chevron-down"></i>
+       </h2>
 
       <div class="chat-content" id="container-af_asgead_saldo_ne_ugr_detalhado">
         <p id="loading-af_asgead_saldo_ne_ugr_detalhado" style="text-align:center; padding:20px;">
@@ -227,12 +224,11 @@
       </div>
     </div>
 
-    <!-- 🔹 Despesas Pagas por UGR, por Subelemento -->
     <div class="chat-item" id="chat-item-supabase">
-		<h2 onclick="toggleSupabase('as_asgead_ugr_scdp_executado_mes_detalhado')">
-			Despesas Pagas por UGR, por Subelemento
-			<i class="fa-solid fa-chevron-down"></i>
-		</h2>
+       <h2 onclick="toggleSupabase('as_asgead_ugr_scdp_executado_mes_detalhado')">
+          Despesas Pagas por UGR, por Subelemento
+          <i class="fa-solid fa-chevron-down"></i>
+       </h2>
 
       <div class="chat-content" id="container-as_asgead_ugr_scdp_executado_mes_detalhado">
         <p id="loading-as_asgead_ugr_scdp_executado_mes_detalhado" style="text-align:center; padding:20px;">
@@ -248,12 +244,11 @@
       </div>
     </div>
 
-    <!-- 🔹 Processos SEI por UGR -->
     <div class="chat-item" id="chat-item-supabase">
-		<h2 onclick="toggleSupabase('ugr_processos_sei')">
-			Processos SEI por UGR
-			<i class="fa-solid fa-chevron-down"></i>
-		</h2>
+       <h2 onclick="toggleSupabase('ugr_processos_sei')">
+          Processos SEI por UGR
+          <i class="fa-solid fa-chevron-down"></i>
+       </h2>
 
       <div class="chat-content" id="container-ugr_processos_sei">
         <p id="loading-ugr_processos_sei" style="text-align:center; padding:20px;">
@@ -292,132 +287,110 @@
   <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
 
   <script>
-    /* --- PARTE A: Lógica para os Iframes (Empenhos e Ordem Bancária) --- */
-    const iframeHeaders = document.querySelectorAll(".chat-item h2:not([onclick])");
+    // --- 1. CONFIGURAÇÕES ---
+    const configLinhas = {
+        'utfpr_ct_ugr_scdp': 5,
+        'af_asgead_saldo_ne_ugr_agrupado': 25,
+        'af_asgead_saldo_ne_ugr_detalhado': 25,
+        'as_asgead_ugr_scdp_executado_mes_detalhado': 20
+    };
 
-    iframeHeaders.forEach((header) => {
-      header.addEventListener("click", () => {
-        const card = header.parentElement;
-        const iframe = card.querySelector("iframe");
-        const icon = header.querySelector("i");
+    const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let tabelasCarregadas = {};
 
-        if (iframe) {
-          if (iframe.style.display === "block") {
-            iframe.style.display = "none";
-            icon.classList.replace("fa-chevron-up", "fa-chevron-down");
-          } else {
-            iframe.style.display = "block";
-            icon.classList.replace("fa-chevron-down", "fa-chevron-up");
-          }
+    // --- 2. GERENCIADOR DE CLIQUES (IFRAMES E TABELAS) ---
+    document.querySelectorAll('.chat-item h2').forEach(header => {
+      header.addEventListener('click', () => {
+        const parent = header.closest('.chat-item');
+        const content = parent.querySelector('.chat-content');
+        const iframe = parent.querySelector('iframe');
+        const icon = header.querySelector('i');
+        let target = null;
+
+        // Define quem deve abrir (prioridade para tabela/conteúdo)
+        if (content) target = content;
+        else if (iframe) target = iframe;
+
+        if (target) {
+            const isHidden = target.style.display === 'none' || target.style.display === '';
+
+            // Toggle Visual
+            target.style.display = isHidden ? 'block' : 'none';
+            icon.classList.toggle('fa-chevron-up', isHidden);
+            icon.classList.toggle('fa-chevron-down', !isHidden);
+
+            // Se for tabela e estiver abrindo, carrega os dados
+            if (isHidden && content) {
+                const table = content.querySelector('table');
+                if (table) loadTable(table.id.replace('tabela-', ''));
+            }
         }
       });
     });
 
-    /* --- PARTE B: Lógica para o Supabase (Saldo Financeiro) --- */
-    const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // --- 3. CARREGAMENTO DE DADOS ---
+    async function loadTable(viewName) {
+      if (tabelasCarregadas[viewName]) return;
 
-    let tabelasCarregadas = {};
+      const loading = document.getElementById(`loading-${viewName}`);
+      const tbody = document.querySelector(`#tabela-${viewName} tbody`);
+      const thead = document.querySelector(`#header-${viewName}`);
 
-    async function toggleSupabase(viewName) {
-        const container = document.getElementById(`container-${viewName}`);
-        const header = document.querySelector(`h2[onclick*="${viewName}"]`);
-        const icon = header.querySelector("i");
+      loading.style.display = 'block';
+      const { data, error } = await supabaseClient.from(viewName).select('*').limit(500);
+      loading.style.display = 'none';
 
-        // 1. Abrir ou Fechar visualmente
-        if (container.style.display === 'block') {
-            container.style.display = 'none';
-            icon.classList.replace("fa-chevron-up", "fa-chevron-down");
-            return;
-        } else {
-            container.style.display = 'block';
-            icon.classList.replace("fa-chevron-down", "fa-chevron-up");
+      if (error) {
+          tbody.innerHTML = `<tr><td colspan="100" style="color:red;text-align:center">Erro: ${error.message}</td></tr>`;
+          return;
+      }
+      if (!data || !data.length) {
+          tbody.innerHTML = `<tr><td colspan="100" style="text-align:center">Nenhum dado encontrado.</td></tr>`;
+          return;
+      }
+
+      // Configuração das Colunas
+      const colunas = Object.keys(data[0]);
+      thead.innerHTML = colunas.map(c => `<th>${c}</th>`).join('');
+
+      const configColunas = colunas.map(c => {
+          const isFinanceiro = c === 'Saldo' || c === 'Valor';
+          return {
+              title: c,
+              className: isFinanceiro ? "dt-body-right" : "",
+              render: function (data, type) {
+                  // Se for financeiro e for número puro, formata. Se for texto (já formatado no SQL), mantém.
+                  if (isFinanceiro && type === 'display' && typeof data === 'number') {
+                      return data.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                  }
+                  return data;
+              }
+          };
+      });
+
+      // Inicializa DataTables
+      $(`#tabela-${viewName}`).DataTable({
+        data: data.map(row => Object.values(row)),
+        columns: configColunas,
+        scrollX: true,
+        pageLength: configLinhas[viewName] || 10, // Aplica config de linhas
+        language: {
+            "sEmptyTable": "Nenhum registro encontrado",
+            "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+            "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+            "sLengthMenu": "_MENU_ resultados por página",
+            "sLoadingRecords": "Carregando...",
+            "sProcessing": "Processando...",
+            "sZeroRecords": "Nenhum registro encontrado",
+            "sSearch": "Pesquisar:",
+            "oPaginate": { "sNext": "Próximo", "sPrevious": "Anterior", "sFirst": "Primeiro", "sLast": "Último" }
         }
+      });
 
-        // 2. Se já carregou antes, não busca de novo
-        if (tabelasCarregadas[viewName]) return;
-
-        // 3. Buscar dados
-        const loading = document.getElementById(`loading-${viewName}`);
-        const tableId = `tabela-${viewName}`;
-
-        loading.style.display = 'block';
-
-        const { data, error } = await supabaseClient
-            .from(viewName)
-            .select('*')
-            .limit(500);
-
-        loading.style.display = 'none';
-
-        const tbody = document.querySelector(`#${tableId} tbody`);
-        const thead = document.querySelector(`#header-${viewName}`);
-
-        if (error) {
-            tbody.innerHTML = `<tr><td colspan="10" style="color:red; text-align:center">Erro: ${error.message}</td></tr>`;
-            return;
-        }
-
-        if (!data || data.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center">Nenhum dado encontrado.</td></tr>`;
-            return;
-        }
-
-        // 4. Montar Tabela e Configurar Colunas
-        const colunas = Object.keys(data[0]);
-        thead.innerHTML = colunas.map(c => `<th>${c}</th>`).join('');
-
-        const valores = data.map(row => Object.values(row));
-
-        // --- AQUI ESTÁ A MUDANÇA DA FORMATAÇÃO R$ ---
-        const configColunas = colunas.map(c => {
-            // Verifica se a coluna é "Saldo" para aplicar R$
-            if (c === 'Saldo') {
-                return {
-                    title: c,
-                    className: "dt-body-right", // Alinha números à direita
-                    render: function (data, type, row) {
-                        // Se for para exibir na tela, formata como Real
-                        if (type === 'display') {
-                            return parseFloat(data).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                        }
-                        // Para ordenar, mantém o número puro
-                        return data;
-                    }
-                };
-            }
-            // Outras colunas normais
-            return { title: c };
-        });
-        // --------------------------------------------
-
-        // Inicia plugin com TRADUÇÃO MANUAL
-        $(`#${tableId}`).DataTable({
-            data: valores,
-            columns: configColunas,
-            scrollX: true,
-            pageLength: 10,
-            language: {
-                "sEmptyTable": "Nenhum registro encontrado",
-                "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-                "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
-                "sInfoFiltered": "(Filtrados de _MAX_ registros)",
-                "sLengthMenu": "_MENU_ resultados por página",
-                "sLoadingRecords": "Carregando...",
-                "sProcessing": "Processando...",
-                "sZeroRecords": "Nenhum registro encontrado",
-                "sSearch": "Pesquisar:",
-                "oPaginate": {
-                    "sNext": "Próximo",
-                    "sPrevious": "Anterior",
-                    "sFirst": "Primeiro",
-                    "sLast": "Último"
-                }
-            }
-        });
-
-        tabelasCarregadas[viewName] = true;
+      tabelasCarregadas[viewName] = true;
     }
   </script>
 </body>
