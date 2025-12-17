@@ -6,7 +6,10 @@
   <title>Consultas UTFPR-CT</title>
 
   <!-- Font Awesome para ícones -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
 
   <style>
     body {
@@ -33,7 +36,7 @@
       margin: 0;
     }
 
-    /* 🔹 Título clicável (voltar ao index) */
+    /* Título clicável */
     header h1 a {
       color: white;
       text-decoration: none;
@@ -60,12 +63,12 @@
       padding: 30px 0;
     }
 
-    /* Cada chat individual */
+    /* Cada chat */
     .chat-item {
       width: 90%;
       box-sizing: border-box;
       border-radius: 1px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
       background-color: white;
       overflow: hidden;
       transition: all 0.3s ease;
@@ -92,7 +95,12 @@
       width: 100%;
       height: 500px;
       border: none;
-      display: none; /* inicial escondido */
+      display: none;
+    }
+
+    /* Iframes de formulário ocupando a altura da tela */
+    .form-iframe iframe {
+      height: 100vh;
     }
 
     footer {
@@ -114,17 +122,10 @@
     footer a:hover {
       color: #fff;
     }
-
-    /* 🔹 Ajuste especial para iframes de formulário (100% da altura real) */
-    .form-iframe iframe {
-      width: 100%;
-      height: 100vh;
-      display: none;
-    }
   </style>
 </head>
-<body>
 
+<body>
   <header>
     <h1>
       <i class="fa-solid fa-comments"></i>
@@ -134,62 +135,73 @@
   </header>
 
   <div class="chat-container">
-
-    <!-- 🔹 MANTIDO 1: Consulta Empenhos UTFPR-CT -->
+    <!-- Consulta Empenhos -->
     <div class="chat-item">
       <h2>
         Consulta Empenhos UTFPR-CT
         <i class="fa-solid fa-chevron-down"></i>
       </h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/form/34a67783-3867-4c0a-a233-a03cbf67703d"></iframe>
+      <iframe
+        src="https://n8n.arthuraaferreira.com.br/form/34a67783-3867-4c0a-a233-a03cbf67703d"
+      ></iframe>
     </div>
 
-    <!-- 🔹 MANTIDO 2: Cálculo valor bruto PF -->
+    <!-- Cálculo PF -->
     <div class="chat-item">
       <h2>
         Cálculo valor bruto de um Pagamento de PF
         <i class="fa-solid fa-chevron-down"></i>
       </h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/abc7f4cd-3162-43e8-9bd0-c7804828f96f/chat"></iframe>
+      <iframe
+        src="https://n8n.arthuraaferreira.com.br/webhook/abc7f4cd-3162-43e8-9bd0-c7804828f96f/chat"
+      ></iframe>
     </div>
 
-    <!-- 🔹 MANTIDO 3: Consulta Ordem Bancária -->
+    <!-- Consulta Ordem Bancária -->
     <div class="chat-item form-iframe">
       <h2>
         Consulta Ordem Bancária UTFPR-CT
         <i class="fa-solid fa-chevron-down"></i>
       </h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/form/6d72e203-bebc-4377-bae3-192e48fed0e1"></iframe>
+      <iframe
+        src="https://n8n.arthuraaferreira.com.br/form/6d72e203-bebc-4377-bae3-192e48fed0e1"
+      ></iframe>
     </div>
-
   </div>
 
   <footer>
     <p>&copy; 2025 Arthur Ferreira | ASGEAD-CT</p>
-    <div class="mt-2">
-      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
-      <a href="https://instagram.com/arthuraaferreira" target="_blank"><i class="fab fa-instagram"></i></a>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br">
+        <i class="fa-solid fa-envelope"></i>
+      </a>
+      <a
+        href="https://instagram.com/arthuraaferreira"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <i class="fab fa-instagram"></i>
+      </a>
     </div>
   </footer>
 
   <script>
-    // Script para abrir/fechar chat ao clicar no título
-    const chatHeaders = document.querySelectorAll('.chat-item h2');
-    chatHeaders.forEach(header => {
-      header.addEventListener('click', () => {
-        const iframe = header.nextElementSibling;
-        const icon = header.querySelector('i');
+    const chatHeaders = document.querySelectorAll(".chat-item h2");
 
-        if (iframe.style.display === 'block') {
-          iframe.style.display = 'none';
-          icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+    chatHeaders.forEach((header) => {
+      header.addEventListener("click", () => {
+        const iframe = header.nextElementSibling;
+        const icon = header.querySelector("i");
+
+        if (iframe.style.display === "block") {
+          iframe.style.display = "none";
+          icon.classList.replace("fa-chevron-up", "fa-chevron-down");
         } else {
-          iframe.style.display = 'block';
-          icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+          iframe.style.display = "block";
+          icon.classList.replace("fa-chevron-down", "fa-chevron-up");
         }
       });
     });
   </script>
-
 </body>
 </html>
