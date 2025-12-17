@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <!-- DataTables -->
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css">
 
   <style>
     body {
@@ -35,6 +35,11 @@
       margin: 0;
     }
 
+    header h1 a {
+      color: white;
+      text-decoration: none;
+    }
+
     header p {
       font-size: 1rem;
       margin-top: 10px;
@@ -51,11 +56,9 @@
 
     .chat-item {
       width: 95%;
-      border-radius: 1px;
       box-shadow: 0 3px 10px rgba(0,0,0,0.12);
       background-color: white;
       overflow: hidden;
-      transition: all 0.3s ease;
     }
 
     .chat-item h2 {
@@ -75,28 +78,24 @@
       background-color: #cce0ff;
     }
 
-    /* Conteúdo interno (iframe ou tabela) */
     .chat-content {
-      display: none;
-      padding: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+    .chat-content.open {
+      max-height: 2000px; /* suficiente para iframe */
     }
 
-    .chat-content iframe {
+
+    iframe {
       width: 100%;
-      height: 500px;
+      height: 520px;
       border: none;
     }
 
-    /* Tabelas */
     table.display {
       width: 100% !important;
-      margin: 0 auto;
-    }
-
-    #loading-saldo, #loading-financeiro {
-      text-align: center;
-      color: #003366;
-      padding: 20px;
     }
 
     footer {
@@ -106,273 +105,156 @@
       padding: 20px;
       font-size: 0.85rem;
     }
-
-    footer a {
-      color: #66ccff;
-      margin: 0 8px;
-      font-size: 1.1rem;
-      text-decoration: none;
-      transition: 0.3s;
-    }
-
-    footer a:hover {
-      color: #fff;
-    }
   </style>
 </head>
 
 <body>
-  <header>
-    <h1><i class="fa-solid fa-comments"></i> Consultas UTFPR-CT</h1>
-    <p>Chats internos da ASGEAD-CT</p>
-  </header>
 
-  <div class="chat-container">
+<header>
+  <h1>
+    <i class="fa-solid fa-comments"></i>
+    <a href="index.html">Consultas UTFPR-CT</a>
+  </h1>
+  <p>Consultas e ferramentas da ASGEAD-CT</p>
+</header>
 
-    <div class="chat-item">
-      <h2>Consulta Empenhos UTFPR-CT por Número <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/0a38394e-dd28-4270-b685-5b1b7672044c/chat"></iframe>
-      </div>
+<div class="chat-container">
+
+  <!-- 🔹 Empenhos UTFPR-CT (UNIFICADO) -->
+  <div class="chat-item">
+    <h2>Consulta Empenhos UTFPR-CT <i class="fa-solid fa-chevron-down"></i></h2>
+    <div class="chat-content">
+      <iframe src="https://n8n.arthuraaferreira.com.br/form/34a67783-3867-4c0a-a233-a03cbf67703d"></iframe>
     </div>
-
-    <div class="chat-item">
-      <h2>Consulta Empenhos UTFPR-CT por Processo <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/d266f6d2-437d-45da-b927-7dbef2057e8c/chat"></iframe>
-      </div>
-    </div>
-
-    <div class="chat-item">
-      <h2>Consulta Empenhos UTFPR-CT por Favorecido <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/bff20b35-3afa-4110-a09d-872e39704c17/chat"></iframe>
-      </div>
-    </div>
-
-    <div class="chat-item">
-      <h2>Consulta Empenhos UTFPR-CT por Elemento de Despesa <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/27ac0384-69c8-49e6-8f75-1cdbd5c57d24/chat"></iframe>
-      </div>
-    </div>
-
-    <div class="chat-item">
-      <h2>Consulta Empenhos UTFPR-CT por Plano Interno <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/2210184d-0c6f-46f1-9e9b-a8beb3bf7046/chat"></iframe>
-      </div>
-    </div>
-
-    <!-- Novo bloco: Saldo Financeiro -->
-    <div class="chat-item" id="saldo-financeiro-item">
-      <h2>Consulta Saldo Financeiro <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content" id="saldo-financeiro-content">
-        <p id="loading-financeiro">Carregando dados do Saldo Financeiro...</p>
-        <table id="saldoFinanceiroTable" class="display">
-          <thead>
-            <tr>
-              <th>Fonte</th>
-              <th>Descrição da Fonte</th>
-              <th>Vinculação</th>
-              <th>Descrição da Vinculação</th>
-              <th>Saldo (R$)</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Saldo Orçamentário -->
-    <div class="chat-item" id="saldo-orcamentario-item">
-      <h2>Consulta Saldo Orçamentário <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content" id="saldo-orcamentario-content">
-        <p id="loading-saldo">Carregando dados do Saldo Orçamentário...</p>
-        <table id="saldoOrcamentarioTable" class="display">
-          <thead>
-            <tr>
-              <th>Fonte</th>
-              <th>Programa</th>
-              <th>Ação</th>
-              <th>PT</th>
-              <th>PI</th>
-              <th>PI - Nome</th>
-              <th>PTRES</th>
-              <th>Categoria</th>
-              <th>Saldo (R$)</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="chat-item">
-      <h2>Consulta Saldo e Valor Gasto SIORG <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/2da3bf4c-5be3-49cf-b0ca-545d62bf0587/chat"></iframe>
-      </div>
-    </div>
-
   </div>
 
-  <footer>
-    <p>&copy; 2025 Arthur Ferreira | ASGEAD-CT</p>
-    <div class="mt-2">
-      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
-      <a href="https://instagram.com/arthuraaferreira" target="_blank"><i class="fab fa-instagram"></i></a>
+  <!-- 🔹 Saldo Financeiro -->
+  <div class="chat-item">
+    <h2>Saldo Financeiro <i class="fa-solid fa-chevron-down"></i></h2>
+    <div class="chat-content">
+      <p id="loading-saldofinanceiro" style="text-align:center;">Carregando dados...</p>
+      <table id="tabela-saldofinanceiro" class="display">
+        <thead>
+          <tr>
+            <th>UGR</th>
+            <th>Fonte</th>
+            <th>Vinculação</th>
+            <th>Saldo (R$)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
-  </footer>
+  </div>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
+  <!-- 🔹 Saldo Orçamentário (MANTIDO) -->
+  <div class="chat-item">
+    <h2>Consulta Saldo Orçamentário <i class="fa-solid fa-chevron-down"></i></h2>
+    <div class="chat-content">
+      <iframe src="ASGEAD-CT_saldo_orcamentario.html"></iframe>
+    </div>
+  </div>
 
-  <script>
-    // Configuração Supabase
-    const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  <!-- 🔹 SIORG (MANTIDO) -->
+  <div class="chat-item">
+    <h2>Consulta Saldo e Valor Gasto SIORG <i class="fa-solid fa-chevron-down"></i></h2>
+    <div class="chat-content">
+      <iframe src="ASGEAD-CT_siorg.html"></iframe>
+    </div>
+  </div>
 
-    let dataTableInitialized = false;
-    let dataTableFinanceiroInitialized = false;
+</div>
 
-    // -------- SALDO ORÇAMENTÁRIO --------
-    async function loadSaldoOrcamentario() {
-      const loading = document.getElementById('loading-saldo');
-      loading.style.display = 'block';
+<footer>
+  <p>&copy; 2025 Arthur Ferreira | ASGEAD-CT</p>
+</footer>
 
-      const { data, error } = await supabase
-        .from('utfpr_ct_saldo_orcamentario')
-        .select(`
-          fonte_detalhada,
-          programa_governo,
-          acao_governo,
-          pt,
-          pi,
-          pi_nome,
-          ptres,
-          categoria_gasto,
-          saldo_orcamentario
-        `);
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
 
-      loading.style.display = 'none';
+<script>
+  const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
 
-      if (error) {
-        console.error(error);
-        $('#saldoOrcamentarioTable tbody').html(`<tr><td colspan="9" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`);
-        return;
-      }
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  let tabelaSaldo;
 
-      if (data && data.length > 0) {
-        const formattedData = data.map(row => [
-          row.fonte_detalhada,
-          row.programa_governo,
-          row.acao_governo,
-          row.pt,
-          row.pi,
-          row.pi_nome,
-          row.ptres,
-          row.categoria_gasto,
-          `R$ ${parseFloat(row.saldo_orcamentario).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
-        ]);
+  async function loadSaldoFinanceiro() {
+    if (tabelaSaldo) return;
 
-        if (!dataTableInitialized) {
-          $('#saldoOrcamentarioTable').DataTable({
-            data: formattedData,
-            language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
-            scrollX: true,
-            paging: true
-          });
-          dataTableInitialized = true;
-        } else {
-          const table = $('#saldoOrcamentarioTable').DataTable();
-          table.clear().rows.add(formattedData).draw();
-        }
-      } else {
-        $('#saldoOrcamentarioTable tbody').html(`<tr><td colspan="9" style="text-align:center;">Nenhum dado encontrado.</td></tr>`);
-      }
+    const loading = document.getElementById('loading-saldofinanceiro');
+    loading.style.display = 'block';
+
+    const { data, error } = await supabase
+      .from('af_asgead_saldofinanceiro')
+      .select('*');
+
+    loading.style.display = 'none';
+
+    if (error) {
+      document.querySelector('#tabela-saldofinanceiro tbody').innerHTML =
+        `<tr><td colspan="4" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`;
+      return;
     }
 
-    // -------- SALDO FINANCEIRO --------
-    async function loadSaldoFinanceiro() {
-      const loading = document.getElementById('loading-financeiro');
-      loading.style.display = 'block';
+    const rows = data.map(r => [
+      r["UGR"],
+      r["Fonte"],
+      r["Vinculação"],
+      Number(r["Saldo"]).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      })
+    ]);
 
-      const { data, error } = await supabase
-        .from('utfpr_saldo_financeiro')
-        .select(`
-          fonte_recursos_detalhada_codigo,
-          fonte_recursos_detalhada_descricao,
-          vinculacao_pagamento_cod,
-          vinculacao_pagamento_descricao,
-          saldo_financeiro
-        `)
-        .eq('ug_executora', 154358);
-
-      loading.style.display = 'none';
-
-      if (error) {
-        console.error(error);
-        $('#saldoFinanceiroTable tbody').html(
-          `<tr><td colspan="5" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`
-        );
-        return;
-      }
-
-      if (data && data.length > 0) {
-        const formattedData = data.map(row => [
-          row.fonte_recursos_detalhada_codigo,
-          row.fonte_recursos_detalhada_descricao,
-          row.vinculacao_pagamento_cod || '-',
-          row.vinculacao_pagamento_descricao || '-',
-          `R$ ${parseFloat(row.saldo_financeiro).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
-        ]);
-
-        if (!dataTableFinanceiroInitialized) {
-          $('#saldoFinanceiroTable').DataTable({
-            data: formattedData,
-            language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
-            scrollX: true,
-            paging: true
-          });
-          dataTableFinanceiroInitialized = true;
-        } else {
-          const table = $('#saldoFinanceiroTable').DataTable();
-          table.clear().rows.add(formattedData).draw();
-        }
-      } else {
-        $('#saldoFinanceiroTable tbody').html(
-          `<tr><td colspan="5" style="text-align:center;">Nenhum dado encontrado.</td></tr>`
-        );
-      }
-    }
-
-    // -------- Acordeão --------
-    document.querySelectorAll('.chat-item h2').forEach(header => {
-      header.addEventListener('click', () => {
-        const content = header.nextElementSibling;
-        const icon = header.querySelector('i');
-        const isSaldoOrcamentario = header.closest('.chat-item').id === 'saldo-orcamentario-item';
-        const isSaldoFinanceiro = header.closest('.chat-item').id === 'saldo-financeiro-item';
-
-        const isOpen = content.style.display === 'block';
-        // Fecha todos
-        document.querySelectorAll('.chat-content').forEach(c => c.style.display = 'none');
-        document.querySelectorAll('.chat-item h2 i').forEach(i => i.classList.replace('fa-chevron-up', 'fa-chevron-down'));
-
-        // Abre ou fecha o atual
-        if (!isOpen) {
-          content.style.display = 'block';
-          icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
-
-          if (isSaldoOrcamentario) loadSaldoOrcamentario();
-          if (isSaldoFinanceiro) loadSaldoFinanceiro();
-        }
-      });
+    tabelaSaldo = $('#tabela-saldofinanceiro').DataTable({
+      data: rows,
+      language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
+      scrollX: true,
+      pageLength: 20
     });
-  </script>
+  }
+
+  /* =====================================================
+     ✅ ACORDEÃO CORRIGIDO (compatível com max-height)
+     ===================================================== */
+
+  document.querySelectorAll('.chat-item h2').forEach(h => {
+    h.addEventListener('click', () => {
+      const content = h.nextElementSibling;
+      const icon = h.querySelector('i');
+      const isOpen = content.classList.contains('open');
+
+      // Fecha todos
+      document.querySelectorAll('.chat-content').forEach(c => {
+        c.classList.remove('open');
+      });
+      document.querySelectorAll('.chat-item h2 i').forEach(i => {
+        i.className = 'fa-solid fa-chevron-down';
+      });
+
+      // Abre o clicado
+      if (!isOpen) {
+        content.classList.add('open');
+        icon.className = 'fa-solid fa-chevron-up';
+
+        // Força render correto do iframe (importante)
+        const iframe = content.querySelector('iframe');
+        if (iframe && !iframe.dataset.loaded) {
+          iframe.dataset.loaded = 'true';
+          iframe.src = iframe.src;
+        }
+
+        // Carrega Supabase só quando abrir
+        if (h.textContent.includes('Saldo Financeiro')) {
+          loadSaldoFinanceiro();
+        }
+      }
+    });
+  });
+</script>
+
+
 </body>
 </html>
