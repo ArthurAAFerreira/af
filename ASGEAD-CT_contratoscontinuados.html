@@ -5,142 +5,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Contratos Continuados da UTFPR-CT</title>
 
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <!-- DataTables -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css">
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background-color: #f9f9fb;
-      color: #333;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; background-color: #f9f9fb; color: #333; }
 
-    header {
-      background: linear-gradient(135deg, #001f3f, #003366);
-      color: white;
-      padding: 50px 20px;
-      text-align: center;
-    }
+    /* Header */
+    header { background: linear-gradient(135deg, #001f3f, #003366); color: white; padding: 50px 20px; text-align: center; }
+    header h1 { font-size: 2rem; display: flex; justify-content: center; align-items: center; gap: 10px; margin: 0; }
+    header h1 a { color: white; text-decoration: none; transition: 0.3s; }
+    header h1 a:hover { color: #66ccff; text-decoration: underline; }
+    header p { font-size: 1rem; margin-top: 10px; opacity: 0.9; }
 
-    header h1 {
-      font-size: 2rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin: 0;
-    }
+    /* Layout Chat */
+    .chat-container { display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 30px 0; }
+    .chat-item { width: 90%; box-sizing: border-box; border-radius: 1px; box-shadow: 0 3px 10px rgba(0,0,0,0.12); background-color: white; overflow: hidden; transition: all 0.3s ease; }
 
-    header p {
-      font-size: 1rem;
-      margin-top: 10px;
-      opacity: 0.9;
-    }
+    /* Cabeçalho do Card */
+    .chat-item h2 { margin: 0; padding: 15px 20px; font-size: 1.1em; font-weight: bold; color: #003366; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background-color: #e6f0ff; }
+    .chat-item h2:hover { background-color: #cce0ff; }
 
-    .chat-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
-      padding: 30px 0;
-    }
+    /* Conteúdos */
+    .chat-item iframe { width: 100%; height: 500px; border: none; display: none; }
+    .chat-content { display: none; padding: 10px; overflow-x: auto; background-color: #fff; }
 
-    .chat-item {
-      width: 90%;
-      box-sizing: border-box;
-      border-radius: 1px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
-      background-color: white;
-      overflow: hidden;
-      transition: all 0.3s ease;
-    }
+    /* Tabelas */
+    table.dataTable { width: 100% !important; border-collapse: collapse; }
+    .dataTables_wrapper { color: #333; padding: 10px; }
+    table th { background-color: #003366 !important; color: white !important; }
 
-    .chat-item h2 {
-      margin: 0;
-      padding: 15px 20px;
-      font-size: 1.1em;
-      font-weight: bold;
-      color: #003366;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #e6f0ff;
-    }
-
-    .chat-item h2:hover {
-      background-color: #cce0ff;
-    }
-
-    .chat-content {
-      display: none;
-      padding: 0px;
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100% !important;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
-
-    th {
-      background-color: #003366;
-      color: white;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
-
-    tr:hover {
-      background-color: #e6f0ff;
-    }
-
-    footer {
-      background: #001f3f;
-      color: #ccc;
-      text-align: center;
-      padding: 20px;
-      font-size: 0.85rem;
-    }
-
-    footer a {
-      color: #66ccff;
-      margin: 0 8px;
-      font-size: 1.1rem;
-      text-decoration: none;
-      transition: 0.3s;
-    }
-
-    footer a:hover {
-      color: #fff;
-    }
+    /* Footer */
+    footer { background: #001f3f; color: #ccc; text-align: center; padding: 20px; font-size: 0.85rem; }
+    footer a { color: #66ccff; margin: 0 8px; font-size: 1.1rem; text-decoration: none; transition: 0.3s; }
+    footer a:hover { color: #fff; }
   </style>
 </head>
 
 <body>
   <header>
-    <h1><i class="fa-solid fa-database"></i> Contratos Continuados</h1>
+    <h1>
+      <i class="fa-solid fa-database"></i>
+      <a href="index.html">Contratos Continuados</a>
+    </h1>
     <p>Consultas e Informações referentes aos Contratos Continuados da UTFPR-CT</p>
   </header>
 
   <div class="chat-container">
 
-    <!-- 🔹 Necessidade Orçamentária -->
+
     <div class="chat-item">
       <h2>Continuados – Necessidade Orçamentária <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
-        <p id="loading-af_asgead_continuados_necessidade_orcamentaria" style="text-align:center;">Carregando dados...</p>
+        <p id="loading-af_asgead_continuados_necessidade_orcamentaria" style="text-align:center; padding:20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+        </p>
         <table id="tabela-af_asgead_continuados_necessidade_orcamentaria" class="display">
           <thead><tr id="header-af_asgead_continuados_necessidade_orcamentaria"></tr></thead>
           <tbody></tbody>
@@ -148,11 +67,12 @@
       </div>
     </div>
 
-    <!-- 🔹 Executado -->
     <div class="chat-item">
-      <h2>Continuados – Executado por Mês de Referência <i class="fa-solid fa-chevron-down"></i></h2>
+      <h2>Continuados – Executado por Mês <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
-        <p id="loading-af_asgead_continuados_executados_por_mes" style="text-align:center;">Carregando dados...</p>
+        <p id="loading-af_asgead_continuados_executados_por_mes" style="text-align:center; padding:20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+        </p>
         <table id="tabela-af_asgead_continuados_executados_por_mes" class="display">
           <thead><tr id="header-af_asgead_continuados_executados_por_mes"></tr></thead>
           <tbody></tbody>
@@ -160,11 +80,12 @@
       </div>
     </div>
 
-    <!-- 🔹 Previsto -->
     <div class="chat-item">
-      <h2>Continuados – Previsto por Mês de Referência <i class="fa-solid fa-chevron-down"></i></h2>
+      <h2>Continuados – Previsto por Mês <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
-        <p id="loading-af_asgead_continuados_previstos_por_mes" style="text-align:center;">Carregando dados...</p>
+        <p id="loading-af_asgead_continuados_previstos_por_mes" style="text-align:center; padding:20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+        </p>
         <table id="tabela-af_asgead_continuados_previstos_por_mes" class="display">
           <thead><tr id="header-af_asgead_continuados_previstos_por_mes"></tr></thead>
           <tbody></tbody>
@@ -173,17 +94,13 @@
     </div>
 
     <div class="chat-item">
-      <h2>Atualização Base de Dados dos Identificadores dos Contratos para o Relatório <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/form/f4bccbce-24ee-42f3-b924-85d204edcc34"></iframe>
-      </div>
+      <h2>Atualização Base de Dados - Identificadores <i class="fa-solid fa-chevron-down"></i></h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/form/f4bccbce-24ee-42f3-b924-85d204edcc34"></iframe>
     </div>
 
     <div class="chat-item">
-      <h2>Atualização Base de Dados dos valores mensais dos contratos. <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/form/0e54689d-2439-454e-9b0b-49e0c964b9cc"></iframe>
-      </div>
+      <h2>Atualização Base de Dados - Valores Mensais <i class="fa-solid fa-chevron-down"></i></h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/form/0e54689d-2439-454e-9b0b-49e0c964b9cc"></iframe>
     </div>
 
   </div>
@@ -200,72 +117,112 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
 
-<script>
-  const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  <script>
+    // --- 1. CONFIGURAÇÕES: CONTROLE DE LINHAS POR PÁGINA ---
+    const configLinhas = {
+        // Tabelas deste arquivo:
+        'af_asgead_continuados_necessidade_orcamentaria': 50,
+        'af_asgead_continuados_executados_por_mes': 50,
+        'af_asgead_continuados_previstos_por_mes': 50
+    };
 
-  let tablesInitialized = {};
+    const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let tabelasCarregadas = {};
 
-  async function loadTable(viewName) {
-    const loading = document.getElementById(`loading-${viewName}`);
-    const header = document.getElementById(`header-${viewName}`);
-    const tbody = document.querySelector(`#tabela-${viewName} tbody`);
+    // --- 2. GERENCIADOR DE CLIQUES (IFRAMES E TABELAS) ---
+    document.querySelectorAll('.chat-item h2').forEach(header => {
+      header.addEventListener('click', () => {
+        const parent = header.closest('.chat-item');
+        const content = parent.querySelector('.chat-content');
+        const iframe = parent.querySelector('iframe');
+        const icon = header.querySelector('i');
+        let target = null;
 
-    loading.style.display = 'block';
+        // Define quem deve abrir (prioridade para tabela/conteúdo)
+        if (content) target = content;
+        else if (iframe) target = iframe;
 
-    const { data, error } = await supabase.from(viewName).select('*').limit(500);
-    loading.style.display = 'none';
+        if (target) {
+            const isHidden = target.style.display === 'none' || target.style.display === '';
 
-    if (error) {
-      tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`;
-      return;
-    }
+            // Toggle Visual
+            target.style.display = isHidden ? 'block' : 'none';
+            icon.classList.toggle('fa-chevron-up', isHidden);
+            icon.classList.toggle('fa-chevron-down', !isHidden);
 
-    if (!data || data.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;">Nenhum registro encontrado</td></tr>`;
-      return;
-    }
-
-    header.innerHTML = Object.keys(data[0]).map(c => `<th>${c}</th>`).join('');
-    const tableData = data.map(row => Object.values(row));
-
-    if (!tablesInitialized[viewName]) {
-      $(`#tabela-${viewName}`).DataTable({
-        data: tableData,
-        columns: Object.keys(data[0]).map(c => ({ title: c })),
-        language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
-        scrollX: true,
-        pageLength: 20
+            // Se for tabela e estiver abrindo, carrega os dados
+            if (isHidden && content) {
+                const table = content.querySelector('table');
+                if (table) loadTable(table.id.replace('tabela-', ''));
+            }
+        }
       });
-      tablesInitialized[viewName] = true;
-    } else {
-      const table = $(`#tabela-${viewName}`).DataTable();
-      table.clear().rows.add(tableData).draw();
-    }
-  }
-
-  document.querySelectorAll('.chat-item h2').forEach(header => {
-    header.addEventListener('click', () => {
-      const content = header.nextElementSibling;
-      const icon = header.querySelector('i');
-      const title = header.textContent;
-
-      // Alterna visibilidade apenas do item clicado
-      const isOpen = content.style.display === 'block';
-      content.style.display = isOpen ? 'none' : 'block';
-      icon.classList.toggle('fa-chevron-up', !isOpen);
-      icon.classList.toggle('fa-chevron-down', isOpen);
-
-      // Carrega dados apenas na primeira abertura
-      if (!isOpen) {
-        if (title.includes('Necessidade')) loadTable('af_asgead_continuados_necessidade_orcamentaria');
-        if (title.includes('Executado')) loadTable('af_asgead_continuados_executados_por_mes');
-        if (title.includes('Previsto')) loadTable('af_asgead_continuados_previstos_por_mes');
-      }
     });
-  });
-</script>
 
+    // --- 3. CARREGAMENTO DE DADOS ---
+    async function loadTable(viewName) {
+      if (tabelasCarregadas[viewName]) return;
+
+      const loading = document.getElementById(`loading-${viewName}`);
+      const tbody = document.querySelector(`#tabela-${viewName} tbody`);
+      const thead = document.querySelector(`#header-${viewName}`);
+
+      loading.style.display = 'block';
+      const { data, error } = await supabaseClient.from(viewName).select('*').limit(500);
+      loading.style.display = 'none';
+
+      if (error) {
+          tbody.innerHTML = `<tr><td colspan="100" style="color:red;text-align:center">Erro: ${error.message}</td></tr>`;
+          return;
+      }
+      if (!data || !data.length) {
+          tbody.innerHTML = `<tr><td colspan="100" style="text-align:center">Nenhum dado encontrado.</td></tr>`;
+          return;
+      }
+
+      // Configuração das Colunas
+      const colunas = Object.keys(data[0]);
+      thead.innerHTML = colunas.map(c => `<th>${c}</th>`).join('');
+
+      const configColunas = colunas.map(c => {
+          const isFinanceiro = c.includes('Saldo') || c.includes('Valor') || c.includes('Total');
+          return {
+              title: c,
+              className: isFinanceiro ? "dt-body-right" : "",
+              render: function (data, type) {
+                  // Se for financeiro e for número puro, formata. Se for texto (já formatado no SQL), mantém.
+                  if (isFinanceiro && type === 'display' && typeof data === 'number') {
+                      return data.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                  }
+                  return data;
+              }
+          };
+      });
+
+      // Inicializa DataTables
+      $(`#tabela-${viewName}`).DataTable({
+        data: data.map(row => Object.values(row)),
+        columns: configColunas,
+        scrollX: true,
+        pageLength: configLinhas[viewName] || 10, // Aplica config de linhas
+        language: {
+            "sEmptyTable": "Nenhum registro encontrado",
+            "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+            "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+            "sLengthMenu": "_MENU_ resultados por página",
+            "sLoadingRecords": "Carregando...",
+            "sProcessing": "Processando...",
+            "sZeroRecords": "Nenhum registro encontrado",
+            "sSearch": "Pesquisar:",
+            "oPaginate": { "sNext": "Próximo", "sPrevious": "Anterior", "sFirst": "Primeiro", "sLast": "Último" }
+        }
+      });
+
+      tabelasCarregadas[viewName] = true;
+    }
+  </script>
 </body>
 </html>
