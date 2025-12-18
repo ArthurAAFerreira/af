@@ -5,167 +5,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Consultas de GRUs e Arrecadação Própria da UTFPR-CT</title>
 
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <!-- DataTables -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css">
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background-color: #f9f9fb;
-      color: #333;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; background-color: #f9f9fb; color: #333; }
 
-    header {
-      background: linear-gradient(135deg, #001f3f, #003366);
-      color: white;
-      padding: 50px 20px;
-      text-align: center;
-    }
+    /* Header */
+    header { background: linear-gradient(135deg, #001f3f, #003366); color: white; padding: 50px 20px; text-align: center; }
+    header h1 { font-size: 2rem; display: flex; justify-content: center; align-items: center; gap: 10px; margin: 0; }
+    header h1 a { color: white; text-decoration: none; transition: 0.3s; }
+    header h1 a:hover { color: #66ccff; text-decoration: underline; }
+    header p { font-size: 1rem; margin-top: 10px; opacity: 0.9; }
 
-    header h1 {
-      font-size: 2rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin: 0;
-    }
+    /* Layout Chat */
+    .chat-container { display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 30px 0; }
+    .chat-item { width: 95%; box-sizing: border-box; border-radius: 1px; box-shadow: 0 3px 10px rgba(0,0,0,0.12); background-color: white; overflow: hidden; transition: all 0.3s ease; }
 
-    header p {
-      font-size: 1rem;
-      margin-top: 10px;
-      opacity: 0.9;
-    }
+    /* Cabeçalho do Card */
+    .chat-item h2 { margin: 0; padding: 15px 20px; font-size: 1.1em; font-weight: bold; color: #003366; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background-color: #e6f0ff; }
+    .chat-item h2:hover { background-color: #cce0ff; }
 
-    .chat-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
-      padding: 30px 0;
-    }
+    /* Conteúdos */
+    .chat-item iframe { width: 100%; height: 500px; border: none; display: none; }
+    .chat-content { display: none; padding: 10px; overflow-x: auto; background-color: #fff; }
 
-    .chat-item {
-      width: 95%;
-      border-radius: 1px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
-      background-color: white;
-      overflow: hidden;
-      transition: all 0.3s ease;
-    }
+    /* Tabelas */
+    table.dataTable { width: 100% !important; border-collapse: collapse; }
+    .dataTables_wrapper { color: #333; padding: 10px; }
+    table th { background-color: #003366 !important; color: white !important; }
 
-    .chat-item h2 {
-      margin: 0;
-      padding: 15px 20px;
-      font-size: 1.1em;
-      font-weight: bold;
-      color: #003366;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #e6f0ff;
-    }
-
-    .chat-item h2:hover {
-      background-color: #cce0ff;
-    }
-
-    .chat-content {
-      display: none;
-      padding: 0;
-    }
-
-    table.display {
-      width: 100% !important;
-      margin: 0 auto;
-    }
-
-    iframe {
-      width: 100%;
-      height: 500px;
-      border: none;
-    }
-
-    footer {
-      background: #001f3f;
-      color: #ccc;
-      text-align: center;
-      padding: 20px;
-      font-size: 0.85rem;
-    }
-
-    footer a {
-      color: #66ccff;
-      margin: 0 8px;
-      font-size: 1.1rem;
-      text-decoration: none;
-      transition: 0.3s;
-    }
-
-    footer a:hover {
-      color: #fff;
-    }
+    /* Footer */
+    footer { background: #001f3f; color: #ccc; text-align: center; padding: 20px; font-size: 0.85rem; }
+    footer a { color: #66ccff; margin: 0 8px; font-size: 1.1rem; text-decoration: none; transition: 0.3s; }
+    footer a:hover { color: #fff; }
   </style>
 </head>
 
 <body>
   <header>
-    <h1><i class="fa-solid fa-database"></i> Consultas de GRUs e Arrecadação Própria da UTFPR-CT</h1>
+    <h1>
+      <i class="fa-solid fa-database"></i>
+      <a href="index.html">Consultas de GRUs e Arrecadação Própria</a>
+    </h1>
     <p>Busque as GRUs pagas e dados de arrecadação própria por filtros e agrupadores.</p>
   </header>
 
   <div class="chat-container">
 
-    <!-- 🔹 Consulta de GRU por Referência -->
     <div class="chat-item">
-      <h2>Consulta de GRU por Referência <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/27cfedb4-76c2-4d6b-92ca-35fe0766b4f2/chat"></iframe>
-      </div>
+      <h2>Consulta de GRU<i class="fa-solid fa-chevron-down"></i></h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/form/820d6b79-9ceb-4b2b-a835-3ba46c17e6bb" style="height: 650px;"></iframe>
     </div>
 
-    <!-- 🔹 Consulta de GRU por CPF/CNPJ -->
-    <div class="chat-item">
-      <h2>Consulta de GRU por CPF/CNPJ <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/c894df5c-dd72-4473-8332-9c42f6429067/chat"></iframe>
-      </div>
-    </div>
-
-    <!-- 🔹 Consulta de GRU por Código de Recolhimento -->
-    <div class="chat-item">
-      <h2>Consulta de GRU por Código de Recolhimento <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/4721d40c-4c64-4758-80f9-2a8942f1e61b/chat"></iframe>
-      </div>
-    </div>
-
-    <!-- 🔹 Consulta de GRU por mês -->
-    <div class="chat-item">
-      <h2>Consulta de GRU por mês - em desenvolvimento <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/27cfedb4-76c2-4d6b-92ca-35fe0766b4f2/chat"></iframe>
-      </div>
-    </div>
-
-    <!-- 🔹 Consulta de GRU total -->
-    <div class="chat-item">
-      <h2>Consulta de GRU total - resultado por e-mail - em desenvolvimento <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/27cfedb4-76c2-4d6b-92ca-35fe0766b4f2/chat"></iframe>
-      </div>
-    </div>
-
-    <!-- 🔹 Resumo GRU por Referência -->
     <div class="chat-item">
       <h2>Resumo GRU por Referência <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
-        <p id="loading-af_asgead_resumo_sisgru" style="text-align:center;">Carregando dados...</p>
+        <p id="loading-af_asgead_resumo_sisgru" style="text-align:center; padding:20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+        </p>
         <table id="tabela-af_asgead_resumo_sisgru" class="display">
           <thead><tr id="header-af_asgead_resumo_sisgru"></tr></thead>
           <tbody></tbody>
@@ -173,11 +71,12 @@
       </div>
     </div>
 
-    <!-- 🔹 Resultado Valores Arrecadados e Repassados por UGR -->
     <div class="chat-item">
       <h2>Resultado Valores Arrecadados e Repassados por UGR <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
-        <p id="loading-af_asgead__resultado_arrecadado_remanejado" style="text-align:center;">Carregando dados...</p>
+        <p id="loading-af_asgead__resultado_arrecadado_remanejado" style="text-align:center; padding:20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+        </p>
         <table id="tabela-af_asgead__resultado_arrecadado_remanejado" class="display">
           <thead><tr id="header-af_asgead__resultado_arrecadado_remanejado"></tr></thead>
           <tbody></tbody>
@@ -185,11 +84,12 @@
       </div>
     </div>
 
-    <!-- 🔹 Arrecadação por Projeto/Referência -->
     <div class="chat-item">
       <h2>Arrecadação por Projeto/Referência com Valores Detalhados <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
-        <p id="loading-af_asgead__arrecadacao_ugr_completo" style="text-align:center;">Carregando dados...</p>
+        <p id="loading-af_asgead__arrecadacao_ugr_completo" style="text-align:center; padding:20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+        </p>
         <table id="tabela-af_asgead__arrecadacao_ugr_completo" class="display">
           <thead><tr id="header-af_asgead__arrecadacao_ugr_completo"></tr></thead>
           <tbody></tbody>
@@ -197,11 +97,12 @@
       </div>
     </div>
 
-    <!-- 🔹 Arrecadação por UGR -->
     <div class="chat-item">
       <h2>Arrecadação por UGR com Valores Detalhados <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
-        <p id="loading-af_asgead__arrecadacao_ugr_completo_agrupado" style="text-align:center;">Carregando dados...</p>
+        <p id="loading-af_asgead__arrecadacao_ugr_completo_agrupado" style="text-align:center; padding:20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+        </p>
         <table id="tabela-af_asgead__arrecadacao_ugr_completo_agrupado" class="display">
           <thead><tr id="header-af_asgead__arrecadacao_ugr_completo_agrupado"></tr></thead>
           <tbody></tbody>
@@ -209,11 +110,12 @@
       </div>
     </div>
 
-    <!-- 🔹 Valores Repassados -->
     <div class="chat-item">
       <h2>Valores Repassados de Recurso Próprio <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
-        <p id="loading-af_asgead_remanejamento_arrecadacao_propria" style="text-align:center;">Carregando dados...</p>
+        <p id="loading-af_asgead_remanejamento_arrecadacao_propria" style="text-align:center; padding:20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+        </p>
         <table id="tabela-af_asgead_remanejamento_arrecadacao_propria" class="display">
           <thead><tr id="header-af_asgead_remanejamento_arrecadacao_propria"></tr></thead>
           <tbody></tbody>
@@ -231,100 +133,126 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
 
-<!-- trecho alterado do script ao final do seu arquivo -->
-<script>
-  const SUPABASE_URL = 'https://xqoutviueorajuremsrh.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhxb3V0dml1ZW9yYWp1cmVtc3JoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NjAwNDQsImV4cCI6MjA3MDIzNjA0NH0.U_3WDVRGG8o39cfehMnBUGs0HOEi7Di-LueXw_sD7U0';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  <script>
+    // --- 1. CONFIGURAÇÕES: CONTROLE DE LINHAS POR PÁGINA ---
+    const configLinhas = {
+        'af_asgead_resumo_sisgru': 25,
+        'af_asgead__resultado_arrecadado_remanejado': 25,
+        'af_asgead__arrecadacao_ugr_completo': 50, // Tabela grande
+        'af_asgead__arrecadacao_ugr_completo_agrupado': 25,
+        'af_asgead_remanejamento_arrecadacao_propria': 25
+    };
 
-  let tablesInitialized = {};
+    // --- CHAVES ESPECÍFICAS DESTE ARQUIVO ---
+    const SUPABASE_URL = 'https://xqoutviueorajuremsrh.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhxb3V0dml1ZW9yYWp1cmVtc3JoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NjAwNDQsImV4cCI6MjA3MDIzNjA0NH0.U_3WDVRGG8o39cfehMnBUGs0HOEi7Di-LueXw_sD7U0';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let tabelasCarregadas = {};
 
-  async function loadTable(viewName) {
-    const loading = document.getElementById(`loading-${viewName}`);
-    const header = document.getElementById(`header-${viewName}`);
-    const tbody = document.querySelector(`#tabela-${viewName} tbody`);
+    // --- 2. GERENCIADOR DE CLIQUES (IFRAMES E TABELAS) ---
+    document.querySelectorAll('.chat-item h2').forEach(header => {
+      header.addEventListener('click', () => {
+        const parent = header.closest('.chat-item');
+        const content = parent.querySelector('.chat-content');
+        const iframe = parent.querySelector('iframe');
+        const icon = header.querySelector('i');
+        let target = null;
 
-    loading.style.display = 'block';
-    const { data, error } = await supabase.from(viewName).select('*').limit(1000);
-    loading.style.display = 'none';
+        // Prioridade: Conteúdo (Tabela) > Iframe
+        if (content) target = content;
+        else if (iframe) target = iframe;
 
-    if (error) {
-      tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;color:red;">Erro: ${error.message}</td></tr>`;
-      return;
-    }
+        if (target) {
+            const isHidden = target.style.display === 'none' || target.style.display === '';
 
-    if (!data || data.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="15" style="text-align:center;">Nenhum registro encontrado</td></tr>`;
-      return;
-    }
+            // Toggle Visual
+            target.style.display = isHidden ? 'block' : 'none';
+            icon.classList.toggle('fa-chevron-up', isHidden);
+            icon.classList.toggle('fa-chevron-down', !isHidden);
 
-    header.innerHTML = Object.keys(data[0]).map(c => `<th>${c}</th>`).join('');
-
-    // 🔹 Transformar a coluna "Consulta FUNTEF" em link clicável
-    const tableData = data.map(row => {
-      const newRow = { ...row };
-      if (viewName === 'af_asgead__arrecadacao_ugr_completo' && row["Consulta FUNTEF"]) {
-        newRow["Consulta FUNTEF"] = `<a href="${row["Consulta FUNTEF"]}" target="_blank" style="color:#004080;font-weight:bold;text-decoration:none;">Projeto FUNTEF</a>`;
-      }
-      return newRow;
-    });
-
-    if (!tablesInitialized[viewName]) {
-      $(`#tabela-${viewName}`).DataTable({
-        data: tableData,
-        columns: Object.keys(data[0]).map(c => ({
-          title: c,
-          data: c,
-          render: function (data, type, row) {
-            if (type === 'display') return data;
-            return data;
-          }
-        })),
-        language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
-        scrollX: true,
-        pageLength: 50,
-        columnDefs: [
-          {
-            targets: Object.keys(data[0]).indexOf("Consulta FUNTEF"),
-            render: function (data) {
-              return data || '';
+            // Se for tabela e estiver abrindo, carrega
+            if (isHidden && content) {
+                const table = content.querySelector('table');
+                if (table) loadTable(table.id.replace('tabela-', ''));
             }
-          }
-        ]
+        }
       });
-      tablesInitialized[viewName] = true;
-    } else {
-      const table = $(`#tabela-${viewName}`).DataTable();
-      table.clear().rows.add(tableData).draw();
-    }
-  }
-
-  document.querySelectorAll('.chat-item h2').forEach(header => {
-    header.addEventListener('click', () => {
-      const content = header.nextElementSibling;
-      const icon = header.querySelector('i');
-      const title = header.textContent;
-      const isOpen = content.style.display === 'block';
-
-      content.style.display = isOpen ? 'none' : 'block';
-      icon.classList.toggle('fa-chevron-up', !isOpen);
-      icon.classList.toggle('fa-chevron-down', isOpen);
-
-      if (!isOpen) {
-        if (title.includes('Resumo GRU')) loadTable('af_asgead_resumo_sisgru');
-        if (title.includes('Resultado Valores')) loadTable('af_asgead__resultado_arrecadado_remanejado');
-        if (title.includes('Projeto/Referência')) loadTable('af_asgead__arrecadacao_ugr_completo');
-        if (title.includes('UGR com Valores')) loadTable('af_asgead__arrecadacao_ugr_completo_agrupado');
-        if (title.includes('Repassados')) loadTable('af_asgead_remanejamento_arrecadacao_propria');
-      }
     });
-  });
-</script>
 
+    // --- 3. CARREGAMENTO DE DADOS ---
+    async function loadTable(viewName) {
+      if (tabelasCarregadas[viewName]) return;
+
+      const loading = document.getElementById(`loading-${viewName}`);
+      const tbody = document.querySelector(`#tabela-${viewName} tbody`);
+      const thead = document.querySelector(`#header-${viewName}`);
+
+      loading.style.display = 'block';
+      // Limite maior para tabelas de arrecadação
+      const { data, error } = await supabaseClient.from(viewName).select('*').limit(1000);
+      loading.style.display = 'none';
+
+      if (error) {
+          tbody.innerHTML = `<tr><td colspan="100" style="color:red;text-align:center">Erro: ${error.message}</td></tr>`;
+          return;
+      }
+      if (!data || !data.length) {
+          tbody.innerHTML = `<tr><td colspan="100" style="text-align:center">Nenhum dado encontrado.</td></tr>`;
+          return;
+      }
+
+      // Configuração das Colunas
+      const colunas = Object.keys(data[0]);
+      thead.innerHTML = colunas.map(c => `<th>${c}</th>`).join('');
+
+      const configColunas = colunas.map(c => {
+          const isFinanceiro = c.includes('Valor') || c.includes('Total') || c.includes('Saldo');
+          const isLink = c === 'Consulta FUNTEF'; // Identifica a coluna do link
+
+          return {
+              title: c,
+              className: isFinanceiro ? "dt-body-right" : "",
+              render: function (data, type) {
+                  // Lógica do Link FUNTEF
+                  if (isLink && data) {
+                       return `<a href="${data}" target="_blank" style="color:#66ccff;font-weight:bold;text-decoration:none;">Link Projeto</a>`;
+                  }
+
+                  // Lógica Financeira
+                  if (isFinanceiro && type === 'display' && typeof data === 'number') {
+                      return data.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                  }
+                  return data;
+              }
+          };
+      });
+
+      // Inicializa DataTables
+      $(`#tabela-${viewName}`).DataTable({
+        data: data.map(row => Object.values(row)),
+        columns: configColunas,
+        scrollX: true,
+        pageLength: configLinhas[viewName] || 10,
+        language: {
+            "sEmptyTable": "Nenhum registro encontrado",
+            "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+            "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+            "sLengthMenu": "_MENU_ resultados por página",
+            "sLoadingRecords": "Carregando...",
+            "sProcessing": "Processando...",
+            "sZeroRecords": "Nenhum registro encontrado",
+            "sSearch": "Pesquisar:",
+            "oPaginate": { "sNext": "Próximo", "sPrevious": "Anterior", "sFirst": "Primeiro", "sLast": "Último" }
+        }
+      });
+
+      tabelasCarregadas[viewName] = true;
+    }
+  </script>
 </body>
 </html>
