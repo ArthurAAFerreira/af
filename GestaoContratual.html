@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AF - Restrito</title>
+
+  <!-- Font Awesome para ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f9f9fb;
+      color: #333;
+    }
+
+    /* Banner */
+    header {
+      background: linear-gradient(135deg, #001f3f, #003366);
+      color: white;
+      padding: 50px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+    }
+
+    header p {
+      font-size: 1rem;
+      margin-top: 10px;
+      opacity: 0.9;
+    }
+
+    /* Container dos chats */
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      padding: 30px 0;
+    }
+
+    /* Cada chat individual */
+    .chat-item {
+      width: 90%;
+      box-sizing: border-box;
+      border-radius: 6px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+      background-color: white;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .chat-header {
+      padding: 15px 20px;
+      background-color: #e6f0ff;
+      cursor: pointer;
+    }
+
+    .chat-header h2 {
+      margin: 0;
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #003366;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-subtitle {
+      font-size: 0.9em;
+      color: #555;
+      margin-top: 5px;
+    }
+
+    .chat-header:hover {
+      background-color: #cce0ff;
+    }
+
+    .chat-item iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
+      display: none; /* inicial escondido */
+    }
+
+    footer {
+      background: #001f3f;
+      color: #ccc;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.85rem;
+    }
+
+    footer a {
+      color: #66ccff;
+      margin: 0 8px;
+      font-size: 1.1rem;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    footer a:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1><i class="fa-solid fa-comments"></i> AF - Restrito</h1>
+    <p>Restrito - referente automações, scripts e comandos pessoais</p>
+  </header>
+
+  <div class="chat-container">
+
+    <div class="chat-item">
+      <div class="chat-header">
+        <h2>Encaminhamento DICONT-CT <i class="fa-solid fa-chevron-down"></i></h2>
+        <div class="chat-subtitle">
+          Esta consulta retorna informações sobre encaminhamentos internos realizados pelo DICONT-CT.
+        </div>
+      </div>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/62e96f24-9db7-4e32-b127-f96b334f9dec/chat"></iframe>
+    </div>
+
+    <div class="chat-item">
+      <div class="chat-header">
+        <h2>Liberar Requisição de Empenho no SIORG - AF <i class="fa-solid fa-chevron-down"></i></h2>
+        <div class="chat-subtitle">
+          Este chat realiza a liberação da requisição de empenho no SIORG e realiza a criação de uma tarefa realizada no Asana e preenche um documento de log.
+        </div>
+      </div>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/4146e976-f453-4f5f-a222-eec9fa2ae14b/chat"></iframe>
+    </div>
+
+    <div class="chat-item">
+      <div class="chat-header">
+        <h2>Tarefas Realizadas por AF <i class="fa-solid fa-chevron-down"></i></h2>
+        <div class="chat-subtitle">
+          Este chat recebe as Tarefas Realizadas para compor uma lista e ser incluído no Asana para controle posterior.
+        </div>
+      </div>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/6b969a56-2ec6-4715-9b54-02ddb72c831a/chat"></iframe>
+    </div>
+
+    <div class="chat-item">
+      <div class="chat-header">
+        <h2>Remanejamento NUAPE - Auxilio Discente em Eventos<i class="fa-solid fa-chevron-down"></i></h2>
+        <div class="chat-subtitle">
+          Este chat realiza o remanejamento no SIORG do valor para o NUAPE-CT e cria um despacho no SEI para andamento do processo.
+        </div>
+      </div>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/60a4fd70-7bb6-49f2-8a8c-7381d46acdc7/chat"></iframe>
+    </div>
+
+    <div class="chat-item">
+      <div class="chat-header">
+        <h2>Consulta Empenhos UTFPR-CT - Versão IA<i class="fa-solid fa-chevron-down"></i></h2>
+        <div class="chat-subtitle">
+          Esta consulta exibe os empenhos registrados na UTFPR-CT, podendo filtrar por UGR, projeto ou serviço.
+        </div>
+      </div>
+      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/3d6ae613-07d4-45c2-876d-ac15a008ff54/chat"></iframe>
+    </div>
+
+
+
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Arthur Ferreira | ASGEAD-CT</p>
+    <div class="mt-2">
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script>
+    // Abrir/fechar chat ao clicar no cabeçalho
+    const chatHeaders = document.querySelectorAll('.chat-header');
+    chatHeaders.forEach(header => {
+      header.addEventListener('click', () => {
+        const iframe = header.nextElementSibling;
+        const icon = header.querySelector('i');
+
+        if (iframe.style.display === 'block') {
+          iframe.style.display = 'none';
+          icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+        } else {
+          iframe.style.display = 'block';
+          icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
