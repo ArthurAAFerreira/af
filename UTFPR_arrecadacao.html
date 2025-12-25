@@ -185,15 +185,90 @@
 
 
     <div class="chat-item">
-      <h2>Movimentação de Crédito Geral<i class="fa-solid fa-chevron-down"></i></h2>
+      <h2>Movimentação de Crédito Geral - Campus / Mensal por Fonte <i class="fa-solid fa-chevron-down"></i></h2>
+
+      <div style="display: flex; gap: 10px; margin: 15px 20px; flex-wrap: wrap; align-items: flex-end;">
+        <div>
+          <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Campus:</label>
+          <select id="filtro-campus-mov1" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+              <option value="153019">UTFPR</option>
+              <option value="150149">UTFPR-AP</option>
+              <option value="153251">UTFPR-CM</option>
+              <option value="153176">UTFPR-CP</option>
+              <option value="154358">UTFPR-CT</option>
+              <option value="153991">UTFPR-DV</option>
+              <option value="150151">UTFPR-FB</option>
+              <option value="152134">UTFPR-GP</option>
+              <option value="150148">UTFPR-LD</option>
+              <option value="153029">UTFPR-MD</option>
+              <option value="153177">UTFPR-PB</option>
+              <option value="153178">UTFPR-PG</option>
+              <option value="154852">UTFPR-SH</option>
+              <option value="150150">UTFPR-TD</option>
+          </select>
+        </div>
+
+        <button onclick="buscarMovimentoPorCampus()" style="padding: 8px 20px; cursor: pointer; background-color: #003366; color: white; border: none; border-radius: 4px; font-weight: bold;">
+          <i class="fa fa-filter"></i> Filtrar
+        </button>
+      </div>
+
       <div class="chat-content">
-        <p id="loading-utfpr_movimentacaodecredito" style="text-align:center; padding:20px;">
-            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
-        </p>
-        <table id="tabela-utfpr_movimentacaodecredito" class="display">
-          <thead><tr id="header-utfpr_movimentacaodecredito"></tr></thead>
-          <tbody></tbody>
-        </table>
+        <div id="loading-mov1" style="display:none; text-align:center; padding: 30px;">
+            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+        </div>
+
+        <div style="overflow-x: auto; margin-top: 15px; border: 1px solid #eee;">
+            <table id="tabela-mov1" style="width:100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px;">
+              <thead style="background-color: #003366; color: white;">
+                 <tr>
+                    <th style="padding:8px;">UG</th>
+                    <th style="padding:8px;">Fonte</th>
+                    <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th>
+                    <th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th>
+                    <th style="padding:8px; background-color:#002244;">Total</th>
+                 </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-item">
+      <h2>Movimentação de Crédito Geral - Fonte / Mensal por Campus <i class="fa-solid fa-chevron-down"></i></h2>
+
+      <div style="display: flex; gap: 10px; margin: 15px 20px; flex-wrap: wrap; align-items: flex-end;">
+        <div>
+          <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Fonte:</label>
+          <select id="filtro-fonte-mov2" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc; min-width: 200px;">
+              <option value="">Carregando...</option>
+          </select>
+        </div>
+
+        <button onclick="buscarMovimentoPorFonte()" style="padding: 8px 20px; cursor: pointer; background-color: #003366; color: white; border: none; border-radius: 4px; font-weight: bold;">
+          <i class="fa fa-filter"></i> Filtrar
+        </button>
+      </div>
+
+      <div class="chat-content">
+        <div id="loading-mov2" style="display:none; text-align:center; padding: 30px;">
+            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+        </div>
+
+        <div style="overflow-x: auto; margin-top: 15px; border: 1px solid #eee;">
+            <table id="tabela-mov2" style="width:100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px;">
+              <thead style="background-color: #003366; color: white;">
+                 <tr>
+                    <th style="padding:8px;">UGR</th>
+                    <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th>
+                    <th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th>
+                    <th style="padding:8px; background-color:#002244;">Total</th>
+                 </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+        </div>
       </div>
     </div>
 
@@ -326,7 +401,7 @@ async function buscarRelatorioMensal() {
 // Inicia o carregamento das fontes assim que o script rodar
 carregarFontesBotao();
 
-    // --- 2. GERENCIADOR DE CLIQUES (IFRAMES E TABELAS) ---
+// --- 2. GERENCIADOR DE CLIQUES (IFRAMES E TABELAS) ---
     document.querySelectorAll('.chat-item h2').forEach(header => {
       header.addEventListener('click', () => {
         const parent = header.closest('.chat-item');
@@ -347,10 +422,21 @@ carregarFontesBotao();
             icon.classList.toggle('fa-chevron-up', isHidden);
             icon.classList.toggle('fa-chevron-down', !isHidden);
 
-            // Se for tabela e estiver abrindo, carrega os dados
+            // Se for tabela e estiver abrindo, verifica se deve carregar automaticamente
             if (isHidden && content) {
                 const table = content.querySelector('table');
-                if (table) loadTable(table.id.replace('tabela-', ''));
+                if (table) {
+                    const viewName = table.id.replace('tabela-', '');
+
+                    // LISTA DE EXCEÇÕES: IDs de tabelas que NÃO devem ser carregadas automaticamente
+                    // pois elas dependem de filtros e botões específicos.
+                    const tabelasManuais = ['pivot-mes', 'painel-saldo', 'mov1', 'mov2', 'utfpr-custom'];
+
+                    // Só chama o loadTable genérico se NÃO estiver na lista de exceções
+                    if (!tabelasManuais.includes(viewName)) {
+                        loadTable(viewName);
+                    }
+                }
             }
         }
       });
@@ -508,6 +594,112 @@ carregarFontesBotao();
 
     // Inicia carregamento das fontes
     carregarFontesPainel();
+
+// =========================================================
+    //  FUNÇÕES PARA MOVIMENTAÇÃO DE CRÉDITO (DOIS PAINÉIS)
+    // =========================================================
+
+    // 1. Carregar Fontes para o 2º Painel
+    async function carregarFontesMovimentacao() {
+        const select = document.getElementById('filtro-fonte-mov2');
+        const { data } = await supabaseClient.from('view_lista_fontes').select('*');
+        if (data) {
+            select.innerHTML = '<option value="">Selecione uma Fonte</option>';
+            data.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.fonte_numero;
+                opt.innerText = `${item.fonte_numero} - ${item.fonte_nome || ''}`;
+                select.appendChild(opt);
+            });
+        }
+    }
+
+    // 2. Lógica do 1º Painel (Filtra Campus -> Mostra Fontes)
+    async function buscarMovimentoPorCampus() {
+        const campus = document.getElementById('filtro-campus-mov1').value;
+        const tbody = document.querySelector('#tabela-mov1 tbody');
+        const loading = document.getElementById('loading-mov1');
+
+        tbody.innerHTML = '';
+        loading.style.display = 'block';
+
+        // Consulta a VIEW filtrando pela coluna auxiliar 'ug_cod'
+        const { data, error } = await supabaseClient
+            .from('utfpr_movimentacaodecredito')
+            .select('*')
+            .eq('ug_cod', campus)
+            .order('Fonte', { ascending: true }); // Ordena por Fonte
+
+        renderizarTabelaMovimentacao(tbody, data, error, true); // true = exibe coluna Fonte
+        loading.style.display = 'none';
+    }
+
+    // 3. Lógica do 2º Painel (Filtra Fonte -> Mostra Campus)
+    async function buscarMovimentoPorFonte() {
+        const fonte = document.getElementById('filtro-fonte-mov2').value;
+        const tbody = document.querySelector('#tabela-mov2 tbody');
+        const loading = document.getElementById('loading-mov2');
+
+        if (!fonte) { alert('Selecione uma fonte'); return; }
+
+        tbody.innerHTML = '';
+        loading.style.display = 'block';
+
+        // Consulta a VIEW filtrando pela coluna auxiliar 'fonte_cod'
+        const { data, error } = await supabaseClient
+            .from('utfpr_movimentacaodecredito')
+            .select('*')
+            .eq('fonte_cod', fonte)
+            .order('UG', { ascending: true }); // Ordena por Nome do Campus
+
+        renderizarTabelaMovimentacao(tbody, data, error, false); // false = esconde coluna Fonte (redundante)
+        loading.style.display = 'none';
+    }
+
+    // 4. Função Genérica para desenhar as tabelas
+    function renderizarTabelaMovimentacao(tbody, data, error, mostrarFonte) {
+        if (error) {
+            alert('Erro: ' + error.message);
+            return;
+        }
+        if (!data || data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="15" style="text-align:center; padding:20px;">Nenhum dado encontrado.</td></tr>';
+            return;
+        }
+
+        const mesesCols = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+        data.forEach((row, i) => {
+            const tr = document.createElement('tr');
+            tr.style.backgroundColor = i % 2 === 0 ? '#fff' : '#f9f9f9';
+
+            let html = `<td style="padding:6px; border:1px solid #ddd; white-space:nowrap;">${row.UG}</td>`;
+
+            if (mostrarFonte) {
+                html += `<td style="padding:6px; border:1px solid #ddd; font-size:11px;">${row.Fonte}</td>`;
+            }
+
+            // Loop pelos meses
+            mesesCols.forEach(mes => {
+                const val = parseFloat(row[mes]) || 0;
+                const cor = val < 0 ? 'red' : '#333';
+                // Mostra traço se for zero para limpar visual, ou valor formatado
+                const display = val === 0 ? '-' : val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                html += `<td style="padding:6px; border:1px solid #ddd; text-align:right; color:${cor};">${display}</td>`;
+            });
+
+            // Coluna Total
+            const total = parseFloat(row.Total) || 0;
+            html += `<td style="padding:6px; border:1px solid #ddd; text-align:right; font-weight:bold; background-color:#e6f0ff;">${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>`;
+
+            tr.innerHTML = html;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Inicializa carregamento das fontes do segundo painel
+    carregarFontesMovimentacao();
+
 </script>
 
 
