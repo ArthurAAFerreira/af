@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UTFPR Arrecadação</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css">
+
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background-color: #f9f9fb; color: #333; }
+
+    /* Header */
+    header { background: linear-gradient(135deg, #001f3f, #003366); color: white; padding: 50px 20px; text-align: center; }
+    header h1 { font-size: 2rem; display: flex; justify-content: center; align-items: center; gap: 10px; margin: 0; }
+    header h1 a { color: white; text-decoration: none; transition: 0.3s; }
+    header h1 a:hover { color: #66ccff; text-decoration: underline; }
+    header p { font-size: 1rem; margin-top: 10px; opacity: 0.9; }
+
+    /* Layout Chat */
+    .chat-container { display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 30px 0; }
+    .chat-item { width: 90%; box-sizing: border-box; border-radius: 1px; box-shadow: 0 3px 10px rgba(0,0,0,0.12); background-color: white; overflow: hidden; transition: all 0.3s ease; }
+
+    /* Cabeçalho do Card */
+    .chat-item h2 { margin: 0; padding: 15px 20px; font-size: 1.1em; font-weight: bold; color: #003366; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background-color: #e6f0ff; }
+    .chat-item h2:hover { background-color: #cce0ff; }
+
+    /* Conteúdos */
+    .chat-item iframe { width: 100%; height: 500px; border: none; display: none; }
+    .chat-content { display: none; padding: 10px; overflow-x: auto; background-color: #fff; }
+
+    /* Tabelas */
+    table.dataTable { width: 100% !important; border-collapse: collapse; }
+    .dataTables_wrapper { color: #333; padding: 10px; }
+    table th { background-color: #003366 !important; color: white !important; }
+
+    /* Footer */
+    footer { background: #001f3f; color: #ccc; text-align: center; padding: 20px; font-size: 0.85rem; }
+    footer a { color: #66ccff; margin: 0 8px; font-size: 1.1rem; text-decoration: none; transition: 0.3s; }
+    footer a:hover { color: #fff; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>
+      <i class="fa-solid fa-database"></i>
+      <a href="index.html">UTFPR Arrecadação</a>
+    </h1>
+    <p>Informações referente valores arrecadas</p>
+  </header>
+
+  <div class="chat-container">
+
+
+    <div class="chat-item">
+      <h2>Arrecadado Por Fonte <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <p id="loading-utfpr_arrecadacao_fonte_campi" style="text-align:center; padding:20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+        </p>
+        <table id="tabela-utfpr_arrecadacao_fonte_campi" class="display">
+          <thead><tr id="header-utfpr_arrecadacao_fonte_campi"></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="chat-item">
+      <h2>Saldo Acumulado Mensal Por Fonte, Campi e Receita <i class="fa-solid fa-chevron-down"></i></h2>
+
+      <div style="display: flex; gap: 10px; margin: 15px 20px; flex-wrap: wrap; align-items: flex-end;">
+        <div>
+          <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Mês:</label>
+          <select id="filtro-mes" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+              <option value="jan">JAN/2025</option>
+              <option value="fev">FEV/2025</option>
+              <option value="mar">MAR/2025</option>
+              <option value="abr">ABR/2025</option>
+              <option value="mai">MAI/2025</option>
+              <option value="jun">JUN/2025</option>
+              <option value="jul">JUL/2025</option>
+              <option value="ago">AGO/2025</option>
+              <option value="set">SET/2025</option>
+              <option value="out">OUT/2025</option>
+              <option value="nov">NOV/2025</option>
+              <option value="dez">DEZ/2025</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Fonte:</label>
+          <select id="filtro-fonte" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc; min-width: 150px;">
+            <option value="">Carregando...</option>
+          </select>
+        </div>
+
+        <button onclick="buscarRelatorioMensal()" style="padding: 8px 20px; cursor: pointer; background-color: #003366; color: white; border: none; border-radius: 4px; font-weight: bold;">
+          <i class="fa fa-filter"></i> Filtrar
+        </button>
+      </div>
+
+      <div class="chat-content">
+        <div id="loading-area" style="display:none; text-align:center; padding: 30px;">
+            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+        </div>
+
+        <div style="overflow-x: auto; margin-top: 15px; border: 1px solid #eee;">
+            <table id="tabela-pivot-mes" style="width:100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;">
+              <thead style="background-color: #003366; color: white;"></thead>
+              <tbody></tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="chat-item">
+      <h2>Necessidade Orçamentária de Arrecadação <i class="fa-solid fa-chevron-down"></i></h2>
+
+      <div style="display: flex; gap: 10px; margin: 15px 20px; flex-wrap: wrap; align-items: flex-end;">
+
+        <div>
+          <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Campus:</label>
+          <select id="filtro-campus" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+              <option value="153019">UTFPR (Reitoria/Sede)</option>
+              <option value="150149">UTFPR-AP</option>
+              <option value="153251">UTFPR-CM</option>
+              <option value="153176">UTFPR-CP</option>
+              <option value="154358">UTFPR-CT</option>
+              <option value="153991">UTFPR-DV</option>
+              <option value="150151">UTFPR-FB</option>
+              <option value="152134">UTFPR-GP</option>
+              <option value="150148">UTFPR-LD</option>
+              <option value="153029">UTFPR-MD</option>
+              <option value="153177">UTFPR-PB</option>
+              <option value="153178">UTFPR-PG</option>
+              <option value="154852">UTFPR-SH</option>
+              <option value="150150">UTFPR-TD</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Fonte:</label>
+          <select id="filtro-fonte-painel" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc; min-width: 150px;">
+            <option value="">Carregando...</option>
+          </select>
+        </div>
+
+        <button onclick="buscarPainelSaldo()" style="padding: 8px 20px; cursor: pointer; background-color: #003366; color: white; border: none; border-radius: 4px; font-weight: bold;">
+          <i class="fa fa-filter"></i> Filtrar
+        </button>
+      </div>
+
+      <div class="chat-content">
+        <div id="loading-painel" style="display:none; text-align:center; padding: 30px;">
+            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+        </div>
+
+        <div style="overflow-x: auto; margin-top: 15px; border: 1px solid #eee;">
+            <table id="tabela-painel-saldo" style="width:100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;">
+              <thead style="background-color: #003366; color: white;">
+                 <tr>
+                    <th style="padding:10px;">Tipo</th>
+                    <th style="padding:10px;">Jan</th>
+                    <th style="padding:10px;">Fev</th>
+                    <th style="padding:10px;">Mar</th>
+                    <th style="padding:10px;">Abr</th>
+                    <th style="padding:10px;">Mai</th>
+                    <th style="padding:10px;">Jun</th>
+                    <th style="padding:10px;">Jul</th>
+                    <th style="padding:10px;">Ago</th>
+                    <th style="padding:10px;">Set</th>
+                    <th style="padding:10px;">Out</th>
+                    <th style="padding:10px;">Nov</th>
+                    <th style="padding:10px;">Dez</th>
+                 </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="chat-item">
+      <h2>Movimentação de Crédito Geral<i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <p id="loading-af_asgead_continuados_previstos_por_mes" style="text-align:center; padding:20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+        </p>
+        <table id="tabela-af_asgead_continuados_previstos_por_mes" class="display">
+          <thead><tr id="header-af_asgead_continuados_previstos_por_mes"></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Arthur Ferreira | ASGEAD-CT</p>
+    <div class="mt-2">
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
+
+  <script>
+    // --- 1. CONFIGURAÇÕES: CONTROLE DE LINHAS POR PÁGINA ---
+    const configLinhas = {
+        // Tabelas deste arquivo:
+        'af_asgead_continuados_necessidade_orcamentaria': 50,
+        'af_asgead_continuados_executados_por_mes': 50,
+        'af_asgead_continuados_previstos_por_mes': 50
+    };
+
+    const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let tabelasCarregadas = {};
+
+    // --- 1. Carrega as fontes automaticamente da View Auxiliar ---
+async function carregarFontesBotao() {
+    const select = document.getElementById('filtro-fonte');
+    // Consulta a view simples que criamos no passo 1
+    const { data, error } = await supabaseClient.from('view_lista_fontes').select('*');
+
+    if (data) {
+        select.innerHTML = '<option value="">Todas as Fontes</option>';
+        data.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item.fonte_numero; // Valor para o filtro
+            opt.innerText = `${item.fonte_numero} - ${item.fonte_nome || ''}`;
+            select.appendChild(opt);
+        });
+    } else {
+        select.innerHTML = '<option value="">Erro ao carregar</option>';
+    }
+}
+
+// --- 2. Busca e monta o relatório do mês escolhido ---
+async function buscarRelatorioMensal() {
+    const mes = document.getElementById('filtro-mes').value; // ex: "jan"
+    const fonte = document.getElementById('filtro-fonte').value; // ex: "100000000"
+
+    const tabela = document.getElementById('tabela-pivot-mes');
+    const loading = document.getElementById('loading-area');
+    const tbody = tabela.querySelector('tbody');
+    const thead = tabela.querySelector('thead');
+
+    // Limpa e mostra loading
+    tbody.innerHTML = '';
+    thead.innerHTML = '';
+    loading.style.display = 'block';
+
+    // Monta o nome da tabela dinamicamente
+    const nomeTabela = `utfpr_arrecadacao_acumulada_mensal_${mes}`;
+
+    try {
+        // Prepara a query
+        let query = supabaseClient.from(nomeTabela).select('*');
+
+        // Se escolheu uma fonte específica, filtra pela coluna "Fonte"
+        if (fonte) {
+            query = query.eq('Fonte', fonte);
+        }
+
+        const { data, error } = await query;
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            tbody.innerHTML = '<tr><td style="padding:20px; text-align:center;">Nenhum dado encontrado.</td></tr>';
+            return;
+        }
+
+        // Desenha o Cabeçalho Dinâmico
+        const colunas = Object.keys(data[0]);
+        let headerHTML = '<tr>';
+        colunas.forEach(col => headerHTML += `<th style="padding:10px; white-space:nowrap;">${col}</th>`);
+        headerHTML += '</tr>';
+        thead.innerHTML = headerHTML;
+
+        // Desenha as Linhas
+        data.forEach((row, i) => {
+            const tr = document.createElement('tr');
+            tr.style.backgroundColor = i % 2 === 0 ? '#fff' : '#f9f9f9';
+
+            colunas.forEach(col => {
+                const td = document.createElement('td');
+                td.style.padding = "8px";
+                td.style.border = "1px solid #ddd";
+
+                // Formatação: Texto a esquerda, Número como Dinheiro a direita
+                if (col === 'Fonte' || col === 'Receita') {
+                    td.innerText = row[col];
+                    td.style.textAlign = 'left';
+                } else {
+                    td.style.textAlign = 'right';
+                    const valor = parseFloat(row[col]) || 0;
+                    td.innerText = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                    if(valor === 0) td.style.color = '#ccc'; // Cinza se for zero
+                }
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+
+    } catch (err) {
+        console.error(err);
+        tbody.innerHTML = `<tr><td style="color:red; padding:20px; text-align:center;">
+            Erro: A tabela ${nomeTabela} ainda não existe ou falhou.
+        </td></tr>`;
+    } finally {
+        loading.style.display = 'none';
+    }
+}
+
+// Inicia o carregamento das fontes assim que o script rodar
+carregarFontesBotao();
+
+    // --- 2. GERENCIADOR DE CLIQUES (IFRAMES E TABELAS) ---
+    document.querySelectorAll('.chat-item h2').forEach(header => {
+      header.addEventListener('click', () => {
+        const parent = header.closest('.chat-item');
+        const content = parent.querySelector('.chat-content');
+        const iframe = parent.querySelector('iframe');
+        const icon = header.querySelector('i');
+        let target = null;
+
+        // Define quem deve abrir (prioridade para tabela/conteúdo)
+        if (content) target = content;
+        else if (iframe) target = iframe;
+
+        if (target) {
+            const isHidden = target.style.display === 'none' || target.style.display === '';
+
+            // Toggle Visual
+            target.style.display = isHidden ? 'block' : 'none';
+            icon.classList.toggle('fa-chevron-up', isHidden);
+            icon.classList.toggle('fa-chevron-down', !isHidden);
+
+            // Se for tabela e estiver abrindo, carrega os dados
+            if (isHidden && content) {
+                const table = content.querySelector('table');
+                if (table) loadTable(table.id.replace('tabela-', ''));
+            }
+        }
+      });
+    });
+
+    // --- 3. CARREGAMENTO DE DADOS ---
+    async function loadTable(viewName) {
+      if (tabelasCarregadas[viewName]) return;
+
+      const loading = document.getElementById(`loading-${viewName}`);
+      const tbody = document.querySelector(`#tabela-${viewName} tbody`);
+      const thead = document.querySelector(`#header-${viewName}`);
+
+      loading.style.display = 'block';
+      const { data, error } = await supabaseClient.from(viewName).select('*').limit(500);
+      loading.style.display = 'none';
+
+      if (error) {
+          tbody.innerHTML = `<tr><td colspan="100" style="color:red;text-align:center">Erro: ${error.message}</td></tr>`;
+          return;
+      }
+      if (!data || !data.length) {
+          tbody.innerHTML = `<tr><td colspan="100" style="text-align:center">Nenhum dado encontrado.</td></tr>`;
+          return;
+      }
+
+      // Configuração das Colunas
+      const colunas = Object.keys(data[0]);
+      thead.innerHTML = colunas.map(c => `<th>${c}</th>`).join('');
+
+      const configColunas = colunas.map(c => {
+          const isFinanceiro = c.includes('Saldo') || c.includes('Valor') || c.includes('Total');
+          return {
+              title: c,
+              className: isFinanceiro ? "dt-body-right" : "",
+              render: function (data, type) {
+                  // Se for financeiro e for número puro, formata. Se for texto (já formatado no SQL), mantém.
+                  if (isFinanceiro && type === 'display' && typeof data === 'number') {
+                      return data.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                  }
+                  return data;
+              }
+          };
+      });
+
+      // Inicializa DataTables
+      $(`#tabela-${viewName}`).DataTable({
+        data: data.map(row => Object.values(row)),
+        columns: configColunas,
+        scrollX: true,
+        pageLength: configLinhas[viewName] || 10, // Aplica config de linhas
+        language: {
+            "sEmptyTable": "Nenhum registro encontrado",
+            "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+            "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+            "sLengthMenu": "_MENU_ resultados por página",
+            "sLoadingRecords": "Carregando...",
+            "sProcessing": "Processando...",
+            "sZeroRecords": "Nenhum registro encontrado",
+            "sSearch": "Pesquisar:",
+            "oPaginate": { "sNext": "Próximo", "sPrevious": "Anterior", "sFirst": "Primeiro", "sLast": "Último" }
+        }
+      });
+
+      tabelasCarregadas[viewName] = true;
+    }
+  </script>
+
+<script>
+    // --- 1. Carrega Fontes para o SELECT deste painel ---
+    async function carregarFontesPainel() {
+        const select = document.getElementById('filtro-fonte-painel');
+        // Usa a view_lista_fontes que você já criou
+        const { data, error } = await supabaseClient.from('view_lista_fontes').select('*');
+
+        if (data) {
+            select.innerHTML = '<option value="">Selecione uma Fonte</option>';
+            data.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.fonte_numero;
+                opt.innerText = `${item.fonte_numero} - ${item.fonte_nome || ''}`;
+                select.appendChild(opt);
+            });
+        }
+    }
+
+    // --- 2. Busca os dados na VIEW utfpr_arrecadacao_painel ---
+    async function buscarPainelSaldo() {
+        const campus = document.getElementById('filtro-campus').value;
+        const fonte = document.getElementById('filtro-fonte-painel').value;
+
+        const tbody = document.querySelector('#tabela-painel-saldo tbody');
+        const loading = document.getElementById('loading-painel');
+
+        if (!fonte) {
+            alert('Por favor, selecione uma fonte.');
+            return;
+        }
+
+        tbody.innerHTML = '';
+        loading.style.display = 'block';
+
+        try {
+            // AQUI ESTÁ A MÁGICA: Consultamos a View aplicando filtros
+            const { data, error } = await supabaseClient
+                .from('utfpr_arrecadacao_painel')
+                .select('Tipo, Jan, Fev, Mar, Abr, Mai, Jun, Jul, Ago, Set, Out, Nov, Dez')
+                .eq('ug_numero', campus)
+                .eq('fonte_numero', fonte);
+
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="13" style="text-align:center; padding:20px;">Nenhum dado encontrado para este Campus e Fonte.</td></tr>';
+                return;
+            }
+
+            // Ordem das linhas que queremos exibir
+            const ordem = ['Valor Arrecadado', 'Valor Constitucional', 'Valor Repassado', 'Saldo a Receber'];
+
+            // Ordena o array data baseado na lista acima
+            data.sort((a, b) => ordem.indexOf(a.Tipo) - ordem.indexOf(b.Tipo));
+
+            data.forEach((row, i) => {
+                const tr = document.createElement('tr');
+                tr.style.backgroundColor = i % 2 === 0 ? '#fff' : '#f9f9f9';
+
+                // Coluna Tipo
+                let tdTipo = `<td style="padding:8px; border:1px solid #ddd; font-weight:bold; white-space:nowrap;">${row.Tipo}</td>`;
+
+                // Colunas Meses
+                let tdMeses = '';
+                const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+                meses.forEach(mes => {
+                    const valor = parseFloat(row[mes]) || 0;
+                    const cor = (valor < 0 && row.Tipo === 'Saldo a Receber') ? 'red' : '#333';
+                    const valorFormatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+                    tdMeses += `<td style="padding:8px; border:1px solid #ddd; text-align:right; color:${cor}; font-size:12px;">${valorFormatado}</td>`;
+                });
+
+                tr.innerHTML = tdTipo + tdMeses;
+                tbody.appendChild(tr);
+            });
+
+        } catch (err) {
+            console.error(err);
+            alert('Erro ao buscar painel: ' + err.message);
+        } finally {
+            loading.style.display = 'none';
+        }
+    }
+
+    // Inicia carregamento das fontes
+    carregarFontesPainel();
+</script>
+
+
+</body>
+</html>
