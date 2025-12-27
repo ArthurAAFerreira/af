@@ -67,211 +67,210 @@
       </div>
     </div>
 
-    <div class="chat-item">
-      <h2>Saldo Acumulado Mensal Por Fonte, Campi e Receita <i class="fa-solid fa-chevron-down"></i></h2>
+<div class="chat-item">
+  <h2>Saldo Acumulado Mensal Por Fonte, Campi e Receita <i class="fa-solid fa-chevron-down"></i></h2>
 
-      <div style="display: flex; gap: 10px; margin: 15px 20px; flex-wrap: wrap; align-items: flex-end;">
-        <div>
-          <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Mês:</label>
-          <select id="filtro-mes" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
-              <option value="jan">JAN/2025</option>
-              <option value="fev">FEV/2025</option>
-              <option value="mar">MAR/2025</option>
-              <option value="abr">ABR/2025</option>
-              <option value="mai">MAI/2025</option>
-              <option value="jun">JUN/2025</option>
-              <option value="jul">JUL/2025</option>
-              <option value="ago">AGO/2025</option>
-              <option value="set">SET/2025</option>
-              <option value="out">OUT/2025</option>
-              <option value="nov">NOV/2025</option>
-              <option value="dez">DEZ/2025</option>
-          </select>
-        </div>
+  <div class="chat-content" style="display: none; padding: 10px;">
 
-        <div>
-          <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Fonte:</label>
-          <select id="filtro-fonte" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc; min-width: 150px;">
+    <div style="display: flex; gap: 10px; margin: 5px 10px 15px 10px; flex-wrap: wrap; align-items: flex-end;">
+
+      <div>
+        <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Mês:</label>
+        <select id="filtro-mes" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+            <option value="jan">JAN/2025</option>
+            <option value="fev">FEV/2025</option>
+            <option value="mar">MAR/2025</option>
+            <option value="abr">ABR/2025</option>
+            <option value="mai">MAI/2025</option>
+            <option value="jun">JUN/2025</option>
+            <option value="jul">JUL/2025</option>
+            <option value="ago">AGO/2025</option>
+            <option value="set">SET/2025</option>
+            <option value="out">OUT/2025</option>
+            <option value="nov">NOV/2025</option>
+            <option value="dez">DEZ/2025</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Fonte:</label>
+        <select id="filtro-fonte" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc; min-width: 150px;">
+          <option value="">Carregando...</option>
+        </select>
+      </div>
+
+      <button onclick="buscarRelatorioMensal()" style="padding: 8px 20px; cursor: pointer; background-color: #003366; color: white; border: none; border-radius: 4px; font-weight: bold;">
+        <i class="fa fa-filter"></i> Filtrar
+      </button>
+    </div>
+    <div id="loading-area" style="display:none; text-align:center; padding: 30px;">
+        <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+    </div>
+
+    <div style="overflow-x: auto; margin-top: 15px; border: 1px solid #eee;">
+        <table id="tabela-pivot-mes" style="width:100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;">
+          <thead style="background-color: #003366; color: white;"></thead>
+          <tbody></tbody>
+        </table>
+    </div>
+  </div>
+</div>
+
+<div class="chat-item">
+  <h2>Necessidade Orçamentária de Arrecadação <i class="fa-solid fa-chevron-down"></i></h2>
+
+  <div class="chat-content" style="display: none; padding: 10px;">
+
+    <div style="display: flex; gap: 10px; margin: 5px 10px 15px 10px; flex-wrap: wrap; align-items: flex-end;">
+
+      <div>
+        <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Campus:</label>
+        <select id="filtro-campus" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+            <option value="153019">UTFPR (Reitoria/Sede)</option>
+            <option value="150149">UTFPR-AP</option>
+            <option value="153251">UTFPR-CM</option>
+            <option value="153176">UTFPR-CP</option>
+            <option value="154358">UTFPR-CT</option>
+            <option value="153991">UTFPR-DV</option>
+            <option value="150151">UTFPR-FB</option>
+            <option value="152134">UTFPR-GP</option>
+            <option value="150148">UTFPR-LD</option>
+            <option value="153029">UTFPR-MD</option>
+            <option value="153177">UTFPR-PB</option>
+            <option value="153178">UTFPR-PG</option>
+            <option value="154852">UTFPR-SH</option>
+            <option value="150150">UTFPR-TD</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Fonte:</label>
+        <select id="filtro-fonte-painel" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc; min-width: 150px;">
+          <option value="">Carregando...</option>
+        </select>
+      </div>
+
+      <button onclick="buscarPainelSaldo()" style="padding: 8px 20px; cursor: pointer; background-color: #003366; color: white; border: none; border-radius: 4px; font-weight: bold;">
+        <i class="fa fa-filter"></i> Filtrar
+      </button>
+    </div>
+    <div id="loading-painel" style="display:none; text-align:center; padding: 30px;">
+        <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+    </div>
+
+    <div style="overflow-x: auto; margin-top: 15px; border: 1px solid #eee;">
+        <table id="tabela-painel-saldo" style="width:100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;">
+          <thead style="background-color: #003366; color: white;">
+             <tr>
+                <th style="padding:10px;">Tipo</th>
+                <th style="padding:10px;">Jan</th>
+                <th style="padding:10px;">Fev</th>
+                <th style="padding:10px;">Mar</th>
+                <th style="padding:10px;">Abr</th>
+                <th style="padding:10px;">Mai</th>
+                <th style="padding:10px;">Jun</th>
+                <th style="padding:10px;">Jul</th>
+                <th style="padding:10px;">Ago</th>
+                <th style="padding:10px;">Set</th>
+                <th style="padding:10px;">Out</th>
+                <th style="padding:10px;">Nov</th>
+                <th style="padding:10px;">Dez</th>
+             </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+    </div>
+  </div>
+</div>
+
+
+<div class="chat-item">
+  <h2>Movimentação de Crédito Geral - Campus / Mensal por Fonte <i class="fa-solid fa-chevron-down"></i></h2>
+
+  <div class="chat-content" style="display: none; padding: 10px;">
+
+    <div style="display: flex; gap: 10px; margin: 5px 10px 15px 10px; flex-wrap: wrap; align-items: flex-end;">
+      <div>
+        <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Campus:</label>
+        <select id="filtro-campus-mov1" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+            <option value="153019">UTFPR</option>
+            <option value="150149">UTFPR-AP</option>
+            <option value="153251">UTFPR-CM</option>
+            <option value="153176">UTFPR-CP</option>
+            <option value="154358">UTFPR-CT</option>
+            <option value="153991">UTFPR-DV</option>
+            <option value="150151">UTFPR-FB</option>
+            <option value="152134">UTFPR-GP</option>
+            <option value="150148">UTFPR-LD</option>
+            <option value="153029">UTFPR-MD</option>
+            <option value="153177">UTFPR-PB</option>
+            <option value="153178">UTFPR-PG</option>
+            <option value="154852">UTFPR-SH</option>
+            <option value="150150">UTFPR-TD</option>
+        </select>
+      </div>
+
+      <button onclick="buscarMovimentoPorCampus()" style="padding: 8px 20px; cursor: pointer; background-color: #003366; color: white; border: none; border-radius: 4px; font-weight: bold;">
+        <i class="fa fa-filter"></i> Filtrar
+      </button>
+    </div>
+    <div id="loading-mov1" style="display:none; text-align:center; padding: 30px;">
+        <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+    </div>
+
+    <div style="overflow-x: auto; margin-top: 15px; border: 1px solid #eee;">
+        <table id="tabela-mov1" style="width:100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px;">
+          <thead style="background-color: #003366; color: white;">
+             <tr>
+                <th style="padding:8px;">UG</th>
+                <th style="padding:8px;">Fonte</th>
+                <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th>
+                <th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th>
+                <th style="padding:8px; background-color:#002244;">Total</th>
+             </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+    </div>
+  </div>
+</div>
+
+<div class="chat-item">
+  <h2>Movimentação de Crédito Geral - Fonte / Mensal por Campus <i class="fa-solid fa-chevron-down"></i></h2>
+
+  <div class="chat-content" style="display: none; padding: 10px;">
+
+    <div style="display: flex; gap: 10px; margin: 5px 10px 15px 10px; flex-wrap: wrap; align-items: flex-end;">
+      <div>
+        <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Fonte:</label>
+        <select id="filtro-fonte-mov2" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc; min-width: 200px;">
             <option value="">Carregando...</option>
-          </select>
-        </div>
-
-        <button onclick="buscarRelatorioMensal()" style="padding: 8px 20px; cursor: pointer; background-color: #003366; color: white; border: none; border-radius: 4px; font-weight: bold;">
-          <i class="fa fa-filter"></i> Filtrar
-        </button>
+        </select>
       </div>
 
-      <div class="chat-content">
-        <div id="loading-area" style="display:none; text-align:center; padding: 30px;">
-            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-        </div>
-
-        <div style="overflow-x: auto; margin-top: 15px; border: 1px solid #eee;">
-            <table id="tabela-pivot-mes" style="width:100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;">
-              <thead style="background-color: #003366; color: white;"></thead>
-              <tbody></tbody>
-            </table>
-        </div>
-      </div>
+      <button onclick="buscarMovimentoPorFonte()" style="padding: 8px 20px; cursor: pointer; background-color: #003366; color: white; border: none; border-radius: 4px; font-weight: bold;">
+        <i class="fa fa-filter"></i> Filtrar
+      </button>
+    </div>
+    <div id="loading-mov2" style="display:none; text-align:center; padding: 30px;">
+        <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
     </div>
 
-
-    <div class="chat-item">
-      <h2>Necessidade Orçamentária de Arrecadação <i class="fa-solid fa-chevron-down"></i></h2>
-
-      <div style="display: flex; gap: 10px; margin: 15px 20px; flex-wrap: wrap; align-items: flex-end;">
-
-        <div>
-          <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Campus:</label>
-          <select id="filtro-campus" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
-              <option value="153019">UTFPR (Reitoria/Sede)</option>
-              <option value="150149">UTFPR-AP</option>
-              <option value="153251">UTFPR-CM</option>
-              <option value="153176">UTFPR-CP</option>
-              <option value="154358">UTFPR-CT</option>
-              <option value="153991">UTFPR-DV</option>
-              <option value="150151">UTFPR-FB</option>
-              <option value="152134">UTFPR-GP</option>
-              <option value="150148">UTFPR-LD</option>
-              <option value="153029">UTFPR-MD</option>
-              <option value="153177">UTFPR-PB</option>
-              <option value="153178">UTFPR-PG</option>
-              <option value="154852">UTFPR-SH</option>
-              <option value="150150">UTFPR-TD</option>
-          </select>
-        </div>
-
-        <div>
-          <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Fonte:</label>
-          <select id="filtro-fonte-painel" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc; min-width: 150px;">
-            <option value="">Carregando...</option>
-          </select>
-        </div>
-
-        <button onclick="buscarPainelSaldo()" style="padding: 8px 20px; cursor: pointer; background-color: #003366; color: white; border: none; border-radius: 4px; font-weight: bold;">
-          <i class="fa fa-filter"></i> Filtrar
-        </button>
-      </div>
-
-      <div class="chat-content">
-        <div id="loading-painel" style="display:none; text-align:center; padding: 30px;">
-            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-        </div>
-
-        <div style="overflow-x: auto; margin-top: 15px; border: 1px solid #eee;">
-            <table id="tabela-painel-saldo" style="width:100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;">
-              <thead style="background-color: #003366; color: white;">
-                 <tr>
-                    <th style="padding:10px;">Tipo</th>
-                    <th style="padding:10px;">Jan</th>
-                    <th style="padding:10px;">Fev</th>
-                    <th style="padding:10px;">Mar</th>
-                    <th style="padding:10px;">Abr</th>
-                    <th style="padding:10px;">Mai</th>
-                    <th style="padding:10px;">Jun</th>
-                    <th style="padding:10px;">Jul</th>
-                    <th style="padding:10px;">Ago</th>
-                    <th style="padding:10px;">Set</th>
-                    <th style="padding:10px;">Out</th>
-                    <th style="padding:10px;">Nov</th>
-                    <th style="padding:10px;">Dez</th>
-                 </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-        </div>
-      </div>
+    <div style="overflow-x: auto; margin-top: 15px; border: 1px solid #eee;">
+        <table id="tabela-mov2" style="width:100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px;">
+          <thead style="background-color: #003366; color: white;">
+             <tr>
+                <th style="padding:8px;">UGR</th>
+                <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th>
+                <th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th>
+                <th style="padding:8px; background-color:#002244;">Total</th>
+             </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
     </div>
-
-
-    <div class="chat-item">
-      <h2>Movimentação de Crédito Geral - Campus / Mensal por Fonte <i class="fa-solid fa-chevron-down"></i></h2>
-
-      <div style="display: flex; gap: 10px; margin: 15px 20px; flex-wrap: wrap; align-items: flex-end;">
-        <div>
-          <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Campus:</label>
-          <select id="filtro-campus-mov1" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
-              <option value="153019">UTFPR</option>
-              <option value="150149">UTFPR-AP</option>
-              <option value="153251">UTFPR-CM</option>
-              <option value="153176">UTFPR-CP</option>
-              <option value="154358">UTFPR-CT</option>
-              <option value="153991">UTFPR-DV</option>
-              <option value="150151">UTFPR-FB</option>
-              <option value="152134">UTFPR-GP</option>
-              <option value="150148">UTFPR-LD</option>
-              <option value="153029">UTFPR-MD</option>
-              <option value="153177">UTFPR-PB</option>
-              <option value="153178">UTFPR-PG</option>
-              <option value="154852">UTFPR-SH</option>
-              <option value="150150">UTFPR-TD</option>
-          </select>
-        </div>
-
-        <button onclick="buscarMovimentoPorCampus()" style="padding: 8px 20px; cursor: pointer; background-color: #003366; color: white; border: none; border-radius: 4px; font-weight: bold;">
-          <i class="fa fa-filter"></i> Filtrar
-        </button>
-      </div>
-
-      <div class="chat-content">
-        <div id="loading-mov1" style="display:none; text-align:center; padding: 30px;">
-            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-        </div>
-
-        <div style="overflow-x: auto; margin-top: 15px; border: 1px solid #eee;">
-            <table id="tabela-mov1" style="width:100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px;">
-              <thead style="background-color: #003366; color: white;">
-                 <tr>
-                    <th style="padding:8px;">UG</th>
-                    <th style="padding:8px;">Fonte</th>
-                    <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th>
-                    <th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th>
-                    <th style="padding:8px; background-color:#002244;">Total</th>
-                 </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-        </div>
-      </div>
-    </div>
-
-    <div class="chat-item">
-      <h2>Movimentação de Crédito Geral - Fonte / Mensal por Campus <i class="fa-solid fa-chevron-down"></i></h2>
-
-      <div style="display: flex; gap: 10px; margin: 15px 20px; flex-wrap: wrap; align-items: flex-end;">
-        <div>
-          <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Fonte:</label>
-          <select id="filtro-fonte-mov2" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc; min-width: 200px;">
-              <option value="">Carregando...</option>
-          </select>
-        </div>
-
-        <button onclick="buscarMovimentoPorFonte()" style="padding: 8px 20px; cursor: pointer; background-color: #003366; color: white; border: none; border-radius: 4px; font-weight: bold;">
-          <i class="fa fa-filter"></i> Filtrar
-        </button>
-      </div>
-
-      <div class="chat-content">
-        <div id="loading-mov2" style="display:none; text-align:center; padding: 30px;">
-            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-        </div>
-
-        <div style="overflow-x: auto; margin-top: 15px; border: 1px solid #eee;">
-            <table id="tabela-mov2" style="width:100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px;">
-              <thead style="background-color: #003366; color: white;">
-                 <tr>
-                    <th style="padding:8px;">UGR</th>
-                    <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th>
-                    <th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th>
-                    <th style="padding:8px; background-color:#002244;">Total</th>
-                 </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-        </div>
-      </div>
-    </div>
-
+  </div>
+</div>
 
   </div>
 
