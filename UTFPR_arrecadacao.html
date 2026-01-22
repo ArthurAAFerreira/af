@@ -77,18 +77,18 @@
       <div>
         <label style="display:block; font-weight:bold; margin-bottom:5px; font-size: 14px;">Mês:</label>
         <select id="filtro-mes" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
-            <option value="jan">JAN/2025</option>
-            <option value="fev">FEV/2025</option>
-            <option value="mar">MAR/2025</option>
-            <option value="abr">ABR/2025</option>
-            <option value="mai">MAI/2025</option>
-            <option value="jun">JUN/2025</option>
-            <option value="jul">JUL/2025</option>
-            <option value="ago">AGO/2025</option>
-            <option value="set">SET/2025</option>
-            <option value="out">OUT/2025</option>
-            <option value="nov">NOV/2025</option>
-            <option value="dez">DEZ/2025</option>
+            <option value="jan">JAN/2026</option>
+            <option value="fev">FEV/2026</option>
+            <option value="mar">MAR/2026</option>
+            <option value="abr">ABR/2026</option>
+            <option value="mai">MAI/2026</option>
+            <option value="jun">JUN/2026</option>
+            <option value="jul">JUL/2026</option>
+            <option value="ago">AGO/2026</option>
+            <option value="set">SET/2026</option>
+            <option value="out">OUT/2026</option>
+            <option value="nov">NOV/2026</option>
+            <option value="dez">DEZ/2026</option>
         </select>
       </div>
 
@@ -624,7 +624,7 @@ carregarFontesBotao();
 
         // Consulta a VIEW filtrando pela coluna auxiliar 'ug_cod'
         const { data, error } = await supabaseClient
-            .from('utfpr_movimentacaodecredito')
+            .from('utfpr_arrecadacao_movimentacaocredito')
             .select('*')
             .eq('ug_cod', campus)
             .order('Fonte', { ascending: true }); // Ordena por Fonte
