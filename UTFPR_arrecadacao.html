@@ -622,9 +622,10 @@ carregarFontesBotao();
         tbody.innerHTML = '';
         loading.style.display = 'block';
 
-        // Consulta a VIEW filtrando pela coluna auxiliar 'ug_cod'
+        // --- CORREÇÃO AQUI ---
+        // Alterado de 'utfpr_arrecadacao_movimentacaocredito' para a VIEW correta
         const { data, error } = await supabaseClient
-            .from('utfpr_arrecadacao_movimentacaocredito')
+            .from('view_movimentacao_campus_consolidado')
             .select('*')
             .eq('ug_cod', campus)
             .order('Fonte', { ascending: true }); // Ordena por Fonte
