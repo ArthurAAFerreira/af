@@ -54,18 +54,22 @@
   <div class="chat-container">
 
     <div class="chat-item">
-      <h2>Consulta de GRU<i class="fa-solid fa-chevron-down"></i></h2>
+      <h2>Consulta de GRU <i class="fa-solid fa-chevron-down"></i></h2>
       <iframe src="https://n8n.arthuraaferreira.com.br/form/820d6b79-9ceb-4b2b-a835-3ba46c17e6bb" style="height: 650px;"></iframe>
     </div>
 
     <div class="chat-item">
       <h2>Resumo GRU por Referência <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
-        <p id="loading-af_asgead_resumo_sisgru" style="text-align:center; padding:20px;">
+        <p id="loading-view_resumo_arrecadacao_referencia" style="text-align:center; padding:20px;">
             <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
         </p>
-        <table id="tabela-af_asgead_resumo_sisgru" class="display">
-          <thead><tr id="header-af_asgead_resumo_sisgru"></tr></thead>
+        <table
+          id="tabela-view_resumo_arrecadacao_referencia"
+          class="display"
+          data-schema="sisgru"
+        >
+          <thead><tr id="header-view_resumo_arrecadacao_referencia"></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -77,7 +81,11 @@
         <p id="loading-af_asgead__resultado_arrecadado_remanejado" style="text-align:center; padding:20px;">
             <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
         </p>
-        <table id="tabela-af_asgead__resultado_arrecadado_remanejado" class="display">
+        <table
+            id="tabela-af_asgead__resultado_arrecadado_remanejado"
+            class="display"
+            data-schema="sisgru"
+        >
           <thead><tr id="header-af_asgead__resultado_arrecadado_remanejado"></tr></thead>
           <tbody></tbody>
         </table>
@@ -90,7 +98,11 @@
         <p id="loading-af_asgead__arrecadacao_ugr_completo" style="text-align:center; padding:20px;">
             <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
         </p>
-        <table id="tabela-af_asgead__arrecadacao_ugr_completo" class="display">
+        <table
+            id="tabela-af_asgead__arrecadacao_ugr_completo"
+            class="display"
+            data-schema="sisgru"
+        >
           <thead><tr id="header-af_asgead__arrecadacao_ugr_completo"></tr></thead>
           <tbody></tbody>
         </table>
@@ -103,7 +115,11 @@
         <p id="loading-af_asgead__arrecadacao_ugr_completo_agrupado" style="text-align:center; padding:20px;">
             <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
         </p>
-        <table id="tabela-af_asgead__arrecadacao_ugr_completo_agrupado" class="display">
+        <table
+            id="tabela-af_asgead__arrecadacao_ugr_completo_agrupado"
+            class="display"
+            data-schema="sisgru"
+        >
           <thead><tr id="header-af_asgead__arrecadacao_ugr_completo_agrupado"></tr></thead>
           <tbody></tbody>
         </table>
@@ -116,7 +132,11 @@
         <p id="loading-af_asgead_remanejamento_arrecadacao_propria" style="text-align:center; padding:20px;">
             <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
         </p>
-        <table id="tabela-af_asgead_remanejamento_arrecadacao_propria" class="display">
+        <table
+            id="tabela-af_asgead_remanejamento_arrecadacao_propria"
+            class="display"
+            data-schema="sisgru"
+        >
           <thead><tr id="header-af_asgead_remanejamento_arrecadacao_propria"></tr></thead>
           <tbody></tbody>
         </table>
@@ -140,9 +160,9 @@
   <script>
     // --- 1. CONFIGURAÇÕES: CONTROLE DE LINHAS POR PÁGINA ---
     const configLinhas = {
-        'af_asgead_resumo_sisgru': 25,
+        'view_resumo_arrecadacao_referencia': 50,
         'af_asgead__resultado_arrecadado_remanejado': 25,
-        'af_asgead__arrecadacao_ugr_completo': 50, // Tabela grande
+        'af_asgead__arrecadacao_ugr_completo': 50,
         'af_asgead__arrecadacao_ugr_completo_agrupado': 25,
         'af_asgead_remanejamento_arrecadacao_propria': 25
     };
@@ -153,7 +173,7 @@
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     let tabelasCarregadas = {};
 
-    // --- 2. GERENCIADOR DE CLIQUES (IFRAMES E TABELAS) ---
+    // --- 2. GERENCIADOR DE CLIQUES ---
     document.querySelectorAll('.chat-item h2').forEach(header => {
       header.addEventListener('click', () => {
         const parent = header.closest('.chat-item');
@@ -162,77 +182,94 @@
         const icon = header.querySelector('i');
         let target = null;
 
-        // Prioridade: Conteúdo (Tabela) > Iframe
         if (content) target = content;
         else if (iframe) target = iframe;
 
         if (target) {
             const isHidden = target.style.display === 'none' || target.style.display === '';
-
-            // Toggle Visual
             target.style.display = isHidden ? 'block' : 'none';
             icon.classList.toggle('fa-chevron-up', isHidden);
             icon.classList.toggle('fa-chevron-down', !isHidden);
 
-            // Se for tabela e estiver abrindo, carrega
             if (isHidden && content) {
                 const table = content.querySelector('table');
-                if (table) loadTable(table.id.replace('tabela-', ''));
+                // Passa a ID completa para a função
+                if (table) loadTable(table.id);
             }
         }
       });
     });
 
     // --- 3. CARREGAMENTO DE DADOS ---
-    async function loadTable(viewName) {
+    async function loadTable(tableId) {
+      // O nome da view é a ID sem o prefixo "tabela-"
+      const viewName = tableId.replace('tabela-', '');
+
       if (tabelasCarregadas[viewName]) return;
 
       const loading = document.getElementById(`loading-${viewName}`);
-      const tbody = document.querySelector(`#tabela-${viewName} tbody`);
+      const tbody = document.querySelector(`#${tableId} tbody`);
       const thead = document.querySelector(`#header-${viewName}`);
 
+      // PEGA O SCHEMA DO ATRIBUTO HTML (se não tiver, usa 'public')
+      const tableElement = document.getElementById(tableId);
+      const schemaName = tableElement.getAttribute('data-schema') || 'public';
+
       loading.style.display = 'block';
-      // Limite maior para tabelas de arrecadação
-      const { data, error } = await supabaseClient.from(viewName).select('*').limit(1000);
+
+      // --- AQUI ESTÁ A MÁGICA: .schema(schemaName) ---
+      const { data, error } = await supabaseClient
+        .schema(schemaName)
+        .from(viewName)
+        .select('*')
+        .limit(1000);
+
       loading.style.display = 'none';
 
       if (error) {
-          tbody.innerHTML = `<tr><td colspan="100" style="color:red;text-align:center">Erro: ${error.message}</td></tr>`;
+          console.error("Erro Supabase:", error);
+          tbody.innerHTML = `<tr><td colspan="100" style="color:red;text-align:center">Erro ao carregar do schema <b>${schemaName}</b>: ${error.message}</td></tr>`;
           return;
       }
       if (!data || !data.length) {
-          tbody.innerHTML = `<tr><td colspan="100" style="text-align:center">Nenhum dado encontrado.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="100" style="text-align:center">Nenhum dado encontrado na tabela ${viewName}.</td></tr>`;
           return;
       }
 
-      // Configuração das Colunas
+      // Configuração das Colunas e Renderização
       const colunas = Object.keys(data[0]);
       thead.innerHTML = colunas.map(c => `<th>${c}</th>`).join('');
 
       const configColunas = colunas.map(c => {
-          const isFinanceiro = c.includes('Valor') || c.includes('Total') || c.includes('Saldo');
-          const isLink = c === 'Consulta FUNTEF'; // Identifica a coluna do link
+          // Detecta colunas financeiras
+          const isFinanceiro = c.toLowerCase().includes('valor') ||
+                               c.toLowerCase().includes('total') ||
+                               c.toLowerCase().includes('saldo') ||
+                               c === 'Total' || c === 'Janeiro' || c === 'Fevereiro' || c === 'Março' || // Meses
+                               c === 'Abril' || c === 'Maio' || c === 'Junho' || c === 'Julho' ||
+                               c === 'Agosto' || c === 'Setembro' || c === 'Outubro' || c === 'Novembro' || c === 'Dezembro';
+
+          const isLink = c === 'Consulta FUNTEF';
 
           return {
               title: c,
               className: isFinanceiro ? "dt-body-right" : "",
               render: function (data, type) {
-                  // Lógica do Link FUNTEF
                   if (isLink && data) {
                        return `<a href="${data}" target="_blank" style="color:#66ccff;font-weight:bold;text-decoration:none;">Link Projeto</a>`;
                   }
-
-                  // Lógica Financeira
-                  if (isFinanceiro && type === 'display' && typeof data === 'number') {
-                      return data.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                  if (isFinanceiro && type === 'display') {
+                      // Se vier string "R$ 1.000,00", mantem. Se vier number, formata.
+                      if (typeof data === 'number') {
+                          return data.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                      }
                   }
                   return data;
               }
           };
       });
 
-      // Inicializa DataTables
-      $(`#tabela-${viewName}`).DataTable({
+      $(`#${tableId}`).DataTable({
         data: data.map(row => Object.values(row)),
         columns: configColunas,
         scrollX: true,
