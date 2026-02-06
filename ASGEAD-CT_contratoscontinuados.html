@@ -53,15 +53,14 @@
 
   <div class="chat-container">
 
-
     <div class="chat-item">
       <h2>Continuados – Necessidade Orçamentária <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
-        <p id="loading-af_asgead_continuados_necessidade_orcamentaria" style="text-align:center; padding:20px;">
+        <p id="loading-necessidade_orcamentaria" style="text-align:center; padding:20px;">
             <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
         </p>
-        <table id="tabela-af_asgead_continuados_necessidade_orcamentaria" class="display">
-          <thead><tr id="header-af_asgead_continuados_necessidade_orcamentaria"></tr></thead>
+        <table id="tabela-necessidade_orcamentaria" class="display">
+          <thead><tr id="header-necessidade_orcamentaria"></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -70,11 +69,11 @@
     <div class="chat-item">
       <h2>Continuados – Executado por Mês <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
-        <p id="loading-af_asgead_continuados_executados_por_mes" style="text-align:center; padding:20px;">
+        <p id="loading-executados_por_mes" style="text-align:center; padding:20px;">
             <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
         </p>
-        <table id="tabela-af_asgead_continuados_executados_por_mes" class="display">
-          <thead><tr id="header-af_asgead_continuados_executados_por_mes"></tr></thead>
+        <table id="tabela-executados_por_mes" class="display">
+          <thead><tr id="header-executados_por_mes"></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -83,11 +82,11 @@
     <div class="chat-item">
       <h2>Continuados – Previsto por Mês <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
-        <p id="loading-af_asgead_continuados_previstos_por_mes" style="text-align:center; padding:20px;">
+        <p id="loading-previstos_por_mes" style="text-align:center; padding:20px;">
             <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
         </p>
-        <table id="tabela-af_asgead_continuados_previstos_por_mes" class="display">
-          <thead><tr id="header-af_asgead_continuados_previstos_por_mes"></tr></thead>
+        <table id="tabela-previstos_por_mes" class="display">
+          <thead><tr id="header-previstos_por_mes"></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -120,15 +119,19 @@
   <script>
     // --- 1. CONFIGURAÇÕES: CONTROLE DE LINHAS POR PÁGINA ---
     const configLinhas = {
-        // Tabelas deste arquivo:
-        'af_asgead_continuados_necessidade_orcamentaria': 50,
-        'af_asgead_continuados_executados_por_mes': 50,
-        'af_asgead_continuados_previstos_por_mes': 50
+        'necessidade_orcamentaria': 50,
+        'executados_por_mes': 50,
+        'previstos_por_mes': 50
     };
 
     const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // --- IMPORTANTE: Aponta para o schema 'contratoscontinuados' ---
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+        db: { schema: 'contratoscontinuados' }
+    });
+
     let tabelasCarregadas = {};
 
     // --- 2. GERENCIADOR DE CLIQUES (IFRAMES E TABELAS) ---
@@ -140,19 +143,16 @@
         const icon = header.querySelector('i');
         let target = null;
 
-        // Define quem deve abrir (prioridade para tabela/conteúdo)
         if (content) target = content;
         else if (iframe) target = iframe;
 
         if (target) {
             const isHidden = target.style.display === 'none' || target.style.display === '';
-
-            // Toggle Visual
             target.style.display = isHidden ? 'block' : 'none';
             icon.classList.toggle('fa-chevron-up', isHidden);
             icon.classList.toggle('fa-chevron-down', !isHidden);
 
-            // Se for tabela e estiver abrindo, carrega os dados
+            // Carrega a tabela somente quando abrir a aba
             if (isHidden && content) {
                 const table = content.querySelector('table');
                 if (table) loadTable(table.id.replace('tabela-', ''));
@@ -170,11 +170,15 @@
       const thead = document.querySelector(`#header-${viewName}`);
 
       loading.style.display = 'block';
+
+      // Busca dados do Supabase
       const { data, error } = await supabaseClient.from(viewName).select('*').limit(500);
       loading.style.display = 'none';
 
+      // Tratamento de Erros
       if (error) {
-          tbody.innerHTML = `<tr><td colspan="100" style="color:red;text-align:center">Erro: ${error.message}</td></tr>`;
+          console.error("Erro Supabase:", error);
+          tbody.innerHTML = `<tr><td colspan="100" style="color:red;text-align:center">Erro ao carregar dados: ${error.message}</td></tr>`;
           return;
       }
       if (!data || !data.length) {
@@ -182,20 +186,20 @@
           return;
       }
 
-      // Configuração das Colunas
+      // Configuração Automática das Colunas
       const colunas = Object.keys(data[0]);
       thead.innerHTML = colunas.map(c => `<th>${c}</th>`).join('');
 
       const configColunas = colunas.map(c => {
-          const isFinanceiro = c.includes('Saldo') || c.includes('Valor') || c.includes('Total');
+          // Identifica colunas financeiras ou meses para alinhar à direita
+          const isFinanceiro = c.includes('Saldo') || c.includes('Valor') || c.includes('Total') ||
+                               ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'].includes(c);
+
           return {
               title: c,
               className: isFinanceiro ? "dt-body-right" : "",
               render: function (data, type) {
-                  // Se for financeiro e for número puro, formata. Se for texto (já formatado no SQL), mantém.
-                  if (isFinanceiro && type === 'display' && typeof data === 'number') {
-                      return data.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                  }
+                  // O dado já vem formatado como texto do SQL
                   return data;
               }
           };
@@ -206,7 +210,7 @@
         data: data.map(row => Object.values(row)),
         columns: configColunas,
         scrollX: true,
-        pageLength: configLinhas[viewName] || 10, // Aplica config de linhas
+        pageLength: configLinhas[viewName] || 10,
         language: {
             "sEmptyTable": "Nenhum registro encontrado",
             "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
