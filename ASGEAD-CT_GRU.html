@@ -65,9 +65,9 @@
             <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
         </p>
         <table
-          id="tabela-view_resumo_arrecadacao_referencia"
-          class="display"
-          data-schema="sisgru"
+            id="tabela-view_resumo_arrecadacao_referencia"
+            class="display"
+            data-schema="sisgru"
         >
           <thead><tr id="header-view_resumo_arrecadacao_referencia"></tr></thead>
           <tbody></tbody>
@@ -160,16 +160,16 @@
   <script>
     // --- 1. CONFIGURAÇÕES: CONTROLE DE LINHAS POR PÁGINA ---
     const configLinhas = {
-        'view_resumo_arrecadacao_referencia': 50,
+        'view_resumo_arrecadacao_referencia': 25,
         'af_asgead__resultado_arrecadado_remanejado': 25,
         'af_asgead__arrecadacao_ugr_completo': 50,
         'af_asgead__arrecadacao_ugr_completo_agrupado': 25,
         'af_asgead_remanejamento_arrecadacao_propria': 25
     };
 
-    // --- CHAVES ESPECÍFICAS DESTE ARQUIVO ---
-    const SUPABASE_URL = 'https://xqoutviueorajuremsrh.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhxb3V0dml1ZW9yYWp1cmVtc3JoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NjAwNDQsImV4cCI6MjA3MDIzNjA0NH0.U_3WDVRGG8o39cfehMnBUGs0HOEi7Di-LueXw_sD7U0';
+    // --- CHAVES SUPABASE (Atualizadas conforme seu último código) ---
+    const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_hdPwDCDVrNkpvFtyUch6Fw_nCeQcRiC'; // Use a chave correta aqui
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     let tabelasCarregadas = {};
 
@@ -193,7 +193,6 @@
 
             if (isHidden && content) {
                 const table = content.querySelector('table');
-                // Passa a ID completa para a função
                 if (table) loadTable(table.id);
             }
         }
@@ -202,7 +201,6 @@
 
     // --- 3. CARREGAMENTO DE DADOS ---
     async function loadTable(tableId) {
-      // O nome da view é a ID sem o prefixo "tabela-"
       const viewName = tableId.replace('tabela-', '');
 
       if (tabelasCarregadas[viewName]) return;
@@ -211,13 +209,13 @@
       const tbody = document.querySelector(`#${tableId} tbody`);
       const thead = document.querySelector(`#header-${viewName}`);
 
-      // PEGA O SCHEMA DO ATRIBUTO HTML (se não tiver, usa 'public')
+      // LÓGICA DE SCHEMA REATIVADA
       const tableElement = document.getElementById(tableId);
       const schemaName = tableElement.getAttribute('data-schema') || 'public';
 
       loading.style.display = 'block';
 
-      // --- AQUI ESTÁ A MÁGICA: .schema(schemaName) ---
+      // Consulta usando .schema(schemaName)
       const { data, error } = await supabaseClient
         .schema(schemaName)
         .from(viewName)
@@ -236,16 +234,15 @@
           return;
       }
 
-      // Configuração das Colunas e Renderização
+      // Configuração das Colunas
       const colunas = Object.keys(data[0]);
       thead.innerHTML = colunas.map(c => `<th>${c}</th>`).join('');
 
       const configColunas = colunas.map(c => {
-          // Detecta colunas financeiras
           const isFinanceiro = c.toLowerCase().includes('valor') ||
                                c.toLowerCase().includes('total') ||
                                c.toLowerCase().includes('saldo') ||
-                               c === 'Total' || c === 'Janeiro' || c === 'Fevereiro' || c === 'Março' || // Meses
+                               c === 'Total' || c === 'Janeiro' || c === 'Fevereiro' || c === 'Março' ||
                                c === 'Abril' || c === 'Maio' || c === 'Junho' || c === 'Julho' ||
                                c === 'Agosto' || c === 'Setembro' || c === 'Outubro' || c === 'Novembro' || c === 'Dezembro';
 
@@ -259,7 +256,6 @@
                        return `<a href="${data}" target="_blank" style="color:#66ccff;font-weight:bold;text-decoration:none;">Link Projeto</a>`;
                   }
                   if (isFinanceiro && type === 'display') {
-                      // Se vier string "R$ 1.000,00", mantem. Se vier number, formata.
                       if (typeof data === 'number') {
                           return data.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                       }
