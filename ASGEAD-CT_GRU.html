@@ -39,6 +39,13 @@
     footer { background: #001f3f; color: #ccc; text-align: center; padding: 20px; font-size: 0.85rem; }
     footer a { color: #66ccff; margin: 0 8px; font-size: 1.1rem; text-decoration: none; transition: 0.3s; }
     footer a:hover { color: #fff; }
+
+    /* Filtros Customizados */
+    .filter-bar { display: flex; gap: 10px; margin: 5px 10px 15px 10px; flex-wrap: wrap; align-items: flex-end; }
+    .filter-bar label { display:block; font-weight:bold; margin-bottom:5px; font-size: 14px; }
+    .filter-bar select { padding: 8px; border-radius: 4px; border: 1px solid #ccc; min-width: 200px; }
+    .filter-bar button { padding: 8px 20px; cursor: pointer; background-color: #003366; color: white; border: none; border-radius: 4px; font-weight: bold; }
+    .filter-bar button:hover { background-color: #002244; }
   </style>
 </head>
 
@@ -59,16 +66,82 @@
     </div>
 
     <div class="chat-item">
+      <h2>Arrecadação Detalhada (Por Departamento) <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <div class="filter-bar">
+          <div>
+            <label>Departamento:</label>
+            <select id="filtro-departamento-detalhado">
+                <option value="">Carregando...</option>
+            </select>
+          </div>
+          <button onclick="buscarArrecadacaoDetalhada()">
+            <i class="fa fa-filter"></i> Filtrar
+          </button>
+        </div>
+        <div id="loading-detalhada" style="display:none; text-align:center; padding: 30px;">
+            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+        </div>
+        <table id="tabela-arrecadacao-detalhada" class="display" style="width:100%">
+          <thead>
+             <tr>
+                <th>Departamento</th>
+                <th>Referência</th>
+                <th>Descrição</th>
+                <th>Qtd GRU</th>
+                <th>Total</th>
+                <th>Valor UGR</th>
+                <th>Valor NIT</th>
+                <th>Valor UTFPR</th>
+             </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="chat-item">
+      <h2>Valores Repassados de Recursos de Arrecadação Própria <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <div class="filter-bar">
+          <div>
+            <label>UGR:</label>
+            <select id="filtro-ugr-repasses">
+                <option value="">Carregando...</option>
+            </select>
+          </div>
+          <button onclick="buscarRepasses()">
+            <i class="fa fa-filter"></i> Filtrar
+          </button>
+        </div>
+        <div id="loading-repasses" style="display:none; text-align:center; padding: 30px;">
+            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+        </div>
+        <table id="tabela-repasses" class="display" style="width:100%">
+          <thead>
+             <tr>
+                <th>ID</th>
+                <th>UGR</th>
+                <th>Tipo</th>
+                <th>GND</th>
+                <th>Fonte</th>
+                <th>Valor</th>
+                <th>Detalhes</th>
+                <th>Data</th>
+             </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="chat-item">
       <h2>Resumo GRU por Referência <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
         <p id="loading-view_resumo_arrecadacao_referencia" style="text-align:center; padding:20px;">
             <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
         </p>
-        <table
-            id="tabela-view_resumo_arrecadacao_referencia"
-            class="display"
-            data-schema="sisgru"
-        >
+        <table id="tabela-view_resumo_arrecadacao_referencia" class="display" data-schema="sisgru">
           <thead><tr id="header-view_resumo_arrecadacao_referencia"></tr></thead>
           <tbody></tbody>
         </table>
@@ -76,71 +149,20 @@
     </div>
 
     <div class="chat-item">
-      <h2>Resultado Valores Arrecadados e Repassados por UGR <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <p id="loading-af_asgead__resultado_arrecadado_remanejado" style="text-align:center; padding:20px;">
-            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
-        </p>
-        <table
-            id="tabela-af_asgead__resultado_arrecadado_remanejado"
-            class="display"
-            data-schema="sisgru"
-        >
-          <thead><tr id="header-af_asgead__resultado_arrecadado_remanejado"></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="chat-item">
-      <h2>Arrecadação por Projeto/Referência com Valores Detalhados <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <p id="loading-af_asgead__arrecadacao_ugr_completo" style="text-align:center; padding:20px;">
-            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
-        </p>
-        <table
-            id="tabela-af_asgead__arrecadacao_ugr_completo"
-            class="display"
-            data-schema="sisgru"
-        >
-          <thead><tr id="header-af_asgead__arrecadacao_ugr_completo"></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="chat-item">
-      <h2>Arrecadação por UGR com Valores Detalhados <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <p id="loading-af_asgead__arrecadacao_ugr_completo_agrupado" style="text-align:center; padding:20px;">
-            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
-        </p>
-        <table
-            id="tabela-af_asgead__arrecadacao_ugr_completo_agrupado"
-            class="display"
-            data-schema="sisgru"
-        >
-          <thead><tr id="header-af_asgead__arrecadacao_ugr_completo_agrupado"></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="chat-item">
-      <h2>Valores Repassados de Recurso Próprio <i class="fa-solid fa-chevron-down"></i></h2>
-      <div class="chat-content">
-        <p id="loading-af_asgead_remanejamento_arrecadacao_propria" style="text-align:center; padding:20px;">
-            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
-        </p>
-        <table
-            id="tabela-af_asgead_remanejamento_arrecadacao_propria"
-            class="display"
-            data-schema="sisgru"
-        >
-          <thead><tr id="header-af_asgead_remanejamento_arrecadacao_propria"></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
+        <h2>Arrecadação por Projeto/Referência com Valores Detalhados <i class="fa-solid fa-chevron-down"></i></h2>
+        <div class="chat-content">
+          <p id="loading-af_asgead__arrecadacao_ugr_completo" style="text-align:center; padding:20px;">
+              <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+          </p>
+          <table
+              id="tabela-af_asgead__arrecadacao_ugr_completo"
+              class="display"
+              data-schema="sisgru"
+          >
+            <thead><tr id="header-af_asgead__arrecadacao_ugr_completo"></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
     </div>
 
   </div>
@@ -158,22 +180,14 @@
   <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
 
   <script>
-    // --- 1. CONFIGURAÇÕES: CONTROLE DE LINHAS POR PÁGINA ---
-    const configLinhas = {
-        'view_resumo_arrecadacao_referencia': 25,
-        'af_asgead__resultado_arrecadado_remanejado': 25,
-        'af_asgead__arrecadacao_ugr_completo': 50,
-        'af_asgead__arrecadacao_ugr_completo_agrupado': 25,
-        'af_asgead_remanejamento_arrecadacao_propria': 25
-    };
-
-    // --- CHAVES SUPABASE (Atualizadas conforme seu último código) ---
+    // --- CONFIGURAÇÕES ---
     const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_hdPwDCDVrNkpvFtyUch6Fw_nCeQcRiC'; // Use a chave correta aqui
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     let tabelasCarregadas = {};
 
-    // --- 2. GERENCIADOR DE CLIQUES ---
+    // --- GENÉRICO: GERENCIADOR DE CLIQUES ---
     document.querySelectorAll('.chat-item h2').forEach(header => {
       header.addEventListener('click', () => {
         const parent = header.closest('.chat-item');
@@ -192,30 +206,216 @@
             icon.classList.toggle('fa-chevron-down', !isHidden);
 
             if (isHidden && content) {
+                // Se for tabela genérica (sem filtro custom), carrega
                 const table = content.querySelector('table');
-                if (table) loadTable(table.id);
+                // Tabelas que dependem de clique no botão "Filtrar" não carregam automático
+                const manuais = ['tabela-arrecadacao-detalhada', 'tabela-repasses'];
+
+                if (table && !manuais.includes(table.id)) {
+                    loadTable(table.id);
+                }
+                // Se for tabela manual, carrega os filtros
+                if(table.id === 'tabela-arrecadacao-detalhada') carregarDeptosDetalhado();
+                if(table.id === 'tabela-repasses') carregarUGRsRepasses();
             }
         }
       });
     });
 
-    // --- 3. CARREGAMENTO DE DADOS ---
+    // =========================================================
+    //  1. ARRECADAÇÃO DETALHADA (POR DEPARTAMENTO)
+    // =========================================================
+
+    async function carregarDeptosDetalhado() {
+        const select = document.getElementById('filtro-departamento-detalhado');
+        // Evita recarregar se já tiver opções
+        if (select.options.length > 1) return;
+
+        const { data, error } = await supabaseClient
+            .schema('sisgru')
+            .from('referencia_departamento')
+            .select('departamento')
+            .order('departamento');
+
+        if (data) {
+            const unicos = [...new Set(data.map(i => i.departamento))].filter(d => d).sort();
+            select.innerHTML = '<option value="">Todos os Departamentos</option>';
+            unicos.forEach(depto => {
+                const opt = document.createElement('option');
+                opt.value = depto;
+                opt.innerText = depto;
+                select.appendChild(opt);
+            });
+        }
+    }
+
+    async function buscarArrecadacaoDetalhada() {
+        const departamento = document.getElementById('filtro-departamento-detalhado').value;
+        const loading = document.getElementById('loading-detalhada');
+        const tabelaId = '#tabela-arrecadacao-detalhada';
+
+        if ($.fn.DataTable.isDataTable(tabelaId)) {
+            $(tabelaId).DataTable().destroy();
+        }
+
+        const tbody = document.querySelector(tabelaId + ' tbody');
+        tbody.innerHTML = '';
+        loading.style.display = 'block';
+
+        try {
+            let query = supabaseClient.schema('sisgru').from('arrecadacao_detalhada').select('*');
+
+            // Se tiver departamento selecionado, filtra. Se vazio (""), traz todos.
+            if (departamento) {
+                query = query.eq('departamento', departamento);
+            }
+
+            const { data, error } = await query;
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px;">Nenhum dado encontrado.</td></tr>';
+            } else {
+                const fmt = (v) => parseFloat(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.departamento || '-'}</td>
+                        <td>${row.referencia || '-'}</td>
+                        <td>${row.descricao || '-'}</td>
+                        <td style="text-align:center">${row.quantidade_gru}</td>
+                        <td style="text-align:right; font-weight:bold;">${fmt(row.total)}</td>
+                        <td style="text-align:right">${fmt(row.valor_ugr)}</td>
+                        <td style="text-align:right">${fmt(row.valor_nit)}</td>
+                        <td style="text-align:right">${fmt(row.valor_utfpr)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            $(tabelaId).DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
+                pageLength: 25,
+                scrollX: true
+            });
+
+        } catch (err) {
+            console.error(err);
+            tbody.innerHTML = `<tr><td colspan="8" style="color:red; text-align:center">Erro: ${err.message}</td></tr>`;
+        } finally {
+            loading.style.display = 'none';
+        }
+    }
+
+    // =========================================================
+    //  2. REPASSES ARRECADAÇÃO PRÓPRIA (POR UGR)
+    // =========================================================
+
+    async function carregarUGRsRepasses() {
+        const select = document.getElementById('filtro-ugr-repasses');
+        if (select.options.length > 1) return;
+
+        // Busca UGRs únicas da tabela remanejamento_ugr filtrada por tipo 'Arrecadação Própria'
+        const { data, error } = await supabaseClient
+            .schema('sisgru')
+            .from('remanejamento_ugr')
+            .select('ugr')
+            .eq('tipo', 'Arrecadação Própria')
+            .order('ugr');
+
+        if (data) {
+            const unicos = [...new Set(data.map(i => i.ugr))].filter(u => u);
+            select.innerHTML = '<option value="">Todas as UGRs</option>';
+            unicos.forEach(ugr => {
+                const opt = document.createElement('option');
+                opt.value = ugr;
+                opt.innerText = ugr;
+                select.appendChild(opt);
+            });
+        }
+    }
+
+    async function buscarRepasses() {
+        const ugr = document.getElementById('filtro-ugr-repasses').value;
+        const loading = document.getElementById('loading-repasses');
+        const tabelaId = '#tabela-repasses';
+
+        if ($.fn.DataTable.isDataTable(tabelaId)) {
+            $(tabelaId).DataTable().destroy();
+        }
+
+        const tbody = document.querySelector(tabelaId + ' tbody');
+        tbody.innerHTML = '';
+        loading.style.display = 'block';
+
+        try {
+            // Filtro Fixo: tipo = 'Arrecadação Própria'
+            let query = supabaseClient
+                .schema('sisgru')
+                .from('remanejamento_ugr')
+                .select('*')
+                .eq('tipo', 'Arrecadação Própria');
+
+            // Filtro Dinâmico: UGR (se selecionado)
+            if (ugr) {
+                query = query.eq('ugr', ugr);
+            }
+
+            const { data, error } = await query;
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px;">Nenhum repasse encontrado.</td></tr>';
+            } else {
+                const fmt = (v) => parseFloat(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                const fmtData = (d) => d ? new Date(d).toLocaleDateString('pt-BR') : '-';
+
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.id}</td>
+                        <td>${row.ugr}</td>
+                        <td>${row.tipo}</td>
+                        <td>${row.gnd}</td>
+                        <td>${row.fonte}</td>
+                        <td style="text-align:right; font-weight:bold;">${fmt(row.valor)}</td>
+                        <td>${row.Detalhes || '-'}</td>
+                        <td>${fmtData(row.data)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            $(tabelaId).DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
+                pageLength: 25,
+                scrollX: true,
+                order: [[7, 'desc']] // Ordena por Data (coluna 7) decrescente
+            });
+
+        } catch (err) {
+            console.error(err);
+            tbody.innerHTML = `<tr><td colspan="8" style="color:red; text-align:center">Erro: ${err.message}</td></tr>`;
+        } finally {
+            loading.style.display = 'none';
+        }
+    }
+
+    // =========================================================
+    //  3. TABELAS GENÉRICAS (SEM FILTRO MANUAL)
+    // =========================================================
     async function loadTable(tableId) {
       const viewName = tableId.replace('tabela-', '');
-
       if (tabelasCarregadas[viewName]) return;
 
       const loading = document.getElementById(`loading-${viewName}`);
       const tbody = document.querySelector(`#${tableId} tbody`);
       const thead = document.querySelector(`#header-${viewName}`);
-
-      // LÓGICA DE SCHEMA REATIVADA
       const tableElement = document.getElementById(tableId);
       const schemaName = tableElement.getAttribute('data-schema') || 'public';
 
       loading.style.display = 'block';
 
-      // Consulta usando .schema(schemaName)
       const { data, error } = await supabaseClient
         .schema(schemaName)
         .from(viewName)
@@ -224,42 +424,22 @@
 
       loading.style.display = 'none';
 
-      if (error) {
-          console.error("Erro Supabase:", error);
-          tbody.innerHTML = `<tr><td colspan="100" style="color:red;text-align:center">Erro ao carregar do schema <b>${schemaName}</b>: ${error.message}</td></tr>`;
-          return;
-      }
-      if (!data || !data.length) {
-          tbody.innerHTML = `<tr><td colspan="100" style="text-align:center">Nenhum dado encontrado na tabela ${viewName}.</td></tr>`;
-          return;
+      if (error || !data || !data.length) {
+         tbody.innerHTML = `<tr><td colspan="100" style="text-align:center">${error ? error.message : 'Sem dados.'}</td></tr>`;
+         return;
       }
 
-      // Configuração das Colunas
       const colunas = Object.keys(data[0]);
       thead.innerHTML = colunas.map(c => `<th>${c}</th>`).join('');
 
       const configColunas = colunas.map(c => {
-          const isFinanceiro = c.toLowerCase().includes('valor') ||
-                               c.toLowerCase().includes('total') ||
-                               c.toLowerCase().includes('saldo') ||
-                               c === 'Total' || c === 'Janeiro' || c === 'Fevereiro' || c === 'Março' ||
-                               c === 'Abril' || c === 'Maio' || c === 'Junho' || c === 'Julho' ||
-                               c === 'Agosto' || c === 'Setembro' || c === 'Outubro' || c === 'Novembro' || c === 'Dezembro';
-
-          const isLink = c === 'Consulta FUNTEF';
-
+          const isFin = ['total', 'valor', 'saldo'].some(k => c.toLowerCase().includes(k));
           return {
               title: c,
-              className: isFinanceiro ? "dt-body-right" : "",
-              render: function (data, type) {
-                  if (isLink && data) {
-                       return `<a href="${data}" target="_blank" style="color:#66ccff;font-weight:bold;text-decoration:none;">Link Projeto</a>`;
-                  }
-                  if (isFinanceiro && type === 'display') {
-                      if (typeof data === 'number') {
-                          return data.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                      }
-                  }
+              className: isFin ? "dt-body-right" : "",
+              render: (data, type) => {
+                  if (isFin && type === 'display' && typeof data === 'number')
+                      return data.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                   return data;
               }
           };
@@ -269,19 +449,8 @@
         data: data.map(row => Object.values(row)),
         columns: configColunas,
         scrollX: true,
-        pageLength: configLinhas[viewName] || 10,
-        language: {
-            "sEmptyTable": "Nenhum registro encontrado",
-            "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-            "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
-            "sInfoFiltered": "(Filtrados de _MAX_ registros)",
-            "sLengthMenu": "_MENU_ resultados por página",
-            "sLoadingRecords": "Carregando...",
-            "sProcessing": "Processando...",
-            "sZeroRecords": "Nenhum registro encontrado",
-            "sSearch": "Pesquisar:",
-            "oPaginate": { "sNext": "Próximo", "sPrevious": "Anterior", "sFirst": "Primeiro", "sLast": "Último" }
-        }
+        pageLength: 25,
+        language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' }
       });
 
       tabelasCarregadas[viewName] = true;
