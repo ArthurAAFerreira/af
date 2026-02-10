@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Ferramentas CABA-CT</title>
 
-  <!-- Font Awesome para ícones -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
@@ -59,28 +58,52 @@
       transition: all 0.3s ease;
     }
 
-    .chat-item h2 {
-      margin: 0;
+    /* --- NOVO ESTILO DO CABEÇALHO (Título + Subtítulo) --- */
+    .chat-header {
       padding: 15px 20px;
-      font-size: 1.1em;
-      font-weight: bold;
-      color: #003366;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       background-color: #e6f0ff;
+      cursor: pointer;
+      transition: background-color 0.2s;
     }
 
-    .chat-item h2:hover {
+    .chat-header:hover {
       background-color: #cce0ff;
     }
 
-    .chat-item iframe {
+    .chat-header h2 {
+      margin: 0;
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #003366;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-subtitle {
+      margin-top: 5px;
+      font-size: 0.9rem;
+      color: #666;
+      font-weight: normal;
+    }
+
+    /* Wrapper para o conteúdo oculto (apenas o iframe agora) */
+    .chat-content-wrapper {
+        display: none; /* Inicialmente escondido */
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    /* Estilo padrão do Iframe */
+    .chat-content-wrapper iframe {
       width: 100%;
       height: 500px;
       border: none;
-      display: none; /* inicial escondido */
+      display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
 
     footer {
@@ -114,13 +137,39 @@
   <div class="chat-container">
 
     <div class="chat-item">
-      <h2>CABA-CT - Análise Processos de Baixa <i class="fa-solid fa-chevron-down"></i></h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/1e94b767-0cea-4694-8246-4388a6ca3573/chat"></iframe>
+      <div class="chat-header">
+        <h2>Análise de Orçamento para Reavaliação de Bem <i class="fa-solid fa-chevron-down"></i></h2>
+        <div class="chat-subtitle">
+          Informe os links de orçamento e obtenha o texto, média e pdf dos sites.
+        </div>
+      </div>
+      <div class="chat-content-wrapper">
+        <iframe src="https://n8n.arthuraaferreira.com.br/form/9af8ec35-e001-4a9c-911c-a8c4a4583f49"></iframe>
+      </div>
     </div>
 
     <div class="chat-item">
-      <h2>CABA-CT - Análise Processos de Baixa <i class="fa-solid fa-chevron-down"></i></h2>
-      <iframe src="https://n8n.arthuraaferreira.com.br/webhook/1e94b767-0cea-4694-8246-4388a6ca3573/chat"></iframe>
+      <div class="chat-header">
+        <h2>CABA-CT - Análise Processos de Baixa (1) <i class="fa-solid fa-chevron-down"></i></h2>
+        <div class="chat-subtitle">
+          Ferramenta para análise e conferência de processos de baixa.
+        </div>
+      </div>
+      <div class="chat-content-wrapper">
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/1e94b767-0cea-4694-8246-4388a6ca3573/chat"></iframe>
+      </div>
+    </div>
+
+    <div class="chat-item">
+      <div class="chat-header">
+        <h2>CABA-CT - Análise Processos de Baixa (2) <i class="fa-solid fa-chevron-down"></i></h2>
+        <div class="chat-subtitle">
+          Ferramenta auxiliar para análise de processos de baixa.
+        </div>
+      </div>
+      <div class="chat-content-wrapper">
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/1e94b767-0cea-4694-8246-4388a6ca3573/chat"></iframe>
+      </div>
     </div>
 
   </div>
@@ -134,18 +183,20 @@
   </footer>
 
   <script>
-    // Abrir/fechar chat ao clicar no título
-    const chatHeaders = document.querySelectorAll('.chat-item h2');
-    chatHeaders.forEach(header => {
+    // Agora selecionamos a div inteira do cabeçalho
+    const headers = document.querySelectorAll('.chat-header');
+
+    headers.forEach(header => {
       header.addEventListener('click', () => {
-        const iframe = header.nextElementSibling;
+        // O conteúdo é o próximo elemento irmão (o wrapper do iframe)
+        const content = header.nextElementSibling;
         const icon = header.querySelector('i');
 
-        if (iframe.style.display === 'block') {
-          iframe.style.display = 'none';
+        if (content.style.display === 'block') {
+          content.style.display = 'none';
           icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
         } else {
-          iframe.style.display = 'block';
+          content.style.display = 'block';
           icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
         }
       });
