@@ -101,6 +101,23 @@
     </div>
 
     <div class="chat-item">
+      <h2>Resultado Valores Arrecadados e Repassados por UGR <i class="fa-solid fa-chevron-down"></i></h2>
+      <div class="chat-content">
+        <p id="loading-necessidade_orçamentaria_arrecadacao" style="text-align:center; padding:20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+        </p>
+        <table
+            id="tabela-necessidade_orçamentaria_arrecadacao"
+            class="display"
+            data-schema="sisgru"
+        >
+          <thead><tr id="header-necessidade_orçamentaria_arrecadacao"></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="chat-item">
       <h2>Valores Repassados de Recursos de Arrecadação Própria <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
         <div class="filter-bar">
@@ -163,6 +180,11 @@
             <tbody></tbody>
           </table>
         </div>
+    </div>
+
+    <div class="chat-item">
+      <h2>Atualização Base de Dados Supabase - SISGRU <i class="fa-solid fa-chevron-down"></i></h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/form/207c15fe-5be9-4609-9257-e9460823ccf4"></iframe>
     </div>
 
   </div>
@@ -316,8 +338,9 @@
         if (select.options.length > 1) return;
 
         // Busca UGRs únicas da tabela remanejamento_ugr filtrada por tipo 'Arrecadação Própria'
+        // Atualizado para ler a tabela remanejamento_ugr do schema utfprct (conforme sua migração)
         const { data, error } = await supabaseClient
-            .schema('sisgru')
+            .schema('utfprct')
             .from('remanejamento_ugr')
             .select('ugr')
             .eq('tipo', 'Arrecadação Própria')
@@ -350,8 +373,9 @@
 
         try {
             // Filtro Fixo: tipo = 'Arrecadação Própria'
+            // Atualizado para o schema utfprct
             let query = supabaseClient
-                .schema('sisgru')
+                .schema('utfprct')
                 .from('remanejamento_ugr')
                 .select('*')
                 .eq('tipo', 'Arrecadação Própria');
@@ -433,7 +457,7 @@
       thead.innerHTML = colunas.map(c => `<th>${c}</th>`).join('');
 
       const configColunas = colunas.map(c => {
-          const isFin = ['total', 'valor', 'saldo'].some(k => c.toLowerCase().includes(k));
+          const isFin = ['total', 'valor', 'saldo', 'receber'].some(k => c.toLowerCase().includes(k));
           return {
               title: c,
               className: isFin ? "dt-body-right" : "",
