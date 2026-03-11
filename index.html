@@ -9,41 +9,139 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
+    :root {
+      --primary: #0057b8;
+      --primary-dark: #00336b;
+      --bg: #f2f6fb;
+      --surface: #ffffff;
+      --text: #1f2937;
+      --muted: #5b6472;
+      --shadow: 0 10px 30px rgba(0, 40, 90, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: #f5f7fa;
+      font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg);
+      color: var(--text);
     }
 
     header {
-      background: linear-gradient(135deg, #0066cc, #003366);
+      background: radial-gradient(circle at top right, #1b7bf5 0%, var(--primary-dark) 65%);
       color: white;
-      padding: 60px 20px;
+      padding: 72px 20px 56px;
       text-align: center;
+      box-shadow: 0 8px 30px rgba(0, 33, 78, 0.28);
     }
 
     header h1 {
       font-size: 2.8rem;
       font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
     }
 
     header p {
       font-size: 1.2rem;
       opacity: 0.9;
+      margin-bottom: 4px;
+    }
+
+    .intro-title {
+      font-weight: 700;
+      color: var(--primary-dark);
+      letter-spacing: -0.01em;
+    }
+
+    .menu-grid > [class*="col-"] {
+      display: flex;
     }
 
     .menu-card {
-      transition: all 0.3s ease;
+      border: 0;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      position: relative;
+      background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+      width: 100%;
     }
 
     .menu-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      transform: translateY(-6px);
+      box-shadow: 0 15px 35px rgba(0, 50, 110, 0.2);
+    }
+
+    .menu-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), #4b9cff);
+    }
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 28px 24px;
+      gap: 8px;
+    }
+
+    .card-title {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .card-text {
+      color: var(--muted);
+      margin-bottom: 20px;
+      flex-grow: 1;
+    }
+
+    .menu-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 87, 184, 0.1);
+      color: var(--primary);
+      font-size: 1.4rem;
+    }
+
+    .btn-enter {
+      background: var(--primary);
+      border-color: var(--primary);
+      min-width: 130px;
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 8px 18px;
+    }
+
+    .btn-enter:hover,
+    .btn-enter:focus {
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
     }
 
     footer {
-      background: #003366;
+      background: #0d2447;
       color: white;
-      padding: 30px 20px;
+      padding: 34px 20px;
       margin-top: 60px;
       text-align: center;
     }
@@ -51,12 +149,23 @@
     footer a {
       color: white;
       margin: 0 10px;
-      font-size: 1.4rem;
+      font-size: 1rem;
       transition: color 0.3s ease;
+      text-decoration: none;
     }
 
     footer a:hover {
-      color: #66ccff;
+      color: #8fc8ff;
+    }
+
+    @media (max-width: 576px) {
+      header h1 {
+        font-size: 2.1rem;
+      }
+
+      .card-title {
+        min-height: auto;
+      }
     }
   </style>
 </head>
@@ -69,16 +178,16 @@
   </header>
 
   <main class="container my-5">
-    <h2 class="text-center mb-4">Escolha uma das opções abaixo:</h2>
-    <div class="row g-4">
+    <h2 class="text-center mb-4 intro-title">Escolha uma das opções abaixo:</h2>
+    <div class="row g-4 menu-grid">
 
       <div class="col-md-6">
         <div class="card menu-card h-100">
           <div class="card-body text-center">
-            <i class="fa-solid fa-comments fa-2x text-primary mb-3"></i>
+            <i class="fa-solid fa-comments menu-icon mb-2"></i>
             <h5 class="card-title">Chats Públicos UTFPR-CT</h5>
             <p class="card-text">Acesse os chats com assuntos gerais para a UTFPR-CT.</p>
-            <a href="ASGEAD-CT_consultas.html" class="btn btn-primary">Entrar</a>
+            <a href="ASGEAD-CT_consultas.html" class="btn btn-primary btn-enter">Entrar</a>
           </div>
         </div>
       </div>
@@ -86,10 +195,10 @@
       <div class="col-md-6">
         <div class="card menu-card h-100">
           <div class="card-body text-center">
-            <i class="fa-solid fa-lock fa-2x text-primary mb-3"></i>
+            <i class="fa-solid fa-lock menu-icon mb-2"></i>
             <h5 class="card-title">Chats Internos ASGEAD-CT</h5>
             <p class="card-text">Consultas relacionadas à DIRPLAD-CT (ASGEAD/DEOFI).</p>
-            <a href="ASGEAD-CT_consultasDIRPLAD-CT.html" class="btn btn-primary">Entrar</a>
+            <a href="ASGEAD-CT_consultasDIRPLAD-CT.html" class="btn btn-primary btn-enter">Entrar</a>
           </div>
         </div>
       </div>
@@ -97,10 +206,10 @@
       <div class="col-md-6">
         <div class="card menu-card h-100">
           <div class="card-body text-center">
-            <i class="fa-solid fa-user-shield fa-2x text-primary mb-3"></i>
+            <i class="fa-solid fa-user-shield menu-icon mb-2"></i>
             <h5 class="card-title">AF - Restrito</h5>
             <p class="card-text">Restrito - referente automações, scripts e comandos pessoais</p>
-            <a href="ASGEAD-CT_AF.html" class="btn btn-primary">Entrar</a>
+            <a href="ASGEAD-CT_AF.html" class="btn btn-primary btn-enter">Entrar</a>
           </div>
         </div>
       </div>
@@ -108,10 +217,10 @@
       <div class="col-md-6">
         <div class="card menu-card h-100">
           <div class="card-body text-center">
-            <i class="fa-solid fa-user-shield fa-2x text-primary mb-3"></i>
+            <i class="fa-solid fa-user-shield menu-icon mb-2"></i>
             <h5 class="card-title">Geral - Restrito</h5>
             <p class="card-text">Restrito - referente consultas e scripts de produção </p>
-            <a href="ASGEAD-CT_restrito.html" class="btn btn-primary">Entrar</a>
+            <a href="ASGEAD-CT_restrito.html" class="btn btn-primary btn-enter">Entrar</a>
           </div>
         </div>
       </div>
@@ -119,10 +228,10 @@
       <div class="col-md-6">
         <div class="card menu-card h-100">
           <div class="card-body text-center">
-            <i class="fa-solid fa-tools fa-2x text-primary mb-3"></i>
+            <i class="fa-solid fa-tools menu-icon mb-2"></i>
             <h5 class="card-title">Ferramentas - CABA-CT</h5>
             <p class="card-text">Acesse ferramentas de apoio da CABA-CT.</p>
-            <a href="CABA-CT.html" class="btn btn-primary">Entrar</a>
+            <a href="CABA-CT.html" class="btn btn-primary btn-enter">Entrar</a>
           </div>
         </div>
       </div>
@@ -130,10 +239,10 @@
       <div class="col-md-6">
         <div class="card menu-card h-100">
           <div class="card-body text-center">
-            <i class="fa-solid fa-database fa-2x text-primary mb-3"></i>
+            <i class="fa-solid fa-database menu-icon mb-2"></i>
             <h5 class="card-title">Consultas de GRUs UTFPR-CT</h5>
             <p class="card-text">Acesse os chats para realizar consultas referentes as GRUs da UTFPR-CT</p>
-            <a href="ASGEAD-CT_GRU.html" class="btn btn-primary">Entrar</a>
+            <a href="ASGEAD-CT_GRU.html" class="btn btn-primary btn-enter">Entrar</a>
           </div>
         </div>
       </div>
@@ -141,10 +250,10 @@
       <div class="col-md-6">
         <div class="card menu-card h-100">
           <div class="card-body text-center">
-            <i class="fa-solid fa-file-contract fa-2x text-primary mb-3"></i>
+            <i class="fa-solid fa-file-contract menu-icon mb-2"></i>
             <h5 class="card-title">Contratos Continuados</h5>
             <p class="card-text">Acesse as planilhas, dados e chats para realizar alterações simplificadas nas base de dados das consultas. Restrito</p>
-            <a href="ASGEAD-CT_contratoscontinuados.html" class="btn btn-primary">Entrar</a>
+            <a href="ASGEAD-CT_contratoscontinuados.html" class="btn btn-primary btn-enter">Entrar</a>
           </div>
         </div>
       </div>
@@ -152,10 +261,10 @@
       <div class="col-md-6">
         <div class="card menu-card h-100">
           <div class="card-body text-center">
-            <i class="fa-solid fa-plane-departure fa-2x text-primary mb-3"></i>
+            <i class="fa-solid fa-plane-departure menu-icon mb-2"></i>
             <h5 class="card-title">Despesas SCDP - Diárias, Passagens e Ressarcimentos</h5>
             <p class="card-text">Acesse as consultas e controles referentes a diárias, passagens e ressarcimentos do SCDP.</p>
-            <a href="ASGEAD-CT_SCDP.html" class="btn btn-primary">Entrar</a>
+            <a href="ASGEAD-CT_SCDP.html" class="btn btn-primary btn-enter">Entrar</a>
           </div>
         </div>
       </div>
@@ -163,10 +272,10 @@
       <div class="col-md-6">
         <div class="card menu-card h-100">
           <div class="card-body text-center">
-            <i class="fa-solid fa-file-invoice fa-2x text-primary mb-3"></i>
+            <i class="fa-solid fa-file-invoice menu-icon mb-2"></i>
             <h5 class="card-title">Gestão Contratual</h5>
             <p class="card-text">Área referente os procedimentos de gestão contratual</p>
-            <a href="GestaoContratual.html" class="btn btn-primary">Entrar</a>
+            <a href="GestaoContratual.html" class="btn btn-primary btn-enter">Entrar</a>
           </div>
         </div>
       </div>
@@ -174,10 +283,10 @@
       <div class="col-md-6">
         <div class="card menu-card h-100">
           <div class="card-body text-center">
-            <i class="fa-solid fa-landmark fa-2x text-primary mb-3"></i>
+            <i class="fa-solid fa-landmark menu-icon mb-2"></i>
             <h5 class="card-title">UTFPR-LD</h5>
             <p class="card-text">Acesse a área da UTFPR-LD.</p>
-            <a href="UTFPR_LD.html" class="btn btn-primary">Entrar</a>
+            <a href="UTFPR_LD.html" class="btn btn-primary btn-enter">Entrar</a>
           </div>
         </div>
       </div>
@@ -185,10 +294,10 @@
       <div class="col-md-6">
         <div class="card menu-card h-100">
           <div class="card-body text-center">
-            <i class="fa-solid fa-landmark fa-2x text-primary mb-3"></i>
+            <i class="fa-solid fa-landmark menu-icon mb-2"></i>
             <h5 class="card-title">Arrecadação UTFPR</h5>
             <p class="card-text">Espaço para apresentação dos relatório de valores arrecadas.</p>
-            <a href="UTFPR_arrecadacao.html" class="btn btn-primary">Entrar</a>
+            <a href="UTFPR_arrecadacao.html" class="btn btn-primary btn-enter">Entrar</a>
           </div>
         </div>
       </div>
