@@ -32,7 +32,7 @@
     header {
       background: radial-gradient(circle at top right, #1b7bf5 0%, var(--primary-dark) 65%);
       color: white;
-      padding: 72px 20px 56px;
+      padding: 52px 20px 38px;
       text-align: center;
       box-shadow: 0 8px 30px rgba(0, 33, 78, 0.28);
     }
@@ -56,8 +56,140 @@
       letter-spacing: -0.01em;
     }
 
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(230px, 1fr));
+      column-gap: 1.35rem;
+      row-gap: 0.81rem;
+      margin-left: 0;
+      margin-right: 0;
+    }
+
     .menu-grid > [class*="col-"] {
       display: flex;
+      width: auto;
+      max-width: none;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .menu-grid > .menu-wide-card {
+      grid-column: 1 / -1;
+    }
+
+    .menu-wide-card .card-body {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      text-align: left;
+      gap: 14px;
+      padding: 20px 24px;
+    }
+
+    .menu-wide-card .menu-icon {
+      margin-bottom: 0 !important;
+    }
+
+    .menu-wide-card .card-title {
+      min-height: auto;
+      justify-content: flex-start;
+    }
+
+    .menu-wide-card .card-text {
+      margin-bottom: 0;
+    }
+
+    .menu-card.menu-featured {
+      border: 0;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 34%),
+        linear-gradient(130deg, #0e6e96 0%, #1f89b5 46%, #27b3c2 100%);
+      box-shadow: 0 18px 34px rgba(5, 56, 74, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      overflow: hidden;
+    }
+
+    .menu-card.menu-featured::after {
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.46), rgba(224, 247, 255, 0.2));
+      height: 5px;
+    }
+
+    .menu-featured .menu-wide-card-link {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      text-decoration: none;
+      color: #f4fcff;
+      padding: 20px 24px;
+    }
+
+    .menu-featured .menu-wide-card-link > div {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .menu-featured .menu-icon {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      margin-bottom: 0 !important;
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.16), 0 6px 14px rgba(6, 42, 60, 0.25);
+    }
+
+    .menu-featured .menu-icon::before {
+      content: "ℹ";
+      font-family: inherit;
+      font-weight: 800;
+      font-style: normal;
+      text-transform: none;
+      font-size: 1.18rem;
+      line-height: 1;
+    }
+
+    .menu-featured .card-title {
+      color: #042338;
+      min-height: auto;
+      justify-content: flex-start;
+      margin: 0 0 4px;
+      font-size: 1.16rem;
+      font-weight: 800;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.28);
+    }
+
+    .menu-featured .card-text {
+      color: rgba(5, 41, 62, 0.95);
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .menu-featured .featured-arrow {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      font-size: 0.95rem;
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.12);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .menu-featured .featured-arrow i {
+      display: none;
+    }
+
+    .menu-featured .featured-arrow::before {
+      content: "➜";
+      line-height: 1;
+    }
+
+    .menu-featured:hover .featured-arrow {
+      transform: translateX(2px);
+      background: rgba(255, 255, 255, 0.28);
     }
 
     .menu-card {
@@ -91,12 +223,12 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      padding: 28px 24px;
+      padding: 24px 21px;
       gap: 8px;
     }
 
     .card-title {
-      min-height: 48px;
+      min-height: 41px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -107,7 +239,7 @@
 
     .card-text {
       color: var(--muted);
-      margin-bottom: 20px;
+      margin-bottom: 17px;
       flex-grow: 1;
     }
 
@@ -132,33 +264,127 @@
       padding: 8px 18px;
     }
 
+    .menu-card.is-restricted-card {
+      position: relative;
+    }
+
+    .card-lock-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #114180 0%, #0b2d58 100%);
+      color: #ffffff;
+      box-shadow: 0 6px 14px rgba(6, 29, 62, 0.32);
+      pointer-events: none;
+    }
+
+    .card-lock-badge i {
+      display: none;
+    }
+
+    .card-lock-badge::before {
+      content: "🔒";
+      font-size: 0.92rem;
+      line-height: 1;
+    }
+
     .btn-enter:hover,
     .btn-enter:focus {
       background: var(--primary-dark);
       border-color: var(--primary-dark);
     }
 
-    footer {
-      background: #0d2447;
-      color: white;
-      padding: 34px 20px;
-      margin-top: 60px;
-      text-align: center;
+    body.is-index {
+      padding-bottom: 86px;
     }
 
-    footer a {
-      color: white;
-      margin: 0 10px;
-      font-size: 1rem;
-      transition: color 0.3s ease;
+    body.is-index footer {
+      position: fixed;
+      left: 10px;
+      right: 10px;
+      bottom: 8px;
+      z-index: 1050;
+      background: rgba(8, 27, 56, 0.93);
+      color: #ecf4ff;
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(170, 210, 255, 0.22);
+      box-shadow: 0 12px 26px rgba(3, 18, 43, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
+      margin-top: 0;
+    }
+
+    .footer-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      font-size: 0.88rem;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      justify-content: flex-end;
+    }
+
+    .footer-links a {
+      color: #d9ebff;
       text-decoration: none;
+      transition: color 0.2s ease;
+      font-size: 0.86rem;
+      white-space: nowrap;
     }
 
-    footer a:hover {
+    .footer-links a:hover {
       color: #8fc8ff;
     }
 
+    @media (max-width: 992px) {
+      .menu-grid {
+        grid-template-columns: repeat(2, minmax(220px, 1fr));
+      }
+    }
+
     @media (max-width: 576px) {
+      .menu-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .menu-wide-card .card-body {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .menu-featured .menu-wide-card-link {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .menu-wide-card .card-title {
+        justify-content: center;
+      }
+
+      body.is-index {
+        padding-bottom: 124px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .footer-links {
+        justify-content: center;
+      }
+
       header h1 {
         font-size: 2.1rem;
       }
@@ -193,34 +419,25 @@
       </div>
 
       <div class="col-md-6">
-        <div class="card menu-card h-100">
+        <div class="card menu-card h-100 is-restricted-card">
+          <span class="card-lock-badge" aria-hidden="true"><i class="fa-solid fa-lock"></i></span>
           <div class="card-body text-center">
             <i class="fa-solid fa-lock menu-icon mb-2"></i>
-            <h5 class="card-title">Chats Internos ASGEAD-CT</h5>
+            <h5 class="card-title">Interno DIRPLAD/ASGEAD-CT</h5>
             <p class="card-text">Consultas relacionadas à DIRPLAD-CT (ASGEAD/DEOFI).</p>
-            <a href="ASGEAD-CT_consultasDIRPLAD-CT.html" class="btn btn-primary btn-enter">Entrar</a>
+            <a href="asgead_interno.html" class="btn btn-primary btn-enter">Entrar</a>
           </div>
         </div>
       </div>
 
       <div class="col-md-6">
-        <div class="card menu-card h-100">
+        <div class="card menu-card h-100 is-restricted-card">
+          <span class="card-lock-badge" aria-hidden="true"><i class="fa-solid fa-lock"></i></span>
           <div class="card-body text-center">
             <i class="fa-solid fa-user-shield menu-icon mb-2"></i>
             <h5 class="card-title">AF - Restrito</h5>
             <p class="card-text">Restrito - referente automações, scripts e comandos pessoais</p>
             <a href="ASGEAD-CT_AF.html" class="btn btn-primary btn-enter">Entrar</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="card menu-card h-100">
-          <div class="card-body text-center">
-            <i class="fa-solid fa-user-shield menu-icon mb-2"></i>
-            <h5 class="card-title">Geral - Restrito</h5>
-            <p class="card-text">Restrito - referente consultas e scripts de produção </p>
-            <a href="ASGEAD-CT_restrito.html" class="btn btn-primary btn-enter">Entrar</a>
           </div>
         </div>
       </div>
@@ -240,7 +457,7 @@
         <div class="card menu-card h-100">
           <div class="card-body text-center">
             <i class="fa-solid fa-database menu-icon mb-2"></i>
-            <h5 class="card-title">Consultas de GRUs UTFPR-CT</h5>
+            <h5 class="card-title">Despesas Gerais e Arrecadação Própria</h5>
             <p class="card-text">Acesse os chats para realizar consultas referentes as GRUs da UTFPR-CT</p>
             <a href="ASGEAD-CT_GRU.html" class="btn btn-primary btn-enter">Entrar</a>
           </div>
@@ -253,7 +470,7 @@
             <i class="fa-solid fa-file-contract menu-icon mb-2"></i>
             <h5 class="card-title">Contratos Continuados</h5>
             <p class="card-text">Acesse as planilhas, dados e chats para realizar alterações simplificadas nas base de dados das consultas. Restrito</p>
-            <a href="ASGEAD-CT_contratoscontinuados.html" class="btn btn-primary btn-enter">Entrar</a>
+            <a href="GestaoContratual.html" class="btn btn-primary btn-enter">Entrar</a>
           </div>
         </div>
       </div>
@@ -272,20 +489,9 @@
       <div class="col-md-6">
         <div class="card menu-card h-100">
           <div class="card-body text-center">
-            <i class="fa-solid fa-file-invoice menu-icon mb-2"></i>
-            <h5 class="card-title">Gestão Contratual</h5>
-            <p class="card-text">Área referente os procedimentos de gestão contratual</p>
-            <a href="GestaoContratual.html" class="btn btn-primary btn-enter">Entrar</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="card menu-card h-100">
-          <div class="card-body text-center">
             <i class="fa-solid fa-landmark menu-icon mb-2"></i>
-            <h5 class="card-title">UTFPR-LD</h5>
-            <p class="card-text">Acesse a área da UTFPR-LD.</p>
+            <h5 class="card-title">Chats Públicos UTFPR-LD</h5>
+            <p class="card-text">Acesse os chats públicos da UTFPR-LD e teste vídeos na própria página.</p>
             <a href="UTFPR_LD.html" class="btn btn-primary btn-enter">Entrar</a>
           </div>
         </div>
@@ -302,14 +508,16 @@
         </div>
       </div>
 
-      <div class="col-md-6">
-        <div class="card menu-card h-100">
-          <div class="card-body text-center">
-            <i class="fa-solid fa-circle-info menu-icon mb-2"></i>
-            <h5 class="card-title">Demais Sistemas e Instruções</h5>
-            <p class="card-text">Acesse links úteis, orientações e vídeos rápidos de apoio.</p>
-            <a href="demais-sistemas.html" class="btn btn-primary btn-enter">Entrar</a>
-          </div>
+      <div class="col-md-6 menu-wide-card">
+        <div class="card menu-card menu-featured h-100">
+          <a href="demais-sistemas.html" class="menu-wide-card-link" aria-label="Abrir Demais Sistemas e Instruções">
+            <i class="fa-solid fa-circle-info menu-icon" aria-hidden="true"></i>
+            <div>
+              <h5 class="card-title">Demais Sistemas e Instruções</h5>
+              <p class="card-text">Acesse links úteis, orientações e vídeos rápidos de apoio.</p>
+            </div>
+            <span class="featured-arrow" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
         </div>
       </div>
 
@@ -317,13 +525,15 @@
   </main>
 
   <footer>
-    <div class="mt-1">
-      <p><a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i> arthurferreira@utfpr.edu.br</a></p>
-      <p><a href="mailto:deofi-ct@utfpr.edu.br"><i class="fa-solid fa-envelope"></i> deofi-ct@utfpr.edu.br</a></p>
-      <p><a href="mailto:arthuraaferreira@gmail.com"><i class="fa-solid fa-envelope-circle-check"></i> arthuraaferreira@gmail.com</a></p>
-      <p><a href="https://instagram.com/arthuraaferreira" target="_blank"><i class="fab fa-instagram"></i> ArthurAAFerreira</a></p>
+    <div class="footer-content">
+      <span>&copy; 2025 Arthur Ferreira | Todos os direitos reservados</span>
+      <div class="footer-links">
+        <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i> arthurferreira@utfpr.edu.br</a>
+        <a href="mailto:deofi-ct@utfpr.edu.br"><i class="fa-solid fa-envelope"></i> deofi-ct@utfpr.edu.br</a>
+        <a href="mailto:arthuraaferreira@gmail.com"><i class="fa-solid fa-envelope-circle-check"></i> arthuraaferreira@gmail.com</a>
+        <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i> ArthurAAFerreira</a>
+      </div>
     </div>
-    <p>&copy; 2025 Arthur Ferreira | Todos os direitos reservados</p>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
