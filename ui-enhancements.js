@@ -342,6 +342,60 @@
     });
   }
 
+  function getDynamicIframeHeight(iframe) {
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 800;
+    const pageHeader = document.querySelector("header");
+    const pageFooter = document.querySelector("footer");
+    const chatItem = iframe.closest(".chat-item");
+    const chatHeader = chatItem ? chatItem.querySelector("h2, .chat-header") : null;
+
+    const pageHeaderHeight = pageHeader ? pageHeader.getBoundingClientRect().height : 0;
+    const pageFooterHeight = pageFooter ? pageFooter.getBoundingClientRect().height : 0;
+    const chatHeaderHeight = chatHeader ? chatHeader.getBoundingClientRect().height : 0;
+
+    const reservedSpace = 56;
+    const calculatedHeight = viewportHeight - pageHeaderHeight - pageFooterHeight - chatHeaderHeight - reservedSpace;
+    return Math.max(420, calculatedHeight);
+  }
+
+  function applyDynamicIframeHeight(iframe) {
+    if (!iframe || iframe.classList.contains("enh-video-frame") || iframe.id === "enhVideoFrame") return;
+
+    const explicitInlineHeight = parseInt(iframe.style.height, 10);
+    const dynamicHeight = getDynamicIframeHeight(iframe);
+    const finalHeight = Number.isFinite(explicitInlineHeight)
+      ? Math.max(dynamicHeight, explicitInlineHeight)
+      : dynamicHeight;
+
+    iframe.style.height = finalHeight + "px";
+  }
+
+  function setupDynamicIframeHeights() {
+    function isVisible(iframe) {
+      if (!iframe) return false;
+      const computed = window.getComputedStyle(iframe);
+      return computed.display !== "none";
+    }
+
+    function refreshVisibleIframes() {
+      document.querySelectorAll(".chat-item iframe").forEach((iframe) => {
+        if (isVisible(iframe)) {
+          applyDynamicIframeHeight(iframe);
+        }
+      });
+    }
+
+    document.addEventListener("click", function (event) {
+      const toggleHeader = event.target.closest(".chat-item h2, .chat-header");
+      if (!toggleHeader) return;
+
+      window.setTimeout(refreshVisibleIframes, 0);
+    });
+
+    window.addEventListener("resize", refreshVisibleIframes);
+    refreshVisibleIframes();
+  }
+
   function init() {
     const currentFile = getCurrentFile();
     const hasInstructionShortcut = currentFile !== "index.html" && currentFile !== "demais-sistemas.html";
@@ -361,6 +415,8 @@
     if (hasInstructionShortcut && pageInstructionConfig) {
       setupInstructionPanel(pageInstructionConfig);
     }
+
+    setupDynamicIframeHeights();
   }
 
   if (document.readyState === "loading") {
