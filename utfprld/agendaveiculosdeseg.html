@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Agenda de Seg. de Veículos UTFPR-LD</title>
+  <title>Agenda de Veículos UTFPR-LD</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/main.min.css" />
@@ -17,6 +17,9 @@
       margin: 0;
       background-color: #f9f9fb;
       color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     header {
@@ -61,6 +64,7 @@
       align-items: center;
       gap: 15px;
       padding: 30px 0;
+      flex: 1;
     }
 
     .chat-item {
@@ -501,6 +505,7 @@
       box-shadow: 0 12px 26px rgba(3, 18, 43, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(5px);
       margin: 20px 12px 10px;
+      margin-top: auto;
     }
 
     .footer-content {
@@ -543,11 +548,11 @@
   </style>
 </head>
 
-<body>
+<body class="is-index">
   <header>
     <h1>
       <i class="fa-solid fa-calendar-days"></i>
-      <a href="index.html">Agenda de Seg. de Veículos UTFPR-LD</a>
+      <a href="index.html">Agenda de Veículos UTFPR-LD</a>
     </h1>
     <p>Visualize agenda de motorista oficial, veículos de passeio, especiais e prévia de ônibus/van com base única no Supabase.</p>
   </header>
@@ -663,11 +668,10 @@
 
   <footer>
     <div class="footer-content">
-      <span>&copy; 2025 Arthur Ferreira | Todos os direitos reservados</span>
+      <span>&copy; 2025 Arthur Ferreira</span>
       <div class="footer-links">
         <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i> arthurferreira@utfpr.edu.br</a>
         <a href="mailto:deofi-ct@utfpr.edu.br"><i class="fa-solid fa-envelope"></i> deofi-ct@utfpr.edu.br</a>
-        <a href="mailto:arthuraaferreira@gmail.com"><i class="fa-solid fa-envelope-circle-check"></i> arthuraaferreira@gmail.com</a>
         <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i> ArthurAAFerreira</a>
       </div>
     </div>
