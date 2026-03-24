@@ -163,6 +163,116 @@
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 12px 30px rgba(7, 29, 66, 0.08);
     }
 
+    #calendarRoot .fc .fc-daygrid-day.fc-day-sat,
+    #calendarRoot .fc .fc-daygrid-day.fc-day-sat .fc-daygrid-day-frame {
+      background-color: #f1f3f5;
+    }
+
+    #calendarRoot .fc .fc-daygrid-day.fc-day-sun,
+    #calendarRoot .fc .fc-daygrid-day.fc-day-sun .fc-daygrid-day-frame {
+      background-color: #eceff3;
+    }
+
+    #calendarRoot .fc .fc-col-header-cell,
+    #calendarRoot .fc .fc-scrollgrid-section-header th,
+    #calendarRoot .fc .fc-col-header-cell.fc-day-sat,
+    #calendarRoot .fc .fc-col-header-cell.fc-day-sun {
+      background: linear-gradient(180deg, #8bc9ff 0%, #3d8be6 100%) !important;
+    }
+
+    #calendarRoot .fc .fc-toolbar.fc-header-toolbar {
+      background: linear-gradient(180deg, #2f66bf 0%, #1d4385 100%);
+      border: 1px solid #17386d;
+      border-radius: 10px;
+      padding: 8px 10px;
+      box-shadow: inset 0 1px 0 rgba(187, 217, 255, 0.85), 0 4px 10px rgba(9, 30, 70, 0.26);
+      margin-bottom: 10px;
+    }
+
+    #calendarRoot .fc .fc-toolbar-title {
+      color: #f4f8ff;
+      text-shadow: 0 1px 1px rgba(8, 26, 53, 0.5);
+    }
+
+    #calendarRoot .fc .fc-button-primary {
+      background: linear-gradient(180deg, #3f79d6 0%, #285aa8 100%);
+      border-color: #1d4a91;
+      box-shadow: inset 0 1px 0 rgba(195, 220, 255, 0.6);
+    }
+
+    #calendarRoot .fc .fc-button-primary:not(:disabled):hover {
+      background: linear-gradient(180deg, #4b84df 0%, #2f63b3 100%);
+      border-color: #1f4f9c;
+    }
+
+    #calendarRoot .fc .fc-scrollgrid-section-header th {
+      box-shadow: inset 0 -1px 0 rgba(16, 39, 74, 0.45);
+    }
+
+    #calendarRoot .fc .fc-col-header-cell-cushion {
+      display: block;
+      width: 100%;
+      font-weight: 700;
+      color: #f2f6ff;
+      text-transform: none;
+    }
+
+    #calendarRoot .fc .fc-daygrid-day-top {
+      position: relative;
+      display: block !important;
+      min-height: 24px;
+      padding-top: 2px;
+    }
+
+    #calendarRoot .fc .fc-daygrid-day-top > .fc-daygrid-day-number {
+      font-weight: 700;
+      color: #213552;
+      position: relative !important;
+      left: auto !important;
+      right: auto !important;
+      transform: none !important;
+      display: block !important;
+      float: none !important;
+      width: 100% !important;
+      text-align: center !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      line-height: 1.1;
+      z-index: 1;
+    }
+
+    .day-driver-indicators {
+      position: absolute;
+      right: 4px;
+      top: 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 0;
+      padding-left: 0;
+      z-index: 2;
+    }
+
+    .day-driver-indicators i {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.64rem;
+      color: #fff;
+      box-shadow: 0 2px 4px rgba(9, 28, 62, 0.26);
+    }
+
+    .day-bus-indicator {
+      background: #2f5fc4;
+    }
+
+    #calendarRoot .fc .fc-daygrid-day-frame {
+      min-height: 78px;
+    }
+
     .legend {
       display: flex;
       flex-wrap: wrap;
@@ -189,26 +299,6 @@
     .dot-finalizada { background: #7e3aa9; }
     .dot-autorizada { background: #d08b00; }
     .dot-aguardando { background: #2f5fc4; }
-
-    .day-driver-indicators {
-      margin-left: auto;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding-left: 4px;
-    }
-
-    .day-driver-indicators i {
-      width: 18px;
-      height: 18px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.64rem;
-      color: #fff;
-      box-shadow: 0 2px 4px rgba(9, 28, 62, 0.26);
-    }
 
     .driver-free { background: #12853b; }
     .driver-alert { background: #d08b00; }
@@ -645,6 +735,23 @@
         .trim();
     }
 
+    function capitalizeFirstLetter(value) {
+      const text = String(value || "").trim();
+      if (!text) return "";
+      return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    function formatWeekdayLabel(dateValue) {
+      const names = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+      return names[dateValue.getUTCDay()];
+    }
+
+    function refreshCalendarTitleCase() {
+      const titleEl = document.querySelector("#calendarRoot .fc-toolbar-title");
+      if (!titleEl) return;
+      titleEl.textContent = capitalizeFirstLetter(titleEl.textContent);
+    }
+
     function textHasAllParts(text, parts) {
       return parts.every((part) => text.includes(part));
     }
@@ -665,6 +772,10 @@
 
     function hasAssignedVehicle(eventData) {
       return !!getVehiclePlate(eventData);
+    }
+
+    function isOnibusOuVan(eventData) {
+      return ONIBUS_VAN_VEICULOS.includes(getVehiclePlate(eventData));
     }
 
     function isMotoristaOficial(eventData) {
@@ -906,6 +1017,64 @@
       return result;
     }
 
+    function refreshUniformDayHeights() {
+      requestAnimationFrame(() => {
+        const frames = Array.from(document.querySelectorAll("#calendarRoot .fc-daygrid-day[data-date] .fc-daygrid-day-frame"));
+        if (!frames.length) return;
+
+        frames.forEach((frame) => {
+          frame.style.minHeight = "0px";
+          frame.style.height = "auto";
+        });
+
+        let maxFrameHeight = 0;
+        frames.forEach((frame) => {
+          maxFrameHeight = Math.max(maxFrameHeight, Math.ceil(frame.scrollHeight));
+        });
+
+        const targetHeight = Math.max(78, maxFrameHeight);
+
+        frames.forEach((frame) => {
+          frame.style.setProperty("min-height", targetHeight + "px", "important");
+        });
+      });
+    }
+
+    function calcOnibusVanDaySummary(rangeStart, rangeEnd) {
+      const result = new Set();
+      const events = getFilteredEvents().filter((evt) => isOnibusOuVan(evt));
+
+      events.forEach((evt) => {
+        const eventStart = new Date(evt.start);
+        const eventEnd = evt.end ? new Date(evt.end) : new Date(eventStart.getTime() + 3600000);
+        if (Number.isNaN(eventStart.getTime()) || Number.isNaN(eventEnd.getTime())) return;
+
+        const visibleStart = new Date(Math.max(eventStart.getTime(), rangeStart.getTime()));
+        const visibleEnd = new Date(Math.min(eventEnd.getTime(), rangeEnd.getTime()));
+        if (visibleEnd <= visibleStart) return;
+
+        let cursor = startOfDay(visibleStart);
+        const lastDay = startOfDay(visibleEnd);
+
+        while (cursor <= lastDay) {
+          const dayStart = startOfDay(cursor);
+          const dayEnd = endOfDay(cursor);
+
+          const overlapStart = new Date(Math.max(eventStart.getTime(), dayStart.getTime()));
+          const overlapEnd = new Date(Math.min(eventEnd.getTime(), dayEnd.getTime()));
+          const overlapMs = Math.max(0, overlapEnd.getTime() - overlapStart.getTime());
+
+          if (overlapMs > 0) {
+            result.add(toLocalDateKey(dayStart));
+          }
+
+          cursor.setDate(cursor.getDate() + 1);
+        }
+      });
+
+      return result;
+    }
+
     function refreshDriverDayIndicators() {
       if (!calendarState.calendar) return;
 
@@ -913,11 +1082,25 @@
       if (!view || !String(view.type || "").startsWith("dayGrid")) return;
 
       const summaryByDay = calcOfficialDriverDaySummary(view.activeStart, view.activeEnd);
+      const onibusVanByDay = calcOnibusVanDaySummary(view.activeStart, view.activeEnd);
       const dayCells = document.querySelectorAll("#calendarRoot .fc-daygrid-day[data-date]");
 
       dayCells.forEach((cell) => {
         const dayTop = cell.querySelector(".fc-daygrid-day-top");
         if (!dayTop) return;
+
+        const dayNumber = dayTop.querySelector(".fc-daygrid-day-number");
+        if (dayNumber) {
+          dayTop.style.setProperty("display", "block", "important");
+          dayTop.style.setProperty("text-align", "center", "important");
+          dayNumber.style.setProperty("display", "block", "important");
+          dayNumber.style.setProperty("width", "100%", "important");
+          dayNumber.style.setProperty("text-align", "center", "important");
+          dayNumber.style.setProperty("float", "none", "important");
+          dayNumber.style.setProperty("margin", "0", "important");
+          dayNumber.style.setProperty("padding", "0", "important");
+          dayNumber.style.setProperty("font-weight", "700", "important");
+        }
 
         const previous = dayTop.querySelector(".day-driver-indicators");
         if (previous) previous.remove();
@@ -928,16 +1111,22 @@
         const wrap = document.createElement("span");
         wrap.className = "day-driver-indicators";
 
+        if (onibusVanByDay.has(key)) {
+          wrap.innerHTML += '<i class="fa-solid fa-bus day-bus-indicator" title="Há saída com ônibus/van no dia"></i>';
+        }
+
         if (!dayInfo || !dayInfo.hasOfficialBooking) {
-          wrap.innerHTML = '<i class="fa-solid fa-user-check driver-free" title="Motorista livre"></i>';
+          wrap.innerHTML += '<i class="fa-solid fa-user-check driver-free" title="Motorista livre"></i>';
         } else if (dayInfo.totalHours > 6) {
-          wrap.innerHTML = '<i class="fa-solid fa-user-xmark driver-overload" title="Mais de 6 horas de agendamento no dia"></i>';
+          wrap.innerHTML += '<i class="fa-solid fa-user-xmark driver-overload" title="Mais de 6 horas de agendamento no dia"></i>';
         } else {
-          wrap.innerHTML = '<i class="fa-solid fa-triangle-exclamation driver-alert" title="Há agendamento no dia"></i>';
+          wrap.innerHTML += '<i class="fa-solid fa-triangle-exclamation driver-alert" title="Há agendamento no dia"></i>';
         }
 
         dayTop.appendChild(wrap);
       });
+
+      refreshUniformDayHeights();
     }
 
     function renderCalendar() {
@@ -953,6 +1142,7 @@
 
       calendarState.calendar = new FullCalendar.Calendar(el, {
         locale: "pt-br",
+        firstDay: 0,
         initialView: "dayGridMonth",
         height: "auto",
         fixedWeekCount: false,
@@ -969,6 +1159,9 @@
         },
         views: {
           dayGridMonth: { dayMaxEventRows: 5 },
+        },
+        dayHeaderContent(arg) {
+          return formatWeekdayLabel(arg.date);
         },
         events: getFilteredEvents(),
         eventClassNames() {
@@ -1014,6 +1207,7 @@
         },
         datesSet(info) {
           refreshDriverDayIndicators();
+          refreshCalendarTitleCase();
         },
         eventClick(info) {
           info.jsEvent.preventDefault();
@@ -1024,6 +1218,7 @@
       calendarState.calendar.render();
       updateKpis();
       refreshDriverDayIndicators();
+      refreshCalendarTitleCase();
     }
 
     function buildTableHTML(title, columns, rows) {
