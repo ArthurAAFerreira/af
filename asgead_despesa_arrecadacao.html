@@ -47,6 +47,69 @@
     .filter-bar select { padding: 8px; border-radius: 4px; border: 1px solid #ccc; min-width: 200px; }
     .filter-bar button { padding: 8px 20px; cursor: pointer; background-color: #003366; color: white; border: none; border-radius: 4px; font-weight: bold; }
     .filter-bar button:hover { background-color: #002244; }
+
+    .matrix-link-card {
+      width: 95%;
+      box-sizing: border-box;
+      border-radius: 1px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+      background-color: white;
+      overflow: hidden;
+    }
+
+    .matrix-link-content {
+      padding: 18px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: linear-gradient(180deg, #f4f8ff 0%, #e9f1ff 100%);
+      border-left: 4px solid #1e63c4;
+    }
+
+    .matrix-link-content h3 {
+      margin: 0;
+      color: #113768;
+      font-size: 1.05rem;
+    }
+
+    .matrix-link-content p {
+      margin: 4px 0 0;
+      color: #365074;
+      font-size: 0.9rem;
+    }
+
+    .matrix-link-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 260px;
+      min-height: 54px;
+      border: 1px solid #0f4c97;
+      border-radius: 999px;
+      background: linear-gradient(145deg, #2f7be2 0%, #1e63c4 52%, #1550a5 100%);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.01em;
+      padding: 12px 24px;
+      box-shadow: inset 0 2px 0 rgba(255,255,255,0.26), 0 8px 0 #0e448a, 0 14px 22px rgba(10,51,109,0.36);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    }
+
+    .matrix-link-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.04);
+      box-shadow: inset 0 2px 0 rgba(255,255,255,0.3), 0 10px 0 #0d4082, 0 18px 26px rgba(10,51,109,0.42);
+    }
+
+    .matrix-link-btn:active {
+      transform: translateY(3px);
+      box-shadow: inset 0 2px 0 rgba(255,255,255,0.2), 0 4px 0 #0c3a74, 0 8px 14px rgba(10,51,109,0.32);
+    }
   </style>
 </head>
 
@@ -102,26 +165,51 @@
     </div>
 
     <div class="chat-item">
-      <h2>Resultado Valores Arrecadados e Repassados por UGR <i class="fa-solid fa-chevron-down"></i></h2>
+      <h2>Resultado Recurso Previsto e Recebido por UGR <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
-        <p id="loading-necessidade_orçamentaria_arrecadacao" style="text-align:center; padding:20px;">
-            <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
-        </p>
-        <table
-            id="tabela-necessidade_orçamentaria_arrecadacao"
-            class="display"
-            data-schema="sisgru"
-        >
-          <thead><tr id="header-necessidade_orçamentaria_arrecadacao"></tr></thead>
+        <div class="filter-bar">
+          <div>
+            <label>Tipo de Recurso:</label>
+            <select id="filtro-tipo-resultado-recurso">
+              <option value="">Todos os Tipos</option>
+              <option value="Despesas Gerais / Custeio">Despesas Gerais / Custeio</option>
+              <option value="Arrecadação Própria">Arrecadação Própria</option>
+            </select>
+          </div>
+          <button onclick="buscarResultadoRecursoPrevistoRecebido()">
+            <i class="fa fa-filter"></i> Filtrar
+          </button>
+        </div>
+        <div id="loading-resultado-recurso-previsto-recebido" style="display:none; text-align:center; padding: 30px;">
+          <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+        </div>
+        <table id="tabela-resultado-recurso-previsto-recebido" class="display" style="width:100%">
+          <thead>
+            <tr>
+              <th>UGR</th>
+              <th>Tipo de Recurso</th>
+              <th>Valor Previsto</th>
+              <th>Valor Repassado</th>
+              <th>Valor a Receber</th>
+            </tr>
+          </thead>
           <tbody></tbody>
         </table>
       </div>
     </div>
 
     <div class="chat-item">
-      <h2>Valores Repassados de Recursos de Arrecadação Própria <i class="fa-solid fa-chevron-down"></i></h2>
+      <h2>Valores Repassados (Despesas Gerais e Arrecadação Própria) <i class="fa-solid fa-chevron-down"></i></h2>
       <div class="chat-content">
         <div class="filter-bar">
+          <div>
+            <label>Tipo de Recurso:</label>
+            <select id="filtro-tipo-repasses" onchange="carregarUGRsRepasses()">
+                <option value="">Todos os Tipos</option>
+                <option value="Despesas Gerais / Custeio">Despesas Gerais / Custeio</option>
+                <option value="Arrecadação Própria">Arrecadação Própria</option>
+            </select>
+          </div>
           <div>
             <label>UGR:</label>
             <select id="filtro-ugr-repasses">
@@ -171,6 +259,23 @@
       <iframe src="https://n8n.arthuraaferreira.com.br/form/207c15fe-5be9-4609-9257-e9460823ccf4"></iframe>
     </div>
 
+    <div class="chat-item">
+      <h2><span><i class="fa-solid fa-lock"></i> Atualização Base de Dados - Remanejamentos SIORG</span> <i class="fa-solid fa-chevron-down"></i></h2>
+      <iframe src="https://n8n.arthuraaferreira.com.br/form/7891fc24-0089-4487-ac48-261ef60a0bd5"></iframe>
+    </div>
+
+    <div class="matrix-link-card">
+      <div class="matrix-link-content">
+        <div>
+          <h3><i class="fa-solid fa-calculator"></i> Elaboração da Matriz Orçamentária de Custeio - UTFPR-CT</h3>
+          <p>Acesse a página de simulações para gerar, editar e comparar divisões de recurso por departamento.</p>
+        </div>
+        <a class="matrix-link-btn" href="matrizorcamentariact.html">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir Simulador
+        </a>
+      </div>
+    </div>
+
   </div>
 
   <footer>
@@ -184,6 +289,22 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
+  <script>
+    window.pageInstructionConfig = {
+      title: "Orientações",
+      items: [
+        {
+          type: "text",
+          label: "Atualização Base de Dados - Remanejamentos SIORG",
+          title: "Atualização Base de Dados - Remanejamentos SIORG",
+          content: [
+            "Use este formulário para atualizar a base de dados de remanejamentos SIORG.",
+            "Preencha os campos solicitados e confirme antes de enviar para manter a consistência dos dados."
+          ]
+        }
+      ]
+    };
+  </script>
   <script src="ui-enhancements.js"></script>
 
   <script>
@@ -200,7 +321,7 @@
         const parent = header.closest('.chat-item');
         const content = parent.querySelector('.chat-content');
         const iframe = parent.querySelector('iframe');
-        const icon = header.querySelector('i');
+        const icon = header.querySelector('.fa-chevron-down, .fa-chevron-up');
         let target = null;
 
         if (content) target = content;
@@ -209,14 +330,16 @@
         if (target) {
             const isHidden = target.style.display === 'none' || target.style.display === '';
             target.style.display = isHidden ? 'block' : 'none';
-            icon.classList.toggle('fa-chevron-up', isHidden);
-            icon.classList.toggle('fa-chevron-down', !isHidden);
+            if (icon) {
+                icon.classList.toggle('fa-chevron-up', isHidden);
+                icon.classList.toggle('fa-chevron-down', !isHidden);
+            }
 
             if (isHidden && content) {
                 // Se for tabela genérica (sem filtro custom), carrega
                 const table = content.querySelector('table');
                 // Tabelas que dependem de clique no botão "Filtrar" não carregam automático
-                const manuais = ['tabela-arrecadacao-detalhada', 'tabela-repasses'];
+                const manuais = ['tabela-arrecadacao-detalhada', 'tabela-repasses', 'tabela-resultado-recurso-previsto-recebido'];
 
                 if (table && !manuais.includes(table.id)) {
                     loadTable(table.id);
@@ -224,6 +347,7 @@
                 // Se for tabela manual, carrega os filtros
                 if(table.id === 'tabela-arrecadacao-detalhada') carregarDeptosDetalhado();
                 if(table.id === 'tabela-repasses') carregarUGRsRepasses();
+                if(table.id === 'tabela-resultado-recurso-previsto-recebido') buscarResultadoRecursoPrevistoRecebido();
             }
         }
       });
@@ -315,21 +439,91 @@
     }
 
     // =========================================================
+    //  2. RESULTADO RECURSO PREVISTO E RECEBIDO POR UGR
+    // =========================================================
+    async function buscarResultadoRecursoPrevistoRecebido() {
+        const tipo = document.getElementById('filtro-tipo-resultado-recurso').value;
+        const loading = document.getElementById('loading-resultado-recurso-previsto-recebido');
+        const tabelaId = '#tabela-resultado-recurso-previsto-recebido';
+
+        if ($.fn.DataTable.isDataTable(tabelaId)) {
+            $(tabelaId).DataTable().destroy();
+        }
+
+        const tbody = document.querySelector(tabelaId + ' tbody');
+        tbody.innerHTML = '';
+        loading.style.display = 'block';
+
+        try {
+            let query = supabaseClient
+                .schema('utfprct')
+                .from('vw_resultado_recurso_previsto_recebido_ugr')
+                .select('*')
+                .order('ugr', { ascending: true });
+
+            if (tipo) {
+                query = query.eq('tipo_recurso', tipo);
+            }
+
+            const { data, error } = await query;
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">Nenhum resultado encontrado.</td></tr>';
+            } else {
+                const fmt = (v) => parseFloat(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.ugr || '-'}</td>
+                        <td>${row.tipo_recurso || '-'}</td>
+                        <td style="text-align:right; font-weight:bold;">${fmt(row.valor_previsto)}</td>
+                        <td style="text-align:right; font-weight:bold;">${fmt(row.valor_repassado)}</td>
+                        <td style="text-align:right; font-weight:bold;">${fmt(row.valor_a_receber)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            $(tabelaId).DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/2.0.7/i18n/pt-BR.json' },
+                pageLength: 25,
+                scrollX: true,
+                order: [[0, 'asc']]
+            });
+
+        } catch (err) {
+            console.error(err);
+            tbody.innerHTML = `<tr><td colspan="5" style="color:red; text-align:center">Erro: ${err.message}</td></tr>`;
+        } finally {
+            loading.style.display = 'none';
+        }
+    }
+
+    // =========================================================
     //  2. REPASSES ARRECADAÇÃO PRÓPRIA (POR UGR)
     // =========================================================
 
     async function carregarUGRsRepasses() {
         const select = document.getElementById('filtro-ugr-repasses');
-        if (select.options.length > 1) return;
+        const tipo = document.getElementById('filtro-tipo-repasses').value;
 
-        // Busca UGRs únicas da tabela remanejamento_ugr filtrada por tipo 'Arrecadação Própria'
-        // Atualizado para ler a tabela remanejamento_ugr do schema utfprct (conforme sua migração)
-        const { data, error } = await supabaseClient
+        let query = supabaseClient
             .schema('utfprct')
-            .from('remanejamento_ugr')
+            .from('vw_remanejamento_ugr_detalhado')
             .select('ugr')
-            .eq('tipo', 'Arrecadação Própria')
             .order('ugr');
+
+        if (tipo) {
+            query = query.eq('tipo_recurso', tipo);
+        }
+
+        const { data, error } = await query;
+        if (error) {
+            console.error(error);
+            select.innerHTML = '<option value="">Erro ao carregar UGRs</option>';
+            return;
+        }
 
         if (data) {
             const unicos = [...new Set(data.map(i => i.ugr))].filter(u => u);
@@ -345,6 +539,7 @@
 
     async function buscarRepasses() {
         const ugr = document.getElementById('filtro-ugr-repasses').value;
+        const tipo = document.getElementById('filtro-tipo-repasses').value;
         const loading = document.getElementById('loading-repasses');
         const tabelaId = '#tabela-repasses';
 
@@ -357,13 +552,16 @@
         loading.style.display = 'block';
 
         try {
-            // Filtro Fixo: tipo = 'Arrecadação Própria'
-            // Atualizado para o schema utfprct
             let query = supabaseClient
                 .schema('utfprct')
-                .from('remanejamento_ugr')
+                .from('vw_remanejamento_ugr_detalhado')
                 .select('*')
-                .eq('tipo', 'Arrecadação Própria');
+                .order('data', { ascending: false });
+
+            // Filtro Dinâmico: tipo de recurso
+            if (tipo) {
+                query = query.eq('tipo_recurso', tipo);
+            }
 
             // Filtro Dinâmico: UGR (se selecionado)
             if (ugr) {
@@ -384,7 +582,7 @@
                     tr.innerHTML = `
                         <td>${row.id}</td>
                         <td>${row.ugr}</td>
-                        <td>${row.tipo}</td>
+                        <td>${row.tipo_recurso}</td>
                         <td>${row.gnd}</td>
                         <td>${row.fonte}</td>
                         <td style="text-align:right; font-weight:bold;">${fmt(row.valor)}</td>

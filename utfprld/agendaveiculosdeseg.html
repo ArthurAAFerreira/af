@@ -185,36 +185,34 @@
     }
 
     .dot-liberada { background: #12853b; }
-    .dot-nao-liberada { background: #d08b00; }
-    .dot-pendente { background: #2f5fc4; }
+    .dot-realizada { background: #59647a; }
+    .dot-finalizada { background: #7e3aa9; }
+    .dot-autorizada { background: #d08b00; }
+    .dot-aguardando { background: #2f5fc4; }
 
-    .availability-box {
-      margin-top: 14px;
-      border: 1px solid #e3eaf8;
-      border-radius: 8px;
-      padding: 12px;
-      background: #f9fbff;
+    .day-driver-indicators {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding-left: 4px;
     }
 
-    .availability-box h3 {
-      margin: 0 0 10px 0;
-      color: #0d3766;
-      font-size: 1rem;
+    .day-driver-indicators i {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.64rem;
+      color: #fff;
+      box-shadow: 0 2px 4px rgba(9, 28, 62, 0.26);
     }
 
-    .availability-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 8px;
-    }
-
-    .availability-item {
-      font-size: 0.86rem;
-      border: 1px solid #dce7fb;
-      background: white;
-      border-radius: 6px;
-      padding: 8px;
-    }
+    .driver-free { background: #12853b; }
+    .driver-alert { background: #d08b00; }
+    .driver-overload { background: #bb2222; }
 
     .embed-frame {
       width: 100%;
@@ -229,6 +227,61 @@
       font-size: 0.84rem;
       color: #4d5a75;
       margin-bottom: 10px;
+    }
+
+    .locked-box {
+      border: 1px solid #dbe6fb;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .locked-box-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #15386c;
+      font-weight: 700;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .locked-box-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .locked-box input,
+    .locked-box button {
+      padding: 8px 10px;
+      border: 1px solid #c4d4ef;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      background: #fff;
+    }
+
+    .locked-box button {
+      background: #003366;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .locked-box button:hover {
+      background: #0c4d95;
+    }
+
+    .locked-box-msg {
+      margin: 0;
+      font-size: 0.82rem;
+      color: #4d5a75;
+    }
+
+    .locked-box-msg.error {
+      color: #a11a1a;
     }
 
     .fc .fc-toolbar-title {
@@ -350,23 +403,52 @@
     }
 
     footer {
-      background: #001f3f;
-      color: #ccc;
-      text-align: center;
-      padding: 20px;
-      font-size: 0.85rem;
+      background: rgba(8, 27, 56, 0.93);
+      color: #ecf4ff;
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(170, 210, 255, 0.22);
+      box-shadow: 0 12px 26px rgba(3, 18, 43, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
+      margin: 20px 12px 10px;
     }
 
-    footer a {
-      color: #66ccff;
-      margin: 0 8px;
-      font-size: 1.1rem;
+    .footer-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      font-size: 0.88rem;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      justify-content: flex-end;
+    }
+
+    .footer-links a {
+      color: #d9ebff;
       text-decoration: none;
-      transition: 0.3s;
+      transition: color 0.2s ease;
+      font-size: 0.86rem;
+      white-space: nowrap;
     }
 
-    footer a:hover {
-      color: #fff;
+    .footer-links a:hover {
+      color: #8fc8ff;
+    }
+
+    @media (max-width: 576px) {
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .footer-links {
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -377,7 +459,7 @@
       <i class="fa-solid fa-calendar-days"></i>
       <a href="index.html">Agenda de Seg. de Veículos UTFPR-LD</a>
     </h1>
-    <p>Visualize Agenda Motorista, Agenda Veículos de Passeio Ocupados, Agenda Amarok e Agenda Prévia Ônibus com base única no Supabase.</p>
+    <p>Visualize agenda de motorista oficial, veículos de passeio, especiais e prévia de ônibus/van com base única no Supabase.</p>
   </header>
 
   <div class="chat-container">
@@ -391,10 +473,10 @@
           <label for="agendaFilter">Agenda:</label>
           <select id="agendaFilter">
             <option value="todas">Todas</option>
-            <option value="motorista">Agenda Motorista</option>
-            <option value="passeio">Agenda Veículos de Passeio Ocupados</option>
-            <option value="amarok">Agenda Amarok</option>
-            <option value="onibus">Agenda Prévia Ônibus</option>
+            <option value="motorista_oficial">Motorista Oficial</option>
+            <option value="passeio">Agenda de Veículos de Passeio</option>
+            <option value="especiais">Agenda de Veículos Especiais</option>
+            <option value="onibus_van">Agenda Prévia Onibus e Van</option>
           </select>
           <button id="refreshCalendarBtn" type="button"><i class="fa-solid fa-rotate"></i> Atualizar</button>
         </div>
@@ -420,24 +502,22 @@
 
         <div class="legend">
           <span><i class="dot-liberada"></i> Liberada pelo DISAU (confirmada)</span>
-          <span><i class="dot-nao-liberada"></i> Autorizada/aguardando (reserva não final)</span>
-          <span><i class="dot-pendente"></i> Outros status válidos para reserva</span>
+          <span><i class="dot-realizada"></i> Realizadas (não finalizadas)</span>
+          <span><i class="dot-finalizada"></i> Finalizadas</span>
+          <span><i class="dot-autorizada"></i> Autorizada pelo aprovador</span>
+          <span><i class="dot-aguardando"></i> Aguardando autorização do aprovador</span>
         </div>
 
-        <p class="status-note">Canceladas, devolvidas e solicitações atendidas/documentadas não entram no calendário.</p>
+        <p class="status-note">Canceladas e devolvidas não entram no calendário.</p>
 
         <div id="calendarRoot"></div>
 
-        <div class="availability-box">
-          <h3>Disponibilidade de Veículos de Passeio (período visível)</h3>
-          <div id="availabilityList" class="availability-list"></div>
-        </div>
       </div>
     </div>
 
     <div class="chat-item">
       <h2>
-        Assistente IA da Agenda (n8n)
+        Assistente de verificação de datas
         <i class="fa-solid fa-chevron-down"></i>
       </h2>
       <div class="chat-content">
@@ -445,16 +525,15 @@
         <iframe
           id="agendaAiFrame"
           class="embed-frame"
-          src="about:blank"
-          title="Assistente IA da Agenda"
-          srcdoc="<html><body style='font-family:Arial,sans-serif;padding:20px;color:#234;'>Defina a URL do chat n8n no atributo src deste iframe.</body></html>"
+          src="https://n8n.arthuraaferreira.com.br/form/604f441c-4ec3-4945-a4ca-2680fbb04e9f"
+          title="Assistente de verificação de datas"
         ></iframe>
       </div>
     </div>
 
     <div class="chat-item">
       <h2>
-        Relatório por Veículo (saídas e horas reservadas)
+        Relatório por Veículo (saídas, horas, finalizadas e pendentes)
         <i class="fa-solid fa-chevron-down"></i>
       </h2>
       <div class="chat-content">
@@ -468,7 +547,16 @@
         <i class="fa-solid fa-chevron-down"></i>
       </h2>
       <div class="chat-content">
-        <iframe id="reportMotoristasFrame" class="embed-frame" title="Relatório por Motorista"></iframe>
+        <div id="driverReportLock" class="locked-box">
+          <p class="locked-box-title"><i class="fa-solid fa-lock"></i> Relatório protegido por senha</p>
+          <p class="locked-box-msg">Digite a senha para liberar o relatório por motorista.</p>
+          <div class="locked-box-actions">
+            <input id="driverReportPassword" type="password" placeholder="Senha do relatório" />
+            <button id="unlockDriverReportBtn" type="button">Desbloquear</button>
+          </div>
+          <p id="driverReportLockMsg" class="locked-box-msg"></p>
+        </div>
+        <iframe id="reportMotoristasFrame" class="embed-frame" title="Relatório por Motorista" style="display: none;"></iframe>
       </div>
     </div>
 
@@ -484,10 +572,14 @@
   </div>
 
   <footer>
-    <p>&copy; 2025 Arthur Ferreira | ASGEAD-CT</p>
-    <div>
-      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
-      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+    <div class="footer-content">
+      <span>&copy; 2025 Arthur Ferreira | Todos os direitos reservados</span>
+      <div class="footer-links">
+        <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i> arthurferreira@utfpr.edu.br</a>
+        <a href="mailto:deofi-ct@utfpr.edu.br"><i class="fa-solid fa-envelope"></i> deofi-ct@utfpr.edu.br</a>
+        <a href="mailto:arthuraaferreira@gmail.com"><i class="fa-solid fa-envelope-circle-check"></i> arthuraaferreira@gmail.com</a>
+        <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i> ArthurAAFerreira</a>
+      </div>
     </div>
   </footer>
 
@@ -510,13 +602,23 @@
     const SUPABASE_URL = "https://wycjvjlhabiyhusupivx.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0";
     const SUPABASE_SCHEMA = "utfprld";
-    const TOTAL_VEICULOS_PASSEIO = 8;
     const MOTORISTA_OFICIAL = "Celso Crespim - 02495180";
+    const DRIVER_REPORT_PASSWORDS = ["federer", "dirpladsandy", "150148deseg"];
+
+    const PASSEIO_VEICULOS = [
+      "AOL8790", "AWP5867", "JGC9671", "AWK7J17", "ATM7929", "ASD9861",
+      "AOL5932", "AWP5703", "ASH1276", "MHW1712", "BDD0B03", "MIN1174",
+    ];
+
+    const ESPECIAIS_VEICULOS = ["AYC2148", "AFP2721", "AFP2695", "MHW1712", "BDD0B03"];
+
+    const ONIBUS_VAN_VEICULOS = ["AYF6659", "ASD6246", "GVJ7973", "AVA9214"];
 
     const calendarState = {
       allEvents: [],
       currentAgenda: "todas",
       calendar: null,
+      driverReportUnlocked: false,
     };
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -535,17 +637,102 @@
       return Number.isNaN(date.getTime()) ? dateTimeStr : date.toLocaleString("pt-BR");
     }
 
+    function normalizeText(value) {
+      return String(value || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+    }
+
+    function textHasAllParts(text, parts) {
+      return parts.every((part) => text.includes(part));
+    }
+
+    function extractPlate(value) {
+      const match = String(value || "").toUpperCase().match(/[A-Z]{3}[0-9][A-Z0-9][0-9]{2}/);
+      return match ? match[0] : "";
+    }
+
+    function getVehiclePlate(eventData) {
+      return extractPlate(eventData.veiculo_principal) || extractPlate(eventData.veiculos);
+    }
+
+    function getPassengerCount(eventData) {
+      const n = Number(eventData.quantidade_passageiros);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function hasAssignedVehicle(eventData) {
+      return !!getVehiclePlate(eventData);
+    }
+
+    function isMotoristaOficial(eventData) {
+      if (eventData.motorista_oficial === true) return true;
+      return normalizeText(eventData.motorista_nome).includes(normalizeText(MOTORISTA_OFICIAL).split("-")[0].trim());
+    }
+
+    function isPassedReturnDate(eventData) {
+      if (!eventData.fim_previsto) return false;
+      const endDate = new Date(eventData.fim_previsto);
+      if (Number.isNaN(endDate.getTime())) return false;
+      return endDate.getTime() < Date.now();
+    }
+
+    function getVisualStatus(eventData) {
+      const status = normalizeText(eventData.situacao_normalizada || eventData.situacao);
+
+      if (textHasAllParts(status, ["liberad", "disau"])) {
+        return isPassedReturnDate(eventData) ? "realizada_nao_finalizada" : "liberada_disau";
+      }
+
+      if (textHasAllParts(status, ["solicitacao", "atendida", "document", "preench"])) {
+        return "finalizada";
+      }
+
+      if (textHasAllParts(status, ["autorizada", "aprovador"])) {
+        return "autorizada_aprovador";
+      }
+
+      if (textHasAllParts(status, ["aguard", "autoriz", "aprovador"])) {
+        return "aguardando_aprovador";
+      }
+
+      return "outros";
+    }
+
+    function getVehicleReference(eventData) {
+      return eventData.veiculo_principal || eventData.veiculos || "Sem veículo estipulado";
+    }
+
     function getAgendaPassFilter(agenda, eventData) {
       if (agenda === "todas") return true;
-      if (agenda === "motorista") return !!eventData.agenda_motorista;
-      if (agenda === "passeio") return !!eventData.agenda_passeio_ocupado;
-      if (agenda === "amarok") return !!eventData.agenda_amarok;
-      if (agenda === "onibus") return !!eventData.agenda_previa_onibus;
+
+      const plate = getVehiclePlate(eventData);
+      const passageiros = getPassengerCount(eventData);
+      const semVeiculo = !hasAssignedVehicle(eventData);
+
+      if (agenda === "motorista_oficial") {
+        return isMotoristaOficial(eventData);
+      }
+
+      if (agenda === "passeio") {
+        return PASSEIO_VEICULOS.includes(plate) || (semVeiculo && passageiros > 0 && passageiros <= 4);
+      }
+
+      if (agenda === "especiais") {
+        return ESPECIAIS_VEICULOS.includes(plate) || (semVeiculo && passageiros > 0 && passageiros <= 7);
+      }
+
+      if (agenda === "onibus_van") {
+        return ONIBUS_VAN_VEICULOS.includes(plate) || (semVeiculo && passageiros > 6);
+      }
+
       return true;
     }
 
-    function getStatusPalette(statusNormalizado) {
-      if (statusNormalizado === "liberada pelo disau") {
+    function getStatusPalette(visualStatus) {
+      if (visualStatus === "liberada_disau") {
         return {
           backgroundColor: "#12853b",
           borderColor: "#0b6028",
@@ -553,10 +740,23 @@
         };
       }
 
-      if (
-        statusNormalizado === "autorizada pelo aprovador" ||
-        statusNormalizado === "aguardando autorização do aprovador"
-      ) {
+      if (visualStatus === "realizada_nao_finalizada") {
+        return {
+          backgroundColor: "#59647a",
+          borderColor: "#414a5d",
+          textColor: "#ffffff",
+        };
+      }
+
+      if (visualStatus === "finalizada") {
+        return {
+          backgroundColor: "#7e3aa9",
+          borderColor: "#5d2a7f",
+          textColor: "#ffffff",
+        };
+      }
+
+      if (visualStatus === "autorizada_aprovador") {
         return {
           backgroundColor: "#d08b00",
           borderColor: "#945f00",
@@ -564,18 +764,27 @@
         };
       }
 
+      if (visualStatus === "aguardando_aprovador") {
+        return {
+          backgroundColor: "#2f5fc4",
+          borderColor: "#234b9a",
+          textColor: "#ffffff",
+        };
+      }
+
       return {
-        backgroundColor: "#2f5fc4",
-        borderColor: "#234b9a",
+        backgroundColor: "#246f85",
+        borderColor: "#1b5161",
         textColor: "#ffffff",
       };
     }
 
     function getEventIcon(eventItem) {
-      if (eventItem.agenda_amarok) return "fa-truck-pickup";
-      if (eventItem.agenda_previa_onibus) return "fa-bus";
-      if (eventItem.agenda_passeio_ocupado) return "fa-car-side";
-      if (eventItem.agenda_motorista) return "fa-id-badge";
+      const plate = getVehiclePlate(eventItem);
+      if (ONIBUS_VAN_VEICULOS.includes(plate)) return "fa-bus";
+      if (ESPECIAIS_VEICULOS.includes(plate)) return "fa-truck-pickup";
+      if (PASSEIO_VEICULOS.includes(plate)) return "fa-car-side";
+      if (isMotoristaOficial(eventItem)) return "fa-id-badge";
       return "fa-calendar-day";
     }
 
@@ -594,7 +803,7 @@
       if (error) throw error;
 
       calendarState.allEvents = (data || []).map((item) => {
-        const statusNorm = (item.situacao_normalizada || "").toLowerCase();
+        const visualStatus = getVisualStatus(item);
         return {
           ...item,
           title: buildEventTitle(item),
@@ -607,9 +816,10 @@
             roteiro: item.roteiro,
             status: item.situacao,
             statusNormalizado: item.situacao_normalizada,
+            visualStatus,
             passageiros: item.quantidade_passageiros,
           },
-          ...getStatusPalette(statusNorm),
+          ...getStatusPalette(visualStatus),
         };
       });
     }
@@ -622,12 +832,12 @@
     function updateKpis() {
       const events = getFilteredEvents();
       const total = events.length;
-      const liberadas = events.filter((e) => (e.situacao_normalizada || "").toLowerCase() === "liberada pelo disau").length;
+      const liberadas = events.filter((e) => getVisualStatus(e) === "liberada_disau").length;
       const pendentes = events.filter((e) => {
-        const s = (e.situacao_normalizada || "").toLowerCase();
-        return s === "autorizada pelo aprovador" || s === "aguardando autorizacao do aprovador";
+        const s = getVisualStatus(e);
+        return s === "autorizada_aprovador" || s === "aguardando_aprovador";
       }).length;
-      const motoristaOficial = events.filter((e) => (e.motorista_nome || "").toLowerCase() === MOTORISTA_OFICIAL.toLowerCase()).length;
+      const motoristaOficial = events.filter((e) => isMotoristaOficial(e)).length;
 
       document.getElementById("kpiTotal").textContent = String(total);
       document.getElementById("kpiLiberadas").textContent = String(liberadas);
@@ -635,41 +845,99 @@
       document.getElementById("kpiMotoristaOficial").textContent = String(motoristaOficial);
     }
 
-    function recalcAvailability(rangeStart, rangeEnd) {
-      const list = document.getElementById("availabilityList");
-      list.innerHTML = "";
+    function toLocalDateKey(dateObj) {
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const day = String(dateObj.getDate()).padStart(2, "0");
+      return year + "-" + month + "-" + day;
+    }
 
-      const passeioEvents = getFilteredEvents().filter((evt) => evt.agenda_passeio_ocupado);
-      if (!passeioEvents.length) {
-        list.innerHTML = '<div class="availability-item">Sem reservas de passeio no filtro atual.</div>';
-        return;
-      }
+    function startOfDay(dateObj) {
+      const d = new Date(dateObj);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    }
 
-      const current = new Date(rangeStart);
-      const end = new Date(rangeEnd);
+    function endOfDay(dateObj) {
+      const d = new Date(dateObj);
+      d.setHours(23, 59, 59, 999);
+      return d;
+    }
 
-      while (current < end) {
-        const dayStart = new Date(current);
-        dayStart.setHours(0, 0, 0, 0);
-        const dayEnd = new Date(current);
-        dayEnd.setHours(23, 59, 59, 999);
+    function calcOfficialDriverDaySummary(rangeStart, rangeEnd) {
+      const result = new Map();
+      const events = getFilteredEvents().filter((evt) => isMotoristaOficial(evt));
 
-        const occupied = passeioEvents.filter((evt) => {
-          const start = new Date(evt.start);
-          const finish = new Date(evt.end);
-          return start <= dayEnd && finish >= dayStart;
-        }).length;
+      events.forEach((evt) => {
+        const eventStart = new Date(evt.start);
+        const eventEnd = evt.end ? new Date(evt.end) : new Date(eventStart.getTime() + 3600000);
+        if (Number.isNaN(eventStart.getTime()) || Number.isNaN(eventEnd.getTime())) return;
 
-        const available = Math.max(0, TOTAL_VEICULOS_PASSEIO - occupied);
-        const d = current.toLocaleDateString("pt-BR");
+        const visibleStart = new Date(Math.max(eventStart.getTime(), rangeStart.getTime()));
+        const visibleEnd = new Date(Math.min(eventEnd.getTime(), rangeEnd.getTime()));
+        if (visibleEnd <= visibleStart) return;
 
-        const item = document.createElement("div");
-        item.className = "availability-item";
-        item.innerHTML = "<strong>" + d + "</strong><br/>Ocupados: " + occupied + "<br/>Vagas: " + available;
-        list.appendChild(item);
+        let cursor = startOfDay(visibleStart);
+        const lastDay = startOfDay(visibleEnd);
 
-        current.setDate(current.getDate() + 1);
-      }
+        while (cursor <= lastDay) {
+          const dayStart = startOfDay(cursor);
+          const dayEnd = endOfDay(cursor);
+
+          const overlapStart = new Date(Math.max(eventStart.getTime(), dayStart.getTime()));
+          const overlapEnd = new Date(Math.min(eventEnd.getTime(), dayEnd.getTime()));
+          const overlapMs = Math.max(0, overlapEnd.getTime() - overlapStart.getTime());
+
+          if (overlapMs > 0) {
+            const key = toLocalDateKey(dayStart);
+            if (!result.has(key)) {
+              result.set(key, { hasOfficialBooking: false, totalHours: 0 });
+            }
+
+            const item = result.get(key);
+            item.hasOfficialBooking = true;
+            item.totalHours += overlapMs / 3600000;
+          }
+
+          cursor.setDate(cursor.getDate() + 1);
+        }
+      });
+
+      return result;
+    }
+
+    function refreshDriverDayIndicators() {
+      if (!calendarState.calendar) return;
+
+      const view = calendarState.calendar.view;
+      if (!view || !String(view.type || "").startsWith("dayGrid")) return;
+
+      const summaryByDay = calcOfficialDriverDaySummary(view.activeStart, view.activeEnd);
+      const dayCells = document.querySelectorAll("#calendarRoot .fc-daygrid-day[data-date]");
+
+      dayCells.forEach((cell) => {
+        const dayTop = cell.querySelector(".fc-daygrid-day-top");
+        if (!dayTop) return;
+
+        const previous = dayTop.querySelector(".day-driver-indicators");
+        if (previous) previous.remove();
+
+        const key = cell.getAttribute("data-date") || "";
+        const dayInfo = summaryByDay.get(key);
+
+        const wrap = document.createElement("span");
+        wrap.className = "day-driver-indicators";
+
+        if (!dayInfo || !dayInfo.hasOfficialBooking) {
+          wrap.innerHTML = '<i class="fa-solid fa-user-check driver-free" title="Motorista livre"></i>';
+        } else if (dayInfo.totalHours > 6) {
+          wrap.innerHTML = '<i class="fa-solid fa-user-xmark driver-overload" title="Mais de 6 horas de agendamento no dia"></i>';
+        } else {
+          wrap.innerHTML = '<i class="fa-solid fa-triangle-exclamation driver-alert" title="Há agendamento no dia"></i>';
+        }
+
+        dayTop.appendChild(wrap);
+      });
     }
 
     function renderCalendar() {
@@ -679,6 +947,7 @@
         calendarState.calendar.removeAllEvents();
         getFilteredEvents().forEach((evt) => calendarState.calendar.addEvent(evt));
         updateKpis();
+        refreshDriverDayIndicators();
         return;
       }
 
@@ -686,6 +955,8 @@
         locale: "pt-br",
         initialView: "dayGridMonth",
         height: "auto",
+        fixedWeekCount: false,
+        showNonCurrentDates: true,
         headerToolbar: {
           left: "prev,next today",
           center: "title",
@@ -723,9 +994,26 @@
             "\nMotorista: " + (p.motorista || "-") +
             "\nRoteiro: " + (p.roteiro || "-") +
             "\nSituação: " + (p.status || "-");
+
+          const palette = getStatusPalette(p.visualStatus || getVisualStatus(p));
+          info.el.style.backgroundColor = palette.backgroundColor;
+          info.el.style.borderColor = palette.borderColor;
+          info.el.style.color = palette.textColor;
+
+          const main = info.el.querySelector(".fc-event-main");
+          if (main) main.style.color = palette.textColor;
+
+          const inner = info.el.querySelector(".fc-event-inner");
+          if (inner) inner.style.color = palette.textColor;
+
+          const dot = info.el.querySelector(".fc-event-dot");
+          if (dot) {
+            dot.style.borderColor = palette.backgroundColor;
+            dot.style.backgroundColor = palette.backgroundColor;
+          }
         },
         datesSet(info) {
-          recalcAvailability(info.start, info.end);
+          refreshDriverDayIndicators();
         },
         eventClick(info) {
           info.jsEvent.preventDefault();
@@ -735,6 +1023,7 @@
 
       calendarState.calendar.render();
       updateKpis();
+      refreshDriverDayIndicators();
     }
 
     function buildTableHTML(title, columns, rows) {
@@ -758,27 +1047,75 @@
 
     async function loadVehicleReport() {
       const { data, error } = await supabaseClient
-        .from("vw_relatorio_veiculos")
-        .select("veiculo_referencia,total_saidas,total_horas_reservadas")
-        .order("veiculo_referencia", { ascending: true });
+        .from("vw_agenda_eventos")
+        .select("veiculo_principal,veiculos,inicio_previsto,fim_previsto,situacao,situacao_normalizada")
+        .order("veiculo_principal", { ascending: true });
 
       if (error) throw error;
 
-      const rows = (data || []).map((item) => [
-        item.veiculo_referencia,
-        item.total_saidas,
-        Number(item.total_horas_reservadas || 0).toLocaleString("pt-BR"),
-      ]);
+      const grouped = new Map();
+
+      (data || []).forEach((item) => {
+        const key = getVehicleReference(item);
+        if (!grouped.has(key)) {
+          grouped.set(key, {
+            veiculo: key,
+            totalSaidas: 0,
+            totalHoras: 0,
+            saidasFinalizadas: 0,
+            horasFinalizadas: 0,
+            saidasPendentes: 0,
+            horasPendentes: 0,
+          });
+        }
+
+        const acc = grouped.get(key);
+        const start = new Date(item.inicio_previsto);
+        const end = new Date(item.fim_previsto);
+        const hours = Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())
+          ? 0
+          : Math.max(0, (end.getTime() - start.getTime()) / 3600000);
+        const visualStatus = getVisualStatus(item);
+
+        acc.totalSaidas += 1;
+        acc.totalHoras += hours;
+
+        if (visualStatus === "finalizada") {
+          acc.saidasFinalizadas += 1;
+          acc.horasFinalizadas += hours;
+        }
+
+        if (visualStatus === "autorizada_aprovador" || visualStatus === "aguardando_aprovador") {
+          acc.saidasPendentes += 1;
+          acc.horasPendentes += hours;
+        }
+      });
+
+      const rows = Array.from(grouped.values())
+        .sort((a, b) => a.veiculo.localeCompare(b.veiculo, "pt-BR"))
+        .map((item) => [
+          item.veiculo,
+          item.totalSaidas,
+          Number(item.totalHoras || 0).toLocaleString("pt-BR", { maximumFractionDigits: 2 }),
+          item.saidasFinalizadas,
+          Number(item.horasFinalizadas || 0).toLocaleString("pt-BR", { maximumFractionDigits: 2 }),
+          item.saidasPendentes,
+          Number(item.horasPendentes || 0).toLocaleString("pt-BR", { maximumFractionDigits: 2 }),
+        ]);
 
       setIframeTable(
         "reportVeiculosFrame",
-        "Saídas e Horas Reservadas por Veículo",
-        ["Veículo", "Saídas", "Horas Reservadas"],
+        "Saídas, Horas, Finalizadas e Pendentes por Veículo",
+        ["Veículo", "Saídas", "Horas Reservadas", "Saídas Finalizadas", "Horas Finalizadas", "Saídas Pendentes", "Horas Pendentes"],
         rows
       );
     }
 
     async function loadDriverReport() {
+      if (!calendarState.driverReportUnlocked) {
+        return;
+      }
+
       const { data, error } = await supabaseClient
         .from("vw_relatorio_motoristas")
         .select("motorista_nome,total_agendamentos,total_dias_agendados,motorista_oficial")
@@ -894,13 +1231,33 @@
       await Promise.all([loadVehicleReport(), loadDriverReport(), loadPendingList()]);
     }
 
+    function setupDriverReportLock() {
+      const lockBox = document.getElementById("driverReportLock");
+      const passwordInput = document.getElementById("driverReportPassword");
+      const unlockButton = document.getElementById("unlockDriverReportBtn");
+      const msg = document.getElementById("driverReportLockMsg");
+      const frame = document.getElementById("reportMotoristasFrame");
+
+      unlockButton.addEventListener("click", async () => {
+        const password = (passwordInput.value || "").trim();
+        if (!DRIVER_REPORT_PASSWORDS.includes(password)) {
+          msg.textContent = "Senha incorreta. Tente novamente.";
+          msg.classList.add("error");
+          return;
+        }
+
+        calendarState.driverReportUnlocked = true;
+        lockBox.style.display = "none";
+        frame.style.display = "block";
+        msg.textContent = "";
+        msg.classList.remove("error");
+        await loadDriverReport();
+      });
+    }
+
     document.getElementById("agendaFilter").addEventListener("change", (event) => {
       calendarState.currentAgenda = event.target.value;
       renderCalendar();
-      if (calendarState.calendar) {
-        const view = calendarState.calendar.view;
-        recalcAvailability(view.activeStart, view.activeEnd);
-      }
     });
 
     document.getElementById("refreshCalendarBtn").addEventListener("click", async () => {
@@ -909,6 +1266,7 @@
 
     setupCardsToggle();
     setupEventModal();
+    setupDriverReportLock();
     loadEverything().catch((error) => {
       console.error(error);
       alert("Erro ao carregar dados do Supabase. Verifique SUPABASE_URL, chave ANON e views SQL.");
