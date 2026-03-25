@@ -323,6 +323,14 @@
       margin-bottom: 10px;
     }
 
+    #enhVideoList .enh-update-option {
+      font-weight: 700;
+    }
+
+    #enhVideoList .enh-update-option i {
+      margin-right: 8px;
+    }
+
     .locked-box {
       border: 1px solid #dbe6fb;
       border-radius: 10px;
@@ -554,7 +562,7 @@
       <i class="fa-solid fa-calendar-days"></i>
       <a href="index.html">Agenda de Veículos UTFPR-CT</a>
     </h1>
-    <p>Visualize agenda de motorista oficial, veículos de passeio, especiais e prévia de ônibus/van com base única no Supabase.</p>
+    <p>Toque para Visualização da agenda veículos oficiais do campus</p>
   </header>
 
   <div class="chat-container">
@@ -698,6 +706,8 @@
     const SUPABASE_SCHEMA = "desegct";
     const MOTORISTA_OFICIAL = "Celso Crespim - 02495180";
     const DRIVER_REPORT_PASSWORDS = ["federer", "dirpladsandy", "150148deseg"];
+    const ORIENTATION_UPDATE_PASSWORDS = ["federer", "dirpladlu", "ketlyn", "154358deseg"];
+    const ORIENTATION_UPDATE_WEBHOOK_URL = "https://n8n.arthuraaferreira.com.br/webhook/283d44b4-f35b-4624-9543-fd6d55d269d4";
 
     const PASSEIO_VEICULOS = [
       "AOL8790", "AWP5867", "JGC9671", "AWK7J17", "ATM7929", "ASD9861",
@@ -750,9 +760,29 @@
       return names[dateValue.getUTCDay()];
     }
 
-    function refreshCalendarTitleCase() {
+    function formatMonthYearTitle(dateValue) {
+      if (!(dateValue instanceof Date) || Number.isNaN(dateValue.getTime())) return "";
+      return capitalizeFirstLetter(
+        dateValue.toLocaleDateString("pt-BR", {
+          month: "long",
+          year: "numeric",
+        })
+      );
+    }
+
+    function refreshCalendarTitleCase(viewInfo) {
       const titleEl = document.querySelector("#calendarRoot .fc-toolbar-title");
       if (!titleEl) return;
+
+      const view = (viewInfo && viewInfo.view) || (calendarState.calendar && calendarState.calendar.view);
+      if (view && view.type === "dayGridMonth") {
+        const forcedMonthTitle = formatMonthYearTitle(view.currentStart);
+        if (forcedMonthTitle) {
+          titleEl.textContent = forcedMonthTitle;
+          return;
+        }
+      }
+
       titleEl.textContent = capitalizeFirstLetter(titleEl.textContent);
     }
 
@@ -1211,7 +1241,7 @@
         },
         datesSet(info) {
           refreshDriverDayIndicators();
-          refreshCalendarTitleCase();
+          refreshCalendarTitleCase(info);
         },
         eventClick(info) {
           info.jsEvent.preventDefault();
@@ -1454,6 +1484,89 @@
       });
     }
 
+    function runOrientationDatabaseUpdate(buttonEl) {
+      const btn = buttonEl;
+      if (!btn) return;
+
+      return (async () => {
+        const password = (window.prompt("Digite a senha para atualizar:") || "").trim();
+        if (!ORIENTATION_UPDATE_PASSWORDS.includes(password)) {
+          window.alert("Senha incorreta.");
+          return;
+        }
+
+        btn.disabled = true;
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-lock"></i> Atualizando...';
+
+        try {
+          const response = await fetch(ORIENTATION_UPDATE_WEBHOOK_URL, {
+            method: "POST",
+            mode: "cors",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              source: "agendaveiculosdeseg-orientacoes",
+              action: "atualizar_base_dados",
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("HTTP " + response.status);
+          }
+
+          window.alert("Atualização confirmada com sucesso.");
+        } catch (error) {
+          console.warn("Falha na confirmação CORS do webhook. Tentando envio sem leitura de resposta.", error);
+
+          try {
+            await fetch(ORIENTATION_UPDATE_WEBHOOK_URL, {
+              method: "POST",
+              mode: "no-cors",
+            });
+            window.alert("Requisição enviada. Confira a execução no n8n (Executions), pois o navegador não conseguiu confirmar a resposta.");
+          } catch (fallbackError) {
+            console.error(fallbackError);
+            window.alert("Não foi possível enviar a atualização para o n8n.");
+          }
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+        }
+      })();
+    }
+
+    function setupOrientationMenuUpdateAction() {
+      function injectUpdateMenuButton() {
+        const list = document.getElementById("enhVideoList");
+        if (!list) return false;
+        if (list.querySelector("#enhUpdateDatabaseBtn")) return true;
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.id = "enhUpdateDatabaseBtn";
+        button.className = "enh-video-option enh-update-option";
+        button.innerHTML = '<i class="fa-solid fa-lock"></i> Atualizar Base de Dados';
+        button.addEventListener("click", () => {
+          runOrientationDatabaseUpdate(button);
+        });
+
+        list.insertBefore(button, list.firstChild);
+        return true;
+      }
+
+      if (injectUpdateMenuButton()) return;
+
+      const observer = new MutationObserver(() => {
+        if (injectUpdateMenuButton()) {
+          observer.disconnect();
+        }
+      });
+
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
+
     document.getElementById("agendaFilter").addEventListener("change", (event) => {
       calendarState.currentAgenda = event.target.value;
       renderCalendar();
@@ -1466,6 +1579,7 @@
     setupCardsToggle();
     setupEventModal();
     setupDriverReportLock();
+    setupOrientationMenuUpdateAction();
     loadEverything().catch((error) => {
       console.error(error);
       alert("Erro ao carregar dados do Supabase. Verifique SUPABASE_URL, chave ANON e views SQL.");

@@ -554,7 +554,7 @@
       <i class="fa-solid fa-calendar-days"></i>
       <a href="index.html">Agenda de Veículos UTFPR-LD</a>
     </h1>
-    <p>Visualize agenda de motorista oficial, veículos de passeio, especiais e prévia de ônibus/van com base única no Supabase.</p>
+    <p>Toque para Visualização da agenda veículos oficiais do campus</p>
   </header>
 
   <div class="chat-container">
@@ -750,9 +750,29 @@
       return names[dateValue.getUTCDay()];
     }
 
-    function refreshCalendarTitleCase() {
+    function formatMonthYearTitle(dateValue) {
+      if (!(dateValue instanceof Date) || Number.isNaN(dateValue.getTime())) return "";
+      return capitalizeFirstLetter(
+        dateValue.toLocaleDateString("pt-BR", {
+          month: "long",
+          year: "numeric",
+        })
+      );
+    }
+
+    function refreshCalendarTitleCase(viewInfo) {
       const titleEl = document.querySelector("#calendarRoot .fc-toolbar-title");
       if (!titleEl) return;
+
+      const view = (viewInfo && viewInfo.view) || (calendarState.calendar && calendarState.calendar.view);
+      if (view && view.type === "dayGridMonth") {
+        const forcedMonthTitle = formatMonthYearTitle(view.currentStart);
+        if (forcedMonthTitle) {
+          titleEl.textContent = forcedMonthTitle;
+          return;
+        }
+      }
+
       titleEl.textContent = capitalizeFirstLetter(titleEl.textContent);
     }
 
@@ -1211,7 +1231,7 @@
         },
         datesSet(info) {
           refreshDriverDayIndicators();
-          refreshCalendarTitleCase();
+          refreshCalendarTitleCase(info);
         },
         eventClick(info) {
           info.jsEvent.preventDefault();
