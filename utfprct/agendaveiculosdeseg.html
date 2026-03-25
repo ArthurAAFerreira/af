@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agenda de Veículos UTFPR-CT</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/main.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.15/main.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.15/main.min.css" />
+  <link rel="stylesheet" href="ui-enhancements.css" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f9f9fb;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(135deg, #001f3f, #003366);
+      color: white;
+      padding: 50px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+    }
+
+    header h1 a {
+      color: white;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    header h1 a:hover {
+      color: #66ccff;
+      text-decoration: underline;
+    }
+
+    header p {
+      font-size: 1rem;
+      margin-top: 10px;
+      opacity: 0.9;
+      max-width: 960px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      padding: 30px 0;
+      flex: 1;
+    }
+
+    .chat-item {
+      width: 92%;
+      box-sizing: border-box;
+      border-radius: 4px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+      background-color: white;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .chat-item h2 {
+      margin: 0;
+      padding: 15px 20px;
+      font-size: 1.08rem;
+      font-weight: bold;
+      color: #003366;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      background-color: #e6f0ff;
+    }
+
+    .chat-item h2:hover {
+      background-color: #cce0ff;
+    }
+
+    .chat-content {
+      display: none;
+      padding: 16px;
+      border-top: 1px solid #e8eef9;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .toolbar select,
+    .toolbar button {
+      padding: 8px 10px;
+      border: 1px solid #c4d4ef;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      background: #fff;
+    }
+
+    .toolbar button {
+      background: #003366;
+      color: white;
+      cursor: pointer;
+    }
+
+    .toolbar button:hover {
+      background: #0c4d95;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .kpi-card {
+      border: 1px solid #dbe6fb;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      padding: 10px 12px;
+      box-shadow: 0 2px 8px rgba(18, 42, 86, 0.08);
+    }
+
+    .kpi-label {
+      font-size: 0.8rem;
+      color: #4e6287;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .kpi-value {
+      margin-top: 6px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #0f2f5d;
+    }
+
+    #calendarRoot {
+      min-height: 760px;
+      border: 1px solid #dbe5f7;
+      border-radius: 8px;
+      padding: 10px;
+      background: #fff;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 12px 30px rgba(7, 29, 66, 0.08);
+    }
+
+    #calendarRoot .fc .fc-daygrid-day.fc-day-sat,
+    #calendarRoot .fc .fc-daygrid-day.fc-day-sat .fc-daygrid-day-frame {
+      background-color: #f1f3f5;
+    }
+
+    #calendarRoot .fc .fc-daygrid-day.fc-day-sun,
+    #calendarRoot .fc .fc-daygrid-day.fc-day-sun .fc-daygrid-day-frame {
+      background-color: #eceff3;
+    }
+
+    #calendarRoot .fc .fc-col-header-cell,
+    #calendarRoot .fc .fc-scrollgrid-section-header th,
+    #calendarRoot .fc .fc-col-header-cell.fc-day-sat,
+    #calendarRoot .fc .fc-col-header-cell.fc-day-sun {
+      background: linear-gradient(180deg, #8bc9ff 0%, #3d8be6 100%) !important;
+    }
+
+    #calendarRoot .fc .fc-toolbar.fc-header-toolbar {
+      background: linear-gradient(180deg, #2f66bf 0%, #1d4385 100%);
+      border: 1px solid #17386d;
+      border-radius: 10px;
+      padding: 8px 10px;
+      box-shadow: inset 0 1px 0 rgba(187, 217, 255, 0.85), 0 4px 10px rgba(9, 30, 70, 0.26);
+      margin-bottom: 10px;
+    }
+
+    #calendarRoot .fc .fc-toolbar-title {
+      color: #f4f8ff;
+      text-shadow: 0 1px 1px rgba(8, 26, 53, 0.5);
+    }
+
+    #calendarRoot .fc .fc-button-primary {
+      background: linear-gradient(180deg, #3f79d6 0%, #285aa8 100%);
+      border-color: #1d4a91;
+      box-shadow: inset 0 1px 0 rgba(195, 220, 255, 0.6);
+    }
+
+    #calendarRoot .fc .fc-button-primary:not(:disabled):hover {
+      background: linear-gradient(180deg, #4b84df 0%, #2f63b3 100%);
+      border-color: #1f4f9c;
+    }
+
+    #calendarRoot .fc .fc-scrollgrid-section-header th {
+      box-shadow: inset 0 -1px 0 rgba(16, 39, 74, 0.45);
+    }
+
+    #calendarRoot .fc .fc-col-header-cell-cushion {
+      display: block;
+      width: 100%;
+      font-weight: 700;
+      color: #f2f6ff;
+      text-transform: none;
+    }
+
+    #calendarRoot .fc .fc-daygrid-day-top {
+      position: relative;
+      display: block !important;
+      min-height: 24px;
+      padding-top: 2px;
+    }
+
+    #calendarRoot .fc .fc-daygrid-day-top > .fc-daygrid-day-number {
+      font-weight: 700;
+      color: #213552;
+      position: relative !important;
+      left: auto !important;
+      right: auto !important;
+      transform: none !important;
+      display: block !important;
+      float: none !important;
+      width: 100% !important;
+      text-align: center !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      line-height: 1.1;
+      z-index: 1;
+    }
+
+    .day-driver-indicators {
+      position: absolute;
+      right: 4px;
+      top: 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 0;
+      padding-left: 0;
+      z-index: 2;
+    }
+
+    .day-driver-indicators i {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.64rem;
+      color: #fff;
+      box-shadow: 0 2px 4px rgba(9, 28, 62, 0.26);
+    }
+
+    .day-bus-indicator {
+      background: #2f5fc4;
+    }
+
+    #calendarRoot .fc .fc-daygrid-day-frame {
+      min-height: 78px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 12px 0;
+      font-size: 0.87rem;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend i {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .dot-liberada { background: #12853b; }
+    .dot-realizada { background: #59647a; }
+    .dot-finalizada { background: #7e3aa9; }
+    .dot-autorizada { background: #d08b00; }
+    .dot-aguardando { background: #2f5fc4; }
+
+    .driver-free { background: #12853b; }
+    .driver-alert { background: #d08b00; }
+    .driver-overload { background: #bb2222; }
+
+    .embed-frame {
+      width: 100%;
+      min-height: 420px;
+      border: none;
+      border-radius: 8px;
+      background: #fff;
+      display: block;
+    }
+
+    .status-note {
+      font-size: 0.84rem;
+      color: #4d5a75;
+      margin-bottom: 10px;
+    }
+
+    .locked-box {
+      border: 1px solid #dbe6fb;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .locked-box-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #15386c;
+      font-weight: 700;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .locked-box-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .locked-box input,
+    .locked-box button {
+      padding: 8px 10px;
+      border: 1px solid #c4d4ef;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      background: #fff;
+    }
+
+    .locked-box button {
+      background: #003366;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .locked-box button:hover {
+      background: #0c4d95;
+    }
+
+    .locked-box-msg {
+      margin: 0;
+      font-size: 0.82rem;
+      color: #4d5a75;
+    }
+
+    .locked-box-msg.error {
+      color: #a11a1a;
+    }
+
+    .fc .fc-toolbar-title {
+      font-size: 1.1rem;
+    }
+
+    .fc .fc-button {
+      border-radius: 8px !important;
+      border: 1px solid rgba(21, 56, 108, 0.18) !important;
+      background: linear-gradient(180deg, #ffffff 0%, #eff5ff 100%) !important;
+      color: #15386c !important;
+      text-transform: none !important;
+      font-weight: 600 !important;
+      box-shadow: 0 1px 3px rgba(12, 46, 92, 0.08);
+    }
+
+    .fc .fc-button-primary:not(:disabled).fc-button-active,
+    .fc .fc-button-primary:not(:disabled):active {
+      background: linear-gradient(180deg, #1a57a5 0%, #154680 100%) !important;
+      color: #fff !important;
+      border-color: #154680 !important;
+    }
+
+    .fc-event-modern {
+      border-radius: 8px !important;
+      padding: 2px 4px !important;
+      box-shadow: 0 2px 6px rgba(11, 35, 74, 0.22);
+      border-width: 1px !important;
+    }
+
+    .fc-event-inner {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.76rem;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fc-event-inner i {
+      opacity: 0.95;
+      font-size: 0.75rem;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 21, 44, 0.58);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .event-modal {
+      width: min(720px, 95vw);
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 26px 55px rgba(4, 17, 39, 0.45);
+      overflow: hidden;
+    }
+
+    .event-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      background: linear-gradient(135deg, #0f2f5d 0%, #215ca6 100%);
+      color: #fff;
+    }
+
+    .event-modal-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .event-modal-close {
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: #fff;
+      background: transparent;
+      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+    }
+
+    .event-modal-body {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      background: #f9fbff;
+    }
+
+    .event-info-item {
+      background: white;
+      border: 1px solid #d9e4f8;
+      border-radius: 8px;
+      padding: 9px 10px;
+      font-size: 0.86rem;
+    }
+
+    .event-info-item strong {
+      display: block;
+      color: #48658f;
+      font-size: 0.73rem;
+      margin-bottom: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    footer {
+      background: rgba(8, 27, 56, 0.93);
+      color: #ecf4ff;
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(170, 210, 255, 0.22);
+      box-shadow: 0 12px 26px rgba(3, 18, 43, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
+      margin: 20px 12px 10px;
+      margin-top: auto;
+    }
+
+    .footer-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      font-size: 0.88rem;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      justify-content: flex-end;
+    }
+
+    .footer-links a {
+      color: #d9ebff;
+      text-decoration: none;
+      transition: color 0.2s ease;
+      font-size: 0.86rem;
+      white-space: nowrap;
+    }
+
+    .footer-links a:hover {
+      color: #8fc8ff;
+    }
+
+    @media (max-width: 576px) {
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .footer-links {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body class="is-index">
+  <header>
+    <h1>
+      <i class="fa-solid fa-calendar-days"></i>
+      <a href="index.html">Agenda de Veículos UTFPR-CT</a>
+    </h1>
+    <p>Visualize agenda de motorista oficial, veículos de passeio, especiais e prévia de ônibus/van com base única no Supabase.</p>
+  </header>
+
+  <div class="chat-container">
+    <div class="chat-item">
+      <h2>
+        Calendário de Agendamentos
+        <i class="fa-solid fa-chevron-down"></i>
+      </h2>
+      <div class="chat-content" style="display: block;">
+        <div class="toolbar">
+          <label for="agendaFilter">Agenda:</label>
+          <select id="agendaFilter">
+            <option value="todas">Todas</option>
+            <option value="motorista_oficial">Motorista Oficial</option>
+            <option value="passeio">Agenda de Veículos de Passeio</option>
+            <option value="especiais">Agenda de Veículos Especiais</option>
+            <option value="onibus_van">Agenda Prévia Onibus e Van</option>
+          </select>
+          <button id="refreshCalendarBtn" type="button"><i class="fa-solid fa-rotate"></i> Atualizar</button>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label"><i class="fa-solid fa-calendar-check"></i> Reservas no filtro</div>
+            <div id="kpiTotal" class="kpi-value">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label"><i class="fa-solid fa-circle-check"></i> Liberadas</div>
+            <div id="kpiLiberadas" class="kpi-value">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label"><i class="fa-solid fa-hourglass-half"></i> Aguardando/Autorizadas</div>
+            <div id="kpiPendentes" class="kpi-value">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label"><i class="fa-solid fa-id-badge"></i> Motorista oficial</div>
+            <div id="kpiMotoristaOficial" class="kpi-value">0</div>
+          </div>
+        </div>
+
+        <div class="legend">
+          <span><i class="dot-liberada"></i> Liberada pelo DISAU (confirmada)</span>
+          <span><i class="dot-realizada"></i> Realizadas (não finalizadas)</span>
+          <span><i class="dot-finalizada"></i> Finalizadas</span>
+          <span><i class="dot-autorizada"></i> Autorizada pelo aprovador</span>
+          <span><i class="dot-aguardando"></i> Aguardando autorização do aprovador</span>
+        </div>
+
+        <p class="status-note">Canceladas e devolvidas não entram no calendário.</p>
+
+        <div id="calendarRoot"></div>
+
+      </div>
+    </div>
+
+    <div class="chat-item">
+      <h2>
+        Assistente de verificação de datas
+        <i class="fa-solid fa-chevron-down"></i>
+      </h2>
+      <div class="chat-content">
+        <p class="status-note">Cole no atributo <code>src</code> do iframe abaixo a URL do seu chat n8n para dicas, distâncias e horários conforme regras da UTFPR.</p>
+        <iframe
+          id="agendaAiFrame"
+          class="embed-frame"
+          src="https://n8n.arthuraaferreira.com.br/form/604f441c-4ec3-4945-a4ca-2680fbb04e9f"
+          title="Assistente de verificação de datas"
+        ></iframe>
+      </div>
+    </div>
+
+    <div class="chat-item">
+      <h2>
+        Relatório por Veículo (saídas, horas, finalizadas e pendentes)
+        <i class="fa-solid fa-chevron-down"></i>
+      </h2>
+      <div class="chat-content">
+        <iframe id="reportVeiculosFrame" class="embed-frame" title="Relatório por Veículo"></iframe>
+      </div>
+    </div>
+
+    <div class="chat-item">
+      <h2>
+        Relatório por Motorista (agendamentos e dias reservados)
+        <i class="fa-solid fa-chevron-down"></i>
+      </h2>
+      <div class="chat-content">
+        <div id="driverReportLock" class="locked-box">
+          <p class="locked-box-title"><i class="fa-solid fa-lock"></i> Relatório protegido por senha</p>
+          <p class="locked-box-msg">Digite a senha para liberar o relatório por motorista.</p>
+          <div class="locked-box-actions">
+            <input id="driverReportPassword" type="password" placeholder="Senha do relatório" />
+            <button id="unlockDriverReportBtn" type="button">Desbloquear</button>
+          </div>
+          <p id="driverReportLockMsg" class="locked-box-msg"></p>
+        </div>
+        <iframe id="reportMotoristasFrame" class="embed-frame" title="Relatório por Motorista" style="display: none;"></iframe>
+      </div>
+    </div>
+
+    <div class="chat-item">
+      <h2>
+        Solicitações Aguardando Liberação
+        <i class="fa-solid fa-chevron-down"></i>
+      </h2>
+      <div class="chat-content">
+        <iframe id="reportAguardandoFrame" class="embed-frame" title="Solicitações aguardando liberação"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <span>&copy; 2025 Arthur Ferreira</span>
+      <div class="footer-links">
+        <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i> arthurferreira@utfpr.edu.br</a>
+        <a href="mailto:deofi-ct@utfpr.edu.br"><i class="fa-solid fa-envelope"></i> deofi-ct@utfpr.edu.br</a>
+        <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i> ArthurAAFerreira</a>
+      </div>
+    </div>
+  </footer>
+
+  <div id="eventModalBackdrop" class="modal-backdrop" aria-hidden="true">
+    <div class="event-modal" role="dialog" aria-modal="true" aria-labelledby="eventModalTitle">
+      <div class="event-modal-header">
+        <h3 id="eventModalTitle" class="event-modal-title">Detalhes da Solicitação</h3>
+        <button id="eventModalCloseBtn" class="event-modal-close" type="button" aria-label="Fechar">✕</button>
+      </div>
+      <div id="eventModalBody" class="event-modal-body"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.15/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.15/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales-all.global.min.js"></script>
+  <script>
+    const SUPABASE_URL = "https://wycjvjlhabiyhusupivx.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0";
+    const SUPABASE_SCHEMA = "desegct";
+    const MOTORISTA_OFICIAL = "Celso Crespim - 02495180";
+    const DRIVER_REPORT_PASSWORDS = ["federer", "dirpladsandy", "150148deseg"];
+
+    const PASSEIO_VEICULOS = [
+      "AOL8790", "AWP5867", "JGC9671", "AWK7J17", "ATM7929", "ASD9861",
+      "AOL5932", "AWP5703", "ASH1276", "MHW1712", "BDD0B03", "MIN1174",
+    ];
+
+    const ESPECIAIS_VEICULOS = ["AYC2148", "AFP2721", "AFP2695", "MHW1712", "BDD0B03"];
+
+    const ONIBUS_VAN_VEICULOS = ["AYF6659", "ASD6246", "GVJ7973", "AVA9214"];
+
+    const calendarState = {
+      allEvents: [],
+      currentAgenda: "todas",
+      calendar: null,
+      driverReportUnlocked: false,
+    };
+
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      db: { schema: SUPABASE_SCHEMA },
+    });
+
+    function formatDateOnly(dateStr) {
+      if (!dateStr) return "-";
+      const date = new Date(dateStr + "T00:00:00");
+      return Number.isNaN(date.getTime()) ? dateStr : date.toLocaleDateString("pt-BR");
+    }
+
+    function formatDateTime(dateTimeStr) {
+      if (!dateTimeStr) return "-";
+      const date = new Date(dateTimeStr);
+      return Number.isNaN(date.getTime()) ? dateTimeStr : date.toLocaleString("pt-BR");
+    }
+
+    function normalizeText(value) {
+      return String(value || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+    }
+
+    function capitalizeFirstLetter(value) {
+      const text = String(value || "").trim();
+      if (!text) return "";
+      return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    function formatWeekdayLabel(dateValue) {
+      const names = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+      return names[dateValue.getUTCDay()];
+    }
+
+    function refreshCalendarTitleCase() {
+      const titleEl = document.querySelector("#calendarRoot .fc-toolbar-title");
+      if (!titleEl) return;
+      titleEl.textContent = capitalizeFirstLetter(titleEl.textContent);
+    }
+
+    function textHasAllParts(text, parts) {
+      return parts.every((part) => text.includes(part));
+    }
+
+    function extractPlate(value) {
+      const match = String(value || "").toUpperCase().match(/[A-Z]{3}[0-9][A-Z0-9][0-9]{2}/);
+      return match ? match[0] : "";
+    }
+
+    function getVehiclePlate(eventData) {
+      return extractPlate(eventData.veiculo_principal) || extractPlate(eventData.veiculos);
+    }
+
+    function getPassengerCount(eventData) {
+      const n = Number(eventData.quantidade_passageiros);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function hasAssignedVehicle(eventData) {
+      return !!getVehiclePlate(eventData);
+    }
+
+    function isOnibusOuVan(eventData) {
+      return ONIBUS_VAN_VEICULOS.includes(getVehiclePlate(eventData));
+    }
+
+    function isMotoristaOficial(eventData) {
+      if (eventData.motorista_oficial === true) return true;
+      return normalizeText(eventData.motorista_nome).includes(normalizeText(MOTORISTA_OFICIAL).split("-")[0].trim());
+    }
+
+    function isPassedReturnDate(eventData) {
+      if (!eventData.fim_previsto) return false;
+      const endDate = new Date(eventData.fim_previsto);
+      if (Number.isNaN(endDate.getTime())) return false;
+      return endDate.getTime() < Date.now();
+    }
+
+    function getVisualStatus(eventData) {
+      const status = normalizeText(eventData.situacao_normalizada || eventData.situacao);
+
+      if (textHasAllParts(status, ["liberad", "disau"])) {
+        return isPassedReturnDate(eventData) ? "realizada_nao_finalizada" : "liberada_disau";
+      }
+
+      if (textHasAllParts(status, ["solicitacao", "atendida", "document", "preench"])) {
+        return "finalizada";
+      }
+
+      if (textHasAllParts(status, ["autorizada", "aprovador"])) {
+        return "autorizada_aprovador";
+      }
+
+      if (textHasAllParts(status, ["aguard", "autoriz", "aprovador"])) {
+        return "aguardando_aprovador";
+      }
+
+      return "outros";
+    }
+
+    function getVehicleReference(eventData) {
+      return eventData.veiculo_principal || eventData.veiculos || "Sem veículo estipulado";
+    }
+
+    function getAgendaPassFilter(agenda, eventData) {
+      if (agenda === "todas") return true;
+
+      const plate = getVehiclePlate(eventData);
+      const passageiros = getPassengerCount(eventData);
+      const semVeiculo = !hasAssignedVehicle(eventData);
+
+      if (agenda === "motorista_oficial") {
+        return isMotoristaOficial(eventData);
+      }
+
+      if (agenda === "passeio") {
+        return PASSEIO_VEICULOS.includes(plate) || (semVeiculo && passageiros > 0 && passageiros <= 4);
+      }
+
+      if (agenda === "especiais") {
+        return ESPECIAIS_VEICULOS.includes(plate) || (semVeiculo && passageiros > 0 && passageiros <= 7);
+      }
+
+      if (agenda === "onibus_van") {
+        return ONIBUS_VAN_VEICULOS.includes(plate) || (semVeiculo && passageiros > 6);
+      }
+
+      return true;
+    }
+
+    function getStatusPalette(visualStatus) {
+      if (visualStatus === "liberada_disau") {
+        return {
+          backgroundColor: "#12853b",
+          borderColor: "#0b6028",
+          textColor: "#ffffff",
+        };
+      }
+
+      if (visualStatus === "realizada_nao_finalizada") {
+        return {
+          backgroundColor: "#59647a",
+          borderColor: "#414a5d",
+          textColor: "#ffffff",
+        };
+      }
+
+      if (visualStatus === "finalizada") {
+        return {
+          backgroundColor: "#7e3aa9",
+          borderColor: "#5d2a7f",
+          textColor: "#ffffff",
+        };
+      }
+
+      if (visualStatus === "autorizada_aprovador") {
+        return {
+          backgroundColor: "#d08b00",
+          borderColor: "#945f00",
+          textColor: "#ffffff",
+        };
+      }
+
+      if (visualStatus === "aguardando_aprovador") {
+        return {
+          backgroundColor: "#2f5fc4",
+          borderColor: "#234b9a",
+          textColor: "#ffffff",
+        };
+      }
+
+      return {
+        backgroundColor: "#246f85",
+        borderColor: "#1b5161",
+        textColor: "#ffffff",
+      };
+    }
+
+    function getEventIcon(eventItem) {
+      const plate = getVehiclePlate(eventItem);
+      if (ONIBUS_VAN_VEICULOS.includes(plate)) return "fa-bus";
+      if (ESPECIAIS_VEICULOS.includes(plate)) return "fa-truck-pickup";
+      if (PASSEIO_VEICULOS.includes(plate)) return "fa-car-side";
+      if (isMotoristaOficial(eventItem)) return "fa-id-badge";
+      return "fa-calendar-day";
+    }
+
+    function buildEventTitle(item) {
+      const base = item.veiculo_principal || item.veiculos || "Sem veículo";
+      const solicitante = item.solicitante_nome ? " - " + item.solicitante_nome : "";
+      return base + solicitante;
+    }
+
+    async function loadCalendarEvents() {
+      const { data, error } = await supabaseClient
+        .from("vw_agenda_eventos")
+        .select("*")
+        .order("inicio_previsto", { ascending: true });
+
+      if (error) throw error;
+
+      calendarState.allEvents = (data || []).map((item) => {
+        const visualStatus = getVisualStatus(item);
+        return {
+          ...item,
+          title: buildEventTitle(item),
+          start: item.inicio_previsto,
+          end: item.fim_previsto,
+          extendedProps: {
+            protocolo: item.numero_solicitacao,
+            solicitante: item.solicitante_nome,
+            motorista: item.motorista_nome || "Não informado",
+            roteiro: item.roteiro,
+            status: item.situacao,
+            statusNormalizado: item.situacao_normalizada,
+            visualStatus,
+            passageiros: item.quantidade_passageiros,
+          },
+          ...getStatusPalette(visualStatus),
+        };
+      });
+    }
+
+    function getFilteredEvents() {
+      const agenda = calendarState.currentAgenda;
+      return calendarState.allEvents.filter((eventItem) => getAgendaPassFilter(agenda, eventItem));
+    }
+
+    function updateKpis() {
+      const events = getFilteredEvents();
+      const total = events.length;
+      const liberadas = events.filter((e) => getVisualStatus(e) === "liberada_disau").length;
+      const pendentes = events.filter((e) => {
+        const s = getVisualStatus(e);
+        return s === "autorizada_aprovador" || s === "aguardando_aprovador";
+      }).length;
+      const motoristaOficial = events.filter((e) => isMotoristaOficial(e)).length;
+
+      document.getElementById("kpiTotal").textContent = String(total);
+      document.getElementById("kpiLiberadas").textContent = String(liberadas);
+      document.getElementById("kpiPendentes").textContent = String(pendentes);
+      document.getElementById("kpiMotoristaOficial").textContent = String(motoristaOficial);
+    }
+
+    function toLocalDateKey(dateObj) {
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const day = String(dateObj.getDate()).padStart(2, "0");
+      return year + "-" + month + "-" + day;
+    }
+
+    function startOfDay(dateObj) {
+      const d = new Date(dateObj);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    }
+
+    function endOfDay(dateObj) {
+      const d = new Date(dateObj);
+      d.setHours(23, 59, 59, 999);
+      return d;
+    }
+
+    function calcOfficialDriverDaySummary(rangeStart, rangeEnd) {
+      const result = new Map();
+      const events = getFilteredEvents().filter((evt) => isMotoristaOficial(evt));
+
+      events.forEach((evt) => {
+        const eventStart = new Date(evt.start);
+        const eventEnd = evt.end ? new Date(evt.end) : new Date(eventStart.getTime() + 3600000);
+        if (Number.isNaN(eventStart.getTime()) || Number.isNaN(eventEnd.getTime())) return;
+
+        const visibleStart = new Date(Math.max(eventStart.getTime(), rangeStart.getTime()));
+        const visibleEnd = new Date(Math.min(eventEnd.getTime(), rangeEnd.getTime()));
+        if (visibleEnd <= visibleStart) return;
+
+        let cursor = startOfDay(visibleStart);
+        const lastDay = startOfDay(visibleEnd);
+
+        while (cursor <= lastDay) {
+          const dayStart = startOfDay(cursor);
+          const dayEnd = endOfDay(cursor);
+
+          const overlapStart = new Date(Math.max(eventStart.getTime(), dayStart.getTime()));
+          const overlapEnd = new Date(Math.min(eventEnd.getTime(), dayEnd.getTime()));
+          const overlapMs = Math.max(0, overlapEnd.getTime() - overlapStart.getTime());
+
+          if (overlapMs > 0) {
+            const key = toLocalDateKey(dayStart);
+            if (!result.has(key)) {
+              result.set(key, { hasOfficialBooking: false, totalHours: 0 });
+            }
+
+            const item = result.get(key);
+            item.hasOfficialBooking = true;
+            item.totalHours += overlapMs / 3600000;
+          }
+
+          cursor.setDate(cursor.getDate() + 1);
+        }
+      });
+
+      return result;
+    }
+
+    function refreshUniformDayHeights() {
+      requestAnimationFrame(() => {
+        const frames = Array.from(document.querySelectorAll("#calendarRoot .fc-daygrid-day[data-date] .fc-daygrid-day-frame"));
+        if (!frames.length) return;
+
+        frames.forEach((frame) => {
+          frame.style.minHeight = "0px";
+          frame.style.height = "auto";
+        });
+
+        let maxFrameHeight = 0;
+        frames.forEach((frame) => {
+          maxFrameHeight = Math.max(maxFrameHeight, Math.ceil(frame.scrollHeight));
+        });
+
+        const targetHeight = Math.max(78, maxFrameHeight);
+
+        frames.forEach((frame) => {
+          frame.style.setProperty("min-height", targetHeight + "px", "important");
+        });
+      });
+    }
+
+    function calcOnibusVanDaySummary(rangeStart, rangeEnd) {
+      const result = new Set();
+      const events = getFilteredEvents().filter((evt) => isOnibusOuVan(evt));
+
+      events.forEach((evt) => {
+        const eventStart = new Date(evt.start);
+        const eventEnd = evt.end ? new Date(evt.end) : new Date(eventStart.getTime() + 3600000);
+        if (Number.isNaN(eventStart.getTime()) || Number.isNaN(eventEnd.getTime())) return;
+
+        const visibleStart = new Date(Math.max(eventStart.getTime(), rangeStart.getTime()));
+        const visibleEnd = new Date(Math.min(eventEnd.getTime(), rangeEnd.getTime()));
+        if (visibleEnd <= visibleStart) return;
+
+        let cursor = startOfDay(visibleStart);
+        const lastDay = startOfDay(visibleEnd);
+
+        while (cursor <= lastDay) {
+          const dayStart = startOfDay(cursor);
+          const dayEnd = endOfDay(cursor);
+
+          const overlapStart = new Date(Math.max(eventStart.getTime(), dayStart.getTime()));
+          const overlapEnd = new Date(Math.min(eventEnd.getTime(), dayEnd.getTime()));
+          const overlapMs = Math.max(0, overlapEnd.getTime() - overlapStart.getTime());
+
+          if (overlapMs > 0) {
+            result.add(toLocalDateKey(dayStart));
+          }
+
+          cursor.setDate(cursor.getDate() + 1);
+        }
+      });
+
+      return result;
+    }
+
+    function refreshDriverDayIndicators() {
+      if (!calendarState.calendar) return;
+
+      const view = calendarState.calendar.view;
+      if (!view || !String(view.type || "").startsWith("dayGrid")) return;
+
+      const summaryByDay = calcOfficialDriverDaySummary(view.activeStart, view.activeEnd);
+      const onibusVanByDay = calcOnibusVanDaySummary(view.activeStart, view.activeEnd);
+      const dayCells = document.querySelectorAll("#calendarRoot .fc-daygrid-day[data-date]");
+
+      dayCells.forEach((cell) => {
+        const dayTop = cell.querySelector(".fc-daygrid-day-top");
+        if (!dayTop) return;
+
+        const dayNumber = dayTop.querySelector(".fc-daygrid-day-number");
+        if (dayNumber) {
+          dayTop.style.setProperty("display", "block", "important");
+          dayTop.style.setProperty("text-align", "center", "important");
+          dayNumber.style.setProperty("display", "block", "important");
+          dayNumber.style.setProperty("width", "100%", "important");
+          dayNumber.style.setProperty("text-align", "center", "important");
+          dayNumber.style.setProperty("float", "none", "important");
+          dayNumber.style.setProperty("margin", "0", "important");
+          dayNumber.style.setProperty("padding", "0", "important");
+          dayNumber.style.setProperty("font-weight", "700", "important");
+        }
+
+        const previous = dayTop.querySelector(".day-driver-indicators");
+        if (previous) previous.remove();
+
+        const key = cell.getAttribute("data-date") || "";
+        const dayInfo = summaryByDay.get(key);
+
+        const wrap = document.createElement("span");
+        wrap.className = "day-driver-indicators";
+
+        if (onibusVanByDay.has(key)) {
+          wrap.innerHTML += '<i class="fa-solid fa-bus day-bus-indicator" title="Há saída com ônibus/van no dia"></i>';
+        }
+
+        if (!dayInfo || !dayInfo.hasOfficialBooking) {
+          wrap.innerHTML += '<i class="fa-solid fa-user-check driver-free" title="Motorista livre"></i>';
+        } else if (dayInfo.totalHours > 6) {
+          wrap.innerHTML += '<i class="fa-solid fa-user-xmark driver-overload" title="Mais de 6 horas de agendamento no dia"></i>';
+        } else {
+          wrap.innerHTML += '<i class="fa-solid fa-triangle-exclamation driver-alert" title="Há agendamento no dia"></i>';
+        }
+
+        dayTop.appendChild(wrap);
+      });
+
+      refreshUniformDayHeights();
+    }
+
+    function renderCalendar() {
+      const el = document.getElementById("calendarRoot");
+
+      if (calendarState.calendar) {
+        calendarState.calendar.removeAllEvents();
+        getFilteredEvents().forEach((evt) => calendarState.calendar.addEvent(evt));
+        updateKpis();
+        refreshDriverDayIndicators();
+        return;
+      }
+
+      calendarState.calendar = new FullCalendar.Calendar(el, {
+        locale: "pt-br",
+        firstDay: 0,
+        initialView: "dayGridMonth",
+        height: "auto",
+        fixedWeekCount: false,
+        showNonCurrentDates: true,
+        headerToolbar: {
+          left: "prev,next today",
+          center: "title",
+          right: "dayGridMonth,timeGridWeek",
+        },
+        buttonText: {
+          today: "Hoje",
+          month: "Mensal",
+          week: "Semanal",
+        },
+        views: {
+          dayGridMonth: { dayMaxEventRows: 5 },
+        },
+        dayHeaderContent(arg) {
+          return formatWeekdayLabel(arg.date);
+        },
+        events: getFilteredEvents(),
+        eventClassNames() {
+          return ["fc-event-modern"];
+        },
+        eventContent(arg) {
+          const iconName = getEventIcon(arg.event.extendedProps || {});
+          const text = arg.event.title || "Reserva";
+          return {
+            html: '<div class="fc-event-inner"><i class="fa-solid ' + iconName + '"></i><span>' + text + "</span></div>",
+          };
+        },
+        eventTimeFormat: {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        },
+        eventDidMount(info) {
+          const p = info.event.extendedProps;
+          info.el.title =
+            "Protocolo: " + (p.protocolo || "-") +
+            "\nSolicitante: " + (p.solicitante || "-") +
+            "\nMotorista: " + (p.motorista || "-") +
+            "\nRoteiro: " + (p.roteiro || "-") +
+            "\nSituação: " + (p.status || "-");
+
+          const palette = getStatusPalette(p.visualStatus || getVisualStatus(p));
+          info.el.style.backgroundColor = palette.backgroundColor;
+          info.el.style.borderColor = palette.borderColor;
+          info.el.style.color = palette.textColor;
+
+          const main = info.el.querySelector(".fc-event-main");
+          if (main) main.style.color = palette.textColor;
+
+          const inner = info.el.querySelector(".fc-event-inner");
+          if (inner) inner.style.color = palette.textColor;
+
+          const dot = info.el.querySelector(".fc-event-dot");
+          if (dot) {
+            dot.style.borderColor = palette.backgroundColor;
+            dot.style.backgroundColor = palette.backgroundColor;
+          }
+        },
+        datesSet(info) {
+          refreshDriverDayIndicators();
+          refreshCalendarTitleCase();
+        },
+        eventClick(info) {
+          info.jsEvent.preventDefault();
+          openEventModal(info.event);
+        },
+      });
+
+      calendarState.calendar.render();
+      updateKpis();
+      refreshDriverDayIndicators();
+      refreshCalendarTitleCase();
+    }
+
+    function buildTableHTML(title, columns, rows) {
+      const th = columns.map((c) => "<th>" + c + "</th>").join("");
+      const tr = rows
+        .map((row) => "<tr>" + row.map((value) => "<td>" + (value ?? "-") + "</td>").join("") + "</tr>")
+        .join("");
+
+      return "<!DOCTYPE html><html><head><meta charset='utf-8'/>" +
+        "<style>body{font-family:Arial,sans-serif;margin:0;padding:14px;background:#fff;color:#1b2a42;}" +
+        "h3{margin:0 0 10px;color:#0d3766;}table{border-collapse:collapse;width:100%;font-size:13px;}" +
+        "th,td{border:1px solid #d7e2f4;padding:8px;text-align:left;}th{background:#e8f0ff;}" +
+        "tr:nth-child(even){background:#f8fbff;}</style></head><body>" +
+        "<h3>" + title + "</h3><table><thead><tr>" + th + "</tr></thead><tbody>" + tr + "</tbody></table></body></html>";
+    }
+
+    function setIframeTable(iframeId, title, columns, rows) {
+      const iframe = document.getElementById(iframeId);
+      iframe.srcdoc = buildTableHTML(title, columns, rows);
+    }
+
+    async function loadVehicleReport() {
+      const { data, error } = await supabaseClient
+        .from("vw_agenda_eventos")
+        .select("veiculo_principal,veiculos,inicio_previsto,fim_previsto,situacao,situacao_normalizada")
+        .order("veiculo_principal", { ascending: true });
+
+      if (error) throw error;
+
+      const grouped = new Map();
+
+      (data || []).forEach((item) => {
+        const key = getVehicleReference(item);
+        if (!grouped.has(key)) {
+          grouped.set(key, {
+            veiculo: key,
+            totalSaidas: 0,
+            totalHoras: 0,
+            saidasFinalizadas: 0,
+            horasFinalizadas: 0,
+            saidasPendentes: 0,
+            horasPendentes: 0,
+          });
+        }
+
+        const acc = grouped.get(key);
+        const start = new Date(item.inicio_previsto);
+        const end = new Date(item.fim_previsto);
+        const hours = Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())
+          ? 0
+          : Math.max(0, (end.getTime() - start.getTime()) / 3600000);
+        const visualStatus = getVisualStatus(item);
+
+        acc.totalSaidas += 1;
+        acc.totalHoras += hours;
+
+        if (visualStatus === "finalizada") {
+          acc.saidasFinalizadas += 1;
+          acc.horasFinalizadas += hours;
+        }
+
+        if (visualStatus === "autorizada_aprovador" || visualStatus === "aguardando_aprovador") {
+          acc.saidasPendentes += 1;
+          acc.horasPendentes += hours;
+        }
+      });
+
+      const rows = Array.from(grouped.values())
+        .sort((a, b) => a.veiculo.localeCompare(b.veiculo, "pt-BR"))
+        .map((item) => [
+          item.veiculo,
+          item.totalSaidas,
+          Number(item.totalHoras || 0).toLocaleString("pt-BR", { maximumFractionDigits: 2 }),
+          item.saidasFinalizadas,
+          Number(item.horasFinalizadas || 0).toLocaleString("pt-BR", { maximumFractionDigits: 2 }),
+          item.saidasPendentes,
+          Number(item.horasPendentes || 0).toLocaleString("pt-BR", { maximumFractionDigits: 2 }),
+        ]);
+
+      setIframeTable(
+        "reportVeiculosFrame",
+        "Saídas, Horas, Finalizadas e Pendentes por Veículo",
+        ["Veículo", "Saídas", "Horas Reservadas", "Saídas Finalizadas", "Horas Finalizadas", "Saídas Pendentes", "Horas Pendentes"],
+        rows
+      );
+    }
+
+    async function loadDriverReport() {
+      if (!calendarState.driverReportUnlocked) {
+        return;
+      }
+
+      const { data, error } = await supabaseClient
+        .from("vw_relatorio_motoristas")
+        .select("motorista_nome,total_agendamentos,total_dias_agendados,motorista_oficial")
+        .order("total_agendamentos", { ascending: false });
+
+      if (error) throw error;
+
+      const rows = (data || []).map((item) => [
+        item.motorista_nome,
+        item.total_agendamentos,
+        item.total_dias_agendados,
+        item.motorista_oficial ? "Sim" : "Não",
+      ]);
+
+      setIframeTable(
+        "reportMotoristasFrame",
+        "Agendamentos e Dias Reservados por Motorista",
+        ["Motorista", "Agendamentos", "Dias Agendados", "Motorista Oficial"],
+        rows
+      );
+    }
+
+    async function loadPendingList() {
+      const { data, error } = await supabaseClient
+        .from("vw_solicitacoes_aguardando_liberacao")
+        .select("numero_solicitacao,solicitante_nome,inicio_previsto,fim_previsto,veiculo_principal,situacao")
+        .order("inicio_previsto", { ascending: true });
+
+      if (error) throw error;
+
+      const rows = (data || []).map((item) => [
+        item.numero_solicitacao,
+        item.solicitante_nome,
+        formatDateTime(item.inicio_previsto),
+        formatDateTime(item.fim_previsto),
+        item.veiculo_principal,
+        item.situacao,
+      ]);
+
+      setIframeTable(
+        "reportAguardandoFrame",
+        "Solicitações em Espera de Liberação",
+        ["Nº Solicitação", "Solicitante", "Início", "Fim", "Veículo", "Situação"],
+        rows
+      );
+    }
+
+    function openEventModal(eventObj) {
+      const props = eventObj.extendedProps || {};
+      const rows = [
+        ["Protocolo", props.protocolo || "-"],
+        ["Solicitante", props.solicitante || "-"],
+        ["Motorista", props.motorista || "-"],
+        ["Veículo", eventObj.extendedProps.veiculo_principal || eventObj.title || "-"],
+        ["Início", formatDateTime(eventObj.start ? eventObj.start.toISOString() : null)],
+        ["Fim", formatDateTime(eventObj.end ? eventObj.end.toISOString() : null)],
+        ["Roteiro", props.roteiro || "-"],
+        ["Situação", props.status || "-"],
+        ["Passageiros", props.passageiros ?? "-"],
+      ];
+
+      document.getElementById("eventModalTitle").textContent = eventObj.title || "Detalhes da Solicitação";
+      document.getElementById("eventModalBody").innerHTML = rows
+        .map(([label, value]) => '<div class="event-info-item"><strong>' + label + "</strong>" + value + "</div>")
+        .join("");
+
+      const backdrop = document.getElementById("eventModalBackdrop");
+      backdrop.classList.add("open");
+      backdrop.setAttribute("aria-hidden", "false");
+    }
+
+    function setupEventModal() {
+      const backdrop = document.getElementById("eventModalBackdrop");
+      const closeBtn = document.getElementById("eventModalCloseBtn");
+
+      function close() {
+        backdrop.classList.remove("open");
+        backdrop.setAttribute("aria-hidden", "true");
+      }
+
+      closeBtn.addEventListener("click", close);
+      backdrop.addEventListener("click", (event) => {
+        if (event.target === backdrop) close();
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && backdrop.classList.contains("open")) close();
+      });
+    }
+
+    function setupCardsToggle() {
+      const headers = document.querySelectorAll(".chat-item h2");
+      headers.forEach((header) => {
+        header.addEventListener("click", () => {
+          const parent = header.closest(".chat-item");
+          const content = parent.querySelector(".chat-content");
+          const icon = header.querySelector(".fa-chevron-down, .fa-chevron-up");
+          const isHidden = !content.style.display || content.style.display === "none";
+
+          content.style.display = isHidden ? "block" : "none";
+
+          if (icon) {
+            icon.classList.toggle("fa-chevron-up", isHidden);
+            icon.classList.toggle("fa-chevron-down", !isHidden);
+          }
+        });
+      });
+    }
+
+    async function loadEverything() {
+      await loadCalendarEvents();
+      renderCalendar();
+      await Promise.all([loadVehicleReport(), loadDriverReport(), loadPendingList()]);
+    }
+
+    function setupDriverReportLock() {
+      const lockBox = document.getElementById("driverReportLock");
+      const passwordInput = document.getElementById("driverReportPassword");
+      const unlockButton = document.getElementById("unlockDriverReportBtn");
+      const msg = document.getElementById("driverReportLockMsg");
+      const frame = document.getElementById("reportMotoristasFrame");
+
+      unlockButton.addEventListener("click", async () => {
+        const password = (passwordInput.value || "").trim();
+        if (!DRIVER_REPORT_PASSWORDS.includes(password)) {
+          msg.textContent = "Senha incorreta. Tente novamente.";
+          msg.classList.add("error");
+          return;
+        }
+
+        calendarState.driverReportUnlocked = true;
+        lockBox.style.display = "none";
+        frame.style.display = "block";
+        msg.textContent = "";
+        msg.classList.remove("error");
+        await loadDriverReport();
+      });
+    }
+
+    document.getElementById("agendaFilter").addEventListener("change", (event) => {
+      calendarState.currentAgenda = event.target.value;
+      renderCalendar();
+    });
+
+    document.getElementById("refreshCalendarBtn").addEventListener("click", async () => {
+      await loadEverything();
+    });
+
+    setupCardsToggle();
+    setupEventModal();
+    setupDriverReportLock();
+    loadEverything().catch((error) => {
+      console.error(error);
+      alert("Erro ao carregar dados do Supabase. Verifique SUPABASE_URL, chave ANON e views SQL.");
+    });
+  </script>
+  <script src="ui-enhancements.js"></script>
+</body>
+</html>
