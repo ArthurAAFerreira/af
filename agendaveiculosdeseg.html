@@ -1488,53 +1488,23 @@
       const btn = buttonEl;
       if (!btn) return;
 
-      return (async () => {
-        const password = (window.prompt("Digite a senha para atualizar:") || "").trim();
-        if (!ORIENTATION_UPDATE_PASSWORDS.includes(password)) {
-          window.alert("Senha incorreta.");
-          return;
-        }
+      const password = (window.prompt("Digite a senha para atualizar:") || "").trim();
+      if (!ORIENTATION_UPDATE_PASSWORDS.includes(password)) {
+        window.alert("Senha incorreta.");
+        return;
+      }
 
-        btn.disabled = true;
-        const originalHtml = btn.innerHTML;
-        btn.innerHTML = '<i class="fa-solid fa-lock"></i> Atualizando...';
+      btn.disabled = true;
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = '<i class="fa-solid fa-lock"></i> Abrindo...';
 
-        try {
-          const response = await fetch(ORIENTATION_UPDATE_WEBHOOK_URL, {
-            method: "POST",
-            mode: "cors",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              source: "agendaveiculosdeseg-orientacoes",
-              action: "atualizar_base_dados",
-            }),
-          });
+      const newTab = window.open(ORIENTATION_UPDATE_WEBHOOK_URL, "_blank", "noopener,noreferrer");
+      if (!newTab) {
+        window.alert("Não foi possível abrir a nova aba. Verifique se o bloqueador de pop-up está ativo.");
+      }
 
-          if (!response.ok) {
-            throw new Error("HTTP " + response.status);
-          }
-
-          window.alert("Atualização confirmada com sucesso.");
-        } catch (error) {
-          console.warn("Falha na confirmação CORS do webhook. Tentando envio sem leitura de resposta.", error);
-
-          try {
-            await fetch(ORIENTATION_UPDATE_WEBHOOK_URL, {
-              method: "POST",
-              mode: "no-cors",
-            });
-            window.alert("Requisição enviada. Confira a execução no n8n (Executions), pois o navegador não conseguiu confirmar a resposta.");
-          } catch (fallbackError) {
-            console.error(fallbackError);
-            window.alert("Não foi possível enviar a atualização para o n8n.");
-          }
-        } finally {
-          btn.disabled = false;
-          btn.innerHTML = originalHtml;
-        }
-      })();
+      btn.disabled = false;
+      btn.innerHTML = originalHtml;
     }
 
     function setupOrientationMenuUpdateAction() {
