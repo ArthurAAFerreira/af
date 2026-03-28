@@ -1,13 +1,21 @@
 (function () {
+  function getCurrentPath() {
+    return (window.location.pathname || "").toLowerCase();
+  }
+
   function getCurrentFile() {
-    const path = window.location.pathname || "";
+    const path = getCurrentPath();
     const last = path.split("/").pop();
     return (last || "index.html").toLowerCase();
   }
 
+  function isRootIndexPage() {
+    const path = getCurrentPath();
+    return path.endsWith("/af/") || path.endsWith("/af/index.html") || path === "/" || path === "/index.html";
+  }
+
   function applyLayoutClasses() {
-    const file = getCurrentFile();
-    document.body.classList.add(file === "index.html" ? "is-index" : "is-internal");
+    document.body.classList.add(isRootIndexPage() ? "is-index" : "is-internal");
   }
 
   function normalizeInstructionItems(config) {
@@ -398,7 +406,7 @@
 
   function init() {
     const currentFile = getCurrentFile();
-    const hasInstructionShortcut = currentFile !== "index.html" && currentFile !== "demais-sistemas.html";
+    const hasInstructionShortcut = currentFile !== "demais-sistemas.html" && !isRootIndexPage();
     applyLayoutClasses();
     const pageInstructionConfig = getPageInstructionConfig();
     updatePanelOffsets();

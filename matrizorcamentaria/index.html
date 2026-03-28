@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Matriz Orçamentária de Custeio - UTFPR-CT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="../ui-enhancements.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>
+      <i class="fa-solid fa-calculator"></i>
+      <a href="../index.html">Matriz Orçamentária de Custeio — UTFPR-CT</a>
+    </h1>
+    <p>Elaboração, configuração e distribuição do recurso de custeio por unidade acadêmica.</p>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="panel-header">
+        <span><i class="fa-solid fa-circle-info"></i> Visão Geral do Fluxo</span>
+        <div id="cfgBadge" class="step-badge badge-muted" style="font-size:0.8rem; padding:4px 12px; border-radius:99px;"><i class="fa-solid fa-circle-exclamation"></i> Sem configuração ativa</div>
+      </div>
+      <div class="panel-body">
+        <div class="note-grid">
+          <div class="note-card">
+            <strong><i class="fa-solid fa-sliders" style="color:var(--accent)"></i> Configuração Base</strong>
+            Defina os pesos das variáveis, recurso líquido, contratos continuados, outras despesas e segurança.
+          </div>
+          <div class="note-card">
+            <strong><i class="fa-solid fa-building" style="color:var(--accent)"></i> Unidades</strong>
+            Cadastre departamentos, programas de pós-graduação, setores administrativos e de gestão com campus e sede.
+          </div>
+          <div class="note-card">
+            <strong><i class="fa-solid fa-user-graduate" style="color:var(--v1)"></i> V1 — Discentes</strong>
+            Pesos entre grad./pós, carga horária e alunos matriculados por unidade.
+          </div>
+          <div class="note-card">
+            <strong><i class="fa-solid fa-chalkboard-teacher" style="color:var(--v2)"></i> V2 — Docentes e TAEs</strong>
+            Regime de trabalho, função administrativa e quantitativo por unidade.
+          </div>
+          <div class="note-card">
+            <strong><i class="fa-solid fa-graduation-cap" style="color:var(--v3)"></i> V3 — Titulação Docente</strong>
+            Distribuição de docentes por nível de titulação e pesos configuráveis.
+          </div>
+          <div class="note-card">
+            <strong><i class="fa-solid fa-flask" style="color:var(--v4)"></i> V4 — Estrutural</strong>
+            Laboratórios e estruturas cadastradas com atributos ponderados por unidade.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-rocket"></i> Acessar Etapas</div>
+      <div class="panel-body">
+        <div class="step-grid">
+          <a class="step-card" href="configuracao.html" style="animation-delay:0.05s">
+            <div class="step-icon icon-config"><i class="fa-solid fa-sliders"></i></div>
+            <div class="step-title">1 — Configuração Base</div>
+            <div class="step-desc">Pesos das variáveis, recurso líquido, contratos, outras despesas e segurança.</div>
+            <div id="badgeConfig" class="step-badge badge-muted"><i class="fa-solid fa-arrow-right"></i> Acessar</div>
+          </a>
+          <a class="step-card" href="unidades.html" style="animation-delay:0.10s">
+            <div class="step-icon icon-units"><i class="fa-solid fa-building"></i></div>
+            <div class="step-title">2 — Unidades</div>
+            <div class="step-desc">Cadastro de departamentos e programas com campus, sede, sigla e tipo.</div>
+            <div id="badgeUnidades" class="step-badge badge-muted"><i class="fa-solid fa-arrow-right"></i> Acessar</div>
+          </a>
+          <a class="step-card" href="v1.html" style="animation-delay:0.15s">
+            <div class="step-icon icon-v1"><i class="fa-solid fa-user-graduate"></i></div>
+            <div class="step-title">3 — V1: Discentes</div>
+            <div class="step-desc">Carga horária e alunos matriculados por unidade (graduação e pós-graduação).</div>
+            <div id="badgeV1" class="step-badge badge-muted"><i class="fa-solid fa-arrow-right"></i> Acessar</div>
+          </a>
+          <a class="step-card" href="v2.html" style="animation-delay:0.20s">
+            <div class="step-icon icon-v2"><i class="fa-solid fa-chalkboard-teacher"></i></div>
+            <div class="step-title">4 — V2: Docentes e TAEs</div>
+            <div class="step-desc">Regime de trabalho, função administrativa e quantitativos de docentes e TAEs.</div>
+            <div id="badgeV2" class="step-badge badge-muted"><i class="fa-solid fa-arrow-right"></i> Acessar</div>
+          </a>
+          <a class="step-card" href="v3.html" style="animation-delay:0.25s">
+            <div class="step-icon icon-v3"><i class="fa-solid fa-graduation-cap"></i></div>
+            <div class="step-title">5 — V3: Titulação Docente</div>
+            <div class="step-desc">Docentes por titulação (graduação, especialização, mestrado, doutorado).</div>
+            <div id="badgeV3" class="step-badge badge-muted"><i class="fa-solid fa-arrow-right"></i> Acessar</div>
+          </a>
+          <a class="step-card" href="v4.html" style="animation-delay:0.30s">
+            <div class="step-icon icon-v4"><i class="fa-solid fa-flask"></i></div>
+            <div class="step-title">6 — V4: Estrutural</div>
+            <div class="step-desc">Cadastro de laboratórios e estruturas com atributos e responsáveis por unidade.</div>
+            <div id="badgeV4" class="step-badge badge-muted"><i class="fa-solid fa-arrow-right"></i> Acessar</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="resultPanel" style="display:none">
+      <div class="panel-header"><i class="fa-solid fa-chart-pie"></i> Resultado da Configuração Ativa</div>
+      <div class="panel-body">
+        <div class="kpi-row" id="kpiRow"></div>
+        <div class="table-wrap" style="margin-top:16px">
+          <table>
+            <thead>
+              <tr>
+                <th>Unidade</th>
+                <th>Tipo</th>
+                <th class="text-right">Score V1</th>
+                <th class="text-right">Score V2</th>
+                <th class="text-right">Score V3</th>
+                <th class="text-right">Score V4</th>
+                <th class="text-right">Índice Composto</th>
+                <th class="text-right">Valor Estimado (R$)</th>
+              </tr>
+            </thead>
+            <tbody id="resultBody"></tbody>
+          </table>
+        </div>
+        <div id="statusMsg" class="status"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Arthur Ferreira | ASGEAD-CT</p>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="modules/dashboard.js"></script>
+  <script src="../ui-enhancements.js"></script>
+</body>
+</html>
