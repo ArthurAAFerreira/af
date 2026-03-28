@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Comparação entre Simulações — Matriz Orçamentária UTFPR-CT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="../ui-enhancements.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>
+      <i class="fa-solid fa-chart-bar"></i>
+      <a href="../index.html">Comparação entre Simulações — Matriz Orçamentária</a>
+    </h1>
+    <p>Compare duas simulações lado a lado: valor recebido, percentual do total, variação em R$ e % por unidade.</p>
+  </header>
+
+  <main>
+    <!-- SELEÇÃO -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-sliders"></i> Selecionar Simulações</div>
+      <div class="panel-body">
+        <div class="config-grid" style="align-items:end">
+          <div class="field">
+            <label for="simA">Simulação A (base)</label>
+            <select id="simA"><option value="">Selecione...</option></select>
+          </div>
+          <div class="field">
+            <label for="simB">Simulação B (comparar)</label>
+            <select id="simB"><option value="">Selecione...</option></select>
+          </div>
+          <div class="field" style="align-self:end">
+            <button id="btnComparar" class="btn btn-save"><i class="fa-solid fa-chart-bar"></i> Comparar</button>
+          </div>
+        </div>
+        <div id="statusMsg" class="status"></div>
+      </div>
+    </section>
+
+    <!-- PARÂMETROS DAS SIMULAÇÕES -->
+    <section class="panel" id="paramPanel" style="display:none">
+      <div class="panel-header"><i class="fa-solid fa-money-bill-wave"></i> Parâmetros Comparados</div>
+      <div class="panel-body">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Parâmetro</th>
+                <th class="text-right" id="thA">Simulação A</th>
+                <th class="text-right" id="thB">Simulação B</th>
+                <th class="text-right">Diferença (B − A)</th>
+              </tr>
+            </thead>
+            <tbody id="paramBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTADO POR UNIDADE -->
+    <section class="panel" id="compPanel" style="display:none">
+      <div class="panel-header">
+        <span><i class="fa-solid fa-table"></i> Resultado por Unidade</span>
+        <select id="filtroTipo" style="font-size:0.83rem;padding:4px 8px;border:1px solid var(--line);border-radius:6px;background:#fff">
+          <option value="">Todos os tipos</option>
+          <option value="GRADUACAO">Graduação</option>
+          <option value="POS_GRADUACAO">Pós-Graduação</option>
+          <option value="ADMINISTRATIVO">Administrativo</option>
+          <option value="GESTAO_DIRETORIA">Gestão/Diretoria</option>
+        </select>
+      </div>
+      <div class="panel-body">
+        <div style="display:flex;gap:12px;margin-bottom:10px;font-size:0.8rem;flex-wrap:wrap">
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:14px;border-radius:3px;background:#e8f5e9;border:1.5px solid #2e7d32;display:inline-block"></span> Aumento (B &gt; A)</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:14px;border-radius:3px;background:#fdecea;border:1.5px solid #c0392b;display:inline-block"></span> Redução (B &lt; A)</span>
+        </div>
+        <div class="table-wrap"><table id="compTable"></table></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Arthur Ferreira | ASGEAD-CT</p>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="modules/comparacoes.js"></script>
+  <script src="../ui-enhancements.js"></script>
+</body>
+</html>

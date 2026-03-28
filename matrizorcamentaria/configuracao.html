@@ -14,7 +14,7 @@
       <i class="fa-solid fa-sliders"></i>
       <a href="../index.html">Configuração Base — Matriz Orçamentária</a>
     </h1>
-    <p>Defina os parâmetros financeiros e os pesos das variáveis para a elaboração da matriz.</p>
+    <p>Defina os parâmetros financeiros e os pesos das variáveis. O recurso líquido é calculado automaticamente a partir do recurso bruto menos as deduções.</p>
   </header>
 
   <main>
@@ -54,14 +54,14 @@
       <div class="panel-body">
         <div class="config-grid">
           <div class="field">
-            <label for="recursoLiquido">Recurso Líquido (R$)</label>
-            <input id="recursoLiquido" type="number" min="0" step="0.01" value="0" />
-            <span class="field-hint">Valor total disponível para distribuição</span>
+            <label for="recursoBruto">Recurso Bruto (R$)</label>
+            <input id="recursoBruto" type="number" min="0" step="0.01" value="0" />
+            <span class="field-hint">Valor total antes das deduções (contratos, despesas, segurança)</span>
           </div>
           <div class="field">
             <label for="pctTotal">Percentual aplicado à distribuição (%)</label>
             <input id="pctTotal" type="number" min="0" max="100" step="0.01" value="100" />
-            <span class="field-hint">Percentual do recurso líquido que será distribuído</span>
+            <span class="field-hint">Percentual do recurso líquido (já deduzido) a distribuir</span>
           </div>
           <div class="field">
             <label for="contratosContinuados">Contratos Continuados (R$)</label>
@@ -84,16 +84,17 @@
             </div>
             <div class="field" style="min-width:200px">
               <input id="segurancaValor" type="number" min="0" step="0.01" value="0" placeholder="0" />
-              <span class="field-hint" id="segHint">% do recurso líquido</span>
+              <span class="field-hint" id="segHint">% do recurso bruto</span>
             </div>
           </div>
         </div>
 
         <div class="kpi-row" style="margin-top:18px">
-          <div class="kpi"><div class="kpi-label">Recurso Líquido</div><div id="kpiRL" class="kpi-value">R$ 0,00</div></div>
-          <div class="kpi"><div class="kpi-label">Valor Base (distribuição)</div><div id="kpiVB" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi"><div class="kpi-label">Recurso Bruto</div><div id="kpiRB" class="kpi-value">R$ 0,00</div></div>
           <div class="kpi"><div class="kpi-label">Contratos + Outras Desp.</div><div id="kpiCO" class="kpi-value">R$ 0,00</div></div>
           <div class="kpi"><div class="kpi-label">Segurança</div><div id="kpiSeg" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi" style="border:2px solid var(--accent)"><div class="kpi-label">Recurso Líquido (calculado)</div><div id="kpiRL" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi"><div class="kpi-label">Base de Distribuição</div><div id="kpiVB" class="kpi-value">R$ 0,00</div></div>
         </div>
       </div>
     </section>

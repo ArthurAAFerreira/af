@@ -6,6 +6,9 @@ renderNav('unidades.html');
 const $ = id => document.getElementById(id);
 let currentId = null;
 let allUnidades = [];
+let campusCT = null;
+let sedesMap = {};
+const SEDES = ['Centro', 'Neoville', 'Ecoville'];
 const TIPOS = { GRADUACAO:'Graduação', POS_GRADUACAO:'Pós-Graduação', ADMINISTRATIVO:'Administrativo', GESTAO_DIRETORIA:'Gestão/Diretoria' };
 const TIPO_COLORS = { GRADUACAO:'#1565c0', POS_GRADUACAO:'#6a1b9a', ADMINISTRATIVO:'#2e7d32', GESTAO_DIRETORIA:'#e65100' };
 
@@ -15,28 +18,12 @@ function setStatus(msg, cls = 'ok') {
   el.innerHTML = `<i class="fa-solid fa-${cls === 'ok' ? 'circle-check' : cls === 'warn' ? 'triangle-exclamation' : 'circle-xmark'}"></i> ${msg}`;
 }
 
-async function loadCampi() {
-  const { data } = await supabase.schema('utfprct').from('matriz_orc_campi').select('id,sigla,nome').eq('ativo', true).order('sigla');
-  const sel = $('uCampus');
-  sel.innerHTML = '<option value="">Selecione o campus</option>';
-  (data || []).forEach(c => {
-    const opt = document.createElement('option');
-    opt.value = c.id; opt.textContent = `${c.sigla} — ${c.nome}`;
-    sel.appendChild(opt);
-  });
-}
-
-async function loadSedes(campusId) {
-  const sel = $('uSede');
-  sel.innerHTML = '<option value="">Carregando...</option>';
-  if (!campusId) { sel.innerHTML = '<option value="">Selecione o campus primeiro</option>'; return; }
-  const { data } = await supabase.schema('utfprct').from('matriz_orc_sedes').select('id,nome').eq('campus_id', campusId).order('nome');
-  sel.innerHTML = '<option value="">Sem sede específica</option>';
-  (data || []).forEach(s => {
-    const opt = document.createElement('option');
-    opt.value = s.id; opt.textContent = s.nome;
-    sel.appendChild(opt);
-  });
+async function loadCampusSedes() {
+  const { data: campus } = await supabase.schema('utfprct').from('matriz_orc_campi').select('id').eq('sigla', 'CT').single();
+  campusCT = campus;
+  const { data: sedes } = await supabase.schema('utfprct').from('matriz_orc_sedes').select('id,nome').eq('campus_id', campus.id);
+  sedesMap = {};
+  (sedes || []).forEach(s => { sedesMap[s.nome] = s.id; });
 }
 
 async function loadUnidades() {
@@ -69,8 +56,7 @@ window.editUnidade = function(id) {
   const u = allUnidades.find(x => x.id === id);
   if (!u) return;
   currentId = u.id;
-  $('uCampus').value = u.campus_id;
-  loadSedes(u.campus_id).then(() => { $('uSede').value = u.sede_id || ''; });
+  $('uSede').value = u.sede?.nome || '';
   $('uSigla').value = u.sigla;
   $('uNome').value = u.nome;
   $('uTipo').value = u.tipo;
@@ -79,23 +65,23 @@ window.editUnidade = function(id) {
 
 function clearForm() {
   currentId = null;
-  $('uCampus').value = '';
-  $('uSede').innerHTML = '<option value="">Selecione o campus primeiro</option>';
+  $('uSede').value = '';
   $('uSigla').value = '';
   $('uNome').value = '';
   $('uTipo').value = 'GRADUACAO';
 }
 
 async function save(isUpdate) {
-  const campusId = toInt($('uCampus').value);
-  const sedeId = toInt($('uSede').value) || null;
+  if (!campusCT) { setStatus('Campus CT não carregado. Aguarde.', 'warn'); return; }
+  const sedeNome = $('uSede').value;
+  const sedeId = sedeNome ? (sedesMap[sedeNome] || null) : null;
   const sigla = $('uSigla').value.trim().toUpperCase();
   const nome = $('uNome').value.trim();
   const tipo = $('uTipo').value;
 
-  if (!campusId || !sigla || !nome) { setStatus('Preencha campus, sigla e nome.', 'warn'); return; }
+  if (!sigla || !nome) { setStatus('Preencha sigla e nome.', 'warn'); return; }
 
-  const payload = { campus_id: campusId, sede_id: sedeId, sigla, nome, tipo, ativo: true };
+  const payload = { campus_id: campusCT.id, sede_id: sedeId, sigla, nome, tipo, ativo: true };
 
   if (isUpdate) {
     if (!currentId) { setStatus('Selecione uma unidade para atualizar.', 'warn'); return; }
@@ -124,10 +110,9 @@ async function deactivate() {
 function toInt(v) { const n = parseInt(v); return isNaN(n) ? null : n; }
 
 async function init() {
-  await loadCampi();
+  await loadCampusSedes();
   await loadUnidades();
 
-  $('uCampus').addEventListener('change', e => loadSedes(e.target.value));
   $('btnSalvar').addEventListener('click', () => save(false));
   $('btnAtualizar').addEventListener('click', () => save(true));
   $('btnExcluir').addEventListener('click', deactivate);

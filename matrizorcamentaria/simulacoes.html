@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulações — Matriz Orçamentária UTFPR-CT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="../ui-enhancements.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>
+      <i class="fa-solid fa-vials"></i>
+      <a href="../index.html">Simulações — Matriz Orçamentária</a>
+    </h1>
+    <p>Crie e gerencie cenários alternativos modificando os parâmetros financeiros e pesos sem alterar a configuração oficial.</p>
+  </header>
+
+  <main>
+    <!-- SELEÇÃO -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-folder-open"></i> Simulações Salvas</div>
+      <div class="panel-body">
+        <div class="config-grid" style="align-items:end">
+          <div class="field">
+            <label for="simSelect">Selecionar simulação</label>
+            <select id="simSelect"><option value="">Nova simulação</option></select>
+          </div>
+          <div class="field">
+            <label for="simNome">Nome da simulação</label>
+            <input id="simNome" type="text" placeholder="Ex: Cenário com maior peso V1" />
+          </div>
+          <div class="field">
+            <label for="simDescricao">Descrição</label>
+            <input id="simDescricao" type="text" placeholder="Observações sobre este cenário" />
+          </div>
+          <div class="field" style="align-self:end">
+            <div class="btn-row" style="margin-top:0">
+              <button id="btnSalvar" class="btn btn-save"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+              <button id="btnAtualizar" class="btn btn-update"><i class="fa-solid fa-rotate"></i> Atualizar</button>
+              <button id="btnExcluir" class="btn btn-delete"><i class="fa-solid fa-trash"></i> Excluir</button>
+              <button id="btnNova" class="btn btn-new"><i class="fa-solid fa-file-circle-plus"></i> Nova</button>
+              <button id="btnCopiarCfg" class="btn btn-secondary"><i class="fa-solid fa-copy"></i> Copiar config ativa</button>
+            </div>
+          </div>
+        </div>
+        <div id="statusMsg" class="status"></div>
+      </div>
+    </section>
+
+    <!-- RECURSOS -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-money-bill-wave"></i> Recursos Financeiros da Simulação</div>
+      <div class="panel-body">
+        <div class="config-grid">
+          <div class="field">
+            <label for="simRB">Recurso Bruto (R$)</label>
+            <input id="simRB" type="number" min="0" step="0.01" value="0" />
+          </div>
+          <div class="field">
+            <label for="simPct">% Distribuído</label>
+            <input id="simPct" type="number" min="0" max="100" step="0.01" value="100" />
+          </div>
+          <div class="field">
+            <label for="simCC">Contratos Continuados (R$)</label>
+            <input id="simCC" type="number" min="0" step="0.01" value="0" />
+          </div>
+          <div class="field">
+            <label for="simOD">Outras Despesas (R$)</label>
+            <input id="simOD" type="number" min="0" step="0.01" value="0" />
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+          <div class="radio-group">
+            <label><input type="radio" name="simSegMode" value="PERCENTUAL" checked /> % do bruto</label>
+            <label><input type="radio" name="simSegMode" value="FIXO" /> Valor fixo</label>
+          </div>
+          <div class="field" style="min-width:200px">
+            <input id="simSegVal" type="number" min="0" step="0.01" value="0" placeholder="Segurança" />
+            <span class="field-hint" id="simSegHint">% do recurso bruto</span>
+          </div>
+        </div>
+        <div class="kpi-row" style="margin-top:16px">
+          <div class="kpi"><div class="kpi-label">Recurso Bruto</div><div id="kpiRB" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi"><div class="kpi-label">Deduções</div><div id="kpiDed" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi" style="border:2px solid var(--accent)"><div class="kpi-label">Recurso Líquido</div><div id="kpiRL" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi" style="border:2px solid var(--ok);background:var(--ok-bg)"><div class="kpi-label">Base de Distribuição</div><div id="kpiVB" class="kpi-value">R$ 0,00</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PESOS -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-scale-balanced"></i> Pesos das Variáveis</div>
+      <div class="panel-body">
+        <div class="weights-inline">
+          <div class="field"><label><i class="fa-solid fa-circle" style="color:var(--v1)"></i> V1 — Discentes (%)</label><input id="simPV1" type="number" min="0" max="100" step="0.01" value="20" /></div>
+          <div class="field"><label><i class="fa-solid fa-circle" style="color:var(--v2)"></i> V2 — Docentes/TAEs (%)</label><input id="simPV2" type="number" min="0" max="100" step="0.01" value="30" /></div>
+          <div class="field"><label><i class="fa-solid fa-circle" style="color:var(--v3)"></i> V3 — Titulação (%)</label><input id="simPV3" type="number" min="0" max="100" step="0.01" value="25" /></div>
+          <div class="field"><label><i class="fa-solid fa-circle" style="color:var(--v4)"></i> V4 — Estrutural (%)</label><input id="simPV4" type="number" min="0" max="100" step="0.01" value="25" /></div>
+        </div>
+        <div id="pesoStatus" class="status ok" style="margin-top:10px">
+          <i class="fa-solid fa-circle-check"></i> Soma: <strong id="pesoSoma">100%</strong>
+        </div>
+
+        <details style="margin-top:16px">
+          <summary style="cursor:pointer;font-size:0.84rem;font-weight:600;color:var(--accent)"><i class="fa-solid fa-chevron-right"></i> Sub-pesos V1, V2, V3</summary>
+          <div style="margin-top:12px;display:grid;gap:16px">
+            <div>
+              <div class="section-divider">V1 — Discentes</div>
+              <div class="weights-2">
+                <div class="field"><label>Graduação (%)</label><input id="sv1Grad" type="number" min="0" step="0.01" value="50" /></div>
+                <div class="field"><label>Pós-Graduação (%)</label><input id="sv1Pos" type="number" min="0" step="0.01" value="50" /></div>
+              </div>
+            </div>
+            <div>
+              <div class="section-divider">V2 — Docentes e TAEs</div>
+              <div class="weights-inline">
+                <div class="field"><label>Docentes (%)</label><input id="sv2Docs" type="number" value="60" min="0" step="0.01" /></div>
+                <div class="field"><label>TAEs (%)</label><input id="sv2Taes" type="number" value="40" min="0" step="0.01" /></div>
+                <div class="field"><label>20h (fator)</label><input id="sv2h20" type="number" value="1" min="0" step="0.01" /></div>
+                <div class="field"><label>40h (fator)</label><input id="sv2h40" type="number" value="2" min="0" step="0.01" /></div>
+                <div class="field"><label>DE (fator)</label><input id="sv2DE" type="number" value="3" min="0" step="0.01" /></div>
+                <div class="field"><label>Func. Parcial</label><input id="sv2FP" type="number" value="1" min="0" step="0.01" /></div>
+                <div class="field"><label>Func. Integral</label><input id="sv2FI" type="number" value="2" min="0" step="0.01" /></div>
+              </div>
+            </div>
+            <div>
+              <div class="section-divider">V3 — Titulação</div>
+              <div class="weights-inline">
+                <div class="field"><label>Grad. (fator)</label><input id="sv3Grad" type="number" value="1" min="0" step="0.01" /></div>
+                <div class="field"><label>Esp. (fator)</label><input id="sv3Esp" type="number" value="2" min="0" step="0.01" /></div>
+                <div class="field"><label>Mest. (fator)</label><input id="sv3Mest" type="number" value="3" min="0" step="0.01" /></div>
+                <div class="field"><label>Dout. (fator)</label><input id="sv3Dout" type="number" value="4" min="0" step="0.01" /></div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- PREVIEW DE RESULTADO -->
+    <section class="panel" id="previewPanel" style="display:none">
+      <div class="panel-header" style="border-left:4px solid var(--accent)"><i class="fa-solid fa-eye"></i> Pré-visualização do Resultado</div>
+      <div class="panel-body">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Unidade</th>
+                <th class="text-right">Índice Composto</th>
+                <th class="text-right">% do Total</th>
+                <th class="text-right">Valor Simulado (R$)</th>
+              </tr>
+            </thead>
+            <tbody id="previewBody"></tbody>
+            <tfoot>
+              <tr class="row-total">
+                <td>TOTAL</td>
+                <td class="text-right">—</td>
+                <td class="text-right">100%</td>
+                <td id="previewTotal" class="text-right">—</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Arthur Ferreira | ASGEAD-CT</p>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="modules/simulacoes.js"></script>
+  <script src="../ui-enhancements.js"></script>
+</body>
+</html>

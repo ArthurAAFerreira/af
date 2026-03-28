@@ -14,11 +14,24 @@ function setStatus(msg, cls = 'ok') {
   el.innerHTML = `<i class="fa-solid fa-${cls === 'ok' ? 'circle-check' : cls === 'warn' ? 'triangle-exclamation' : 'circle-xmark'}"></i> ${msg}`;
 }
 
+function calcLiquido() {
+  const rb = toNumber($('recursoBruto').value);
+  const cc = toNumber($('contratosContinuados').value);
+  const od = toNumber($('outrasDespesas').value);
+  const modo = document.querySelector('input[name="segMode"]:checked').value;
+  const sv = toNumber($('segurancaValor').value);
+  const segVal = modo === 'PERCENTUAL' ? rb * sv / 100 : sv;
+  return Math.max(0, rb - cc - od - segVal);
+}
+
 function getFormData() {
+  const rb = toNumber($('recursoBruto').value);
+  const rl = calcLiquido();
   return {
     ano: toNumber($('cfgAno').value),
     descricao: $('cfgDescricao').value.trim() || null,
-    recurso_liquido: toNumber($('recursoLiquido').value),
+    recurso_bruto: rb,
+    recurso_liquido: rl,
     pct_total: toNumber($('pctTotal').value),
     contratos_continuados: toNumber($('contratosContinuados').value),
     outras_despesas_campus: toNumber($('outrasDespesas').value),
@@ -49,7 +62,7 @@ function fillForm(cfg) {
   currentId = cfg.id;
   $('cfgAno').value = cfg.ano;
   $('cfgDescricao').value = cfg.descricao || '';
-  $('recursoLiquido').value = cfg.recurso_liquido;
+  $('recursoBruto').value = cfg.recurso_bruto ?? cfg.recurso_liquido;
   $('pctTotal').value = cfg.pct_total;
   $('contratosContinuados').value = cfg.contratos_continuados;
   $('outrasDespesas').value = cfg.outras_despesas_campus;
@@ -82,7 +95,7 @@ function clearForm() {
   $('cfgSelect').value = '';
   $('cfgAno').value = new Date().getFullYear();
   $('cfgDescricao').value = '';
-  $('recursoLiquido').value = 0;
+  $('recursoBruto').value = 0;
   $('pctTotal').value = 100;
   $('contratosContinuados').value = 0;
   $('outrasDespesas').value = 0;
@@ -100,18 +113,20 @@ function clearForm() {
 }
 
 function updateKpis() {
-  const rl = toNumber($('recursoLiquido').value);
+  const rb = toNumber($('recursoBruto').value);
   const pct = toNumber($('pctTotal').value);
   const cc = toNumber($('contratosContinuados').value);
   const od = toNumber($('outrasDespesas').value);
   const modo = document.querySelector('input[name="segMode"]:checked').value;
   const sv = toNumber($('segurancaValor').value);
-  const segVal = modo === 'PERCENTUAL' ? rl * sv / 100 : sv;
+  const segVal = modo === 'PERCENTUAL' ? rb * sv / 100 : sv;
+  const rl = Math.max(0, rb - cc - od - segVal);
   const vb = rl * pct / 100;
-  $('kpiRL').textContent = brMoney(rl);
-  $('kpiVB').textContent = brMoney(vb);
+  $('kpiRB').textContent = brMoney(rb);
   $('kpiCO').textContent = brMoney(cc + od);
   $('kpiSeg').textContent = brMoney(segVal);
+  $('kpiRL').textContent = brMoney(rl);
+  $('kpiVB').textContent = brMoney(vb);
 }
 
 function updatePesoStatus() {
@@ -188,7 +203,7 @@ async function init() {
   $('btnExcluir').addEventListener('click', remove);
   $('btnNova').addEventListener('click', clearForm);
 
-  ['recursoLiquido','pctTotal','contratosContinuados','outrasDespesas','segurancaValor'].forEach(id => $(`${id}`)?.addEventListener('input', updateKpis));
+  ['recursoBruto','pctTotal','contratosContinuados','outrasDespesas','segurancaValor'].forEach(id => $(id)?.addEventListener('input', updateKpis));
   ['pesoV1','pesoV2','pesoV3','pesoV4'].forEach(id => $(id).addEventListener('input', updatePesoStatus));
   document.querySelectorAll('input[name="segMode"]').forEach(r => r.addEventListener('change', () => { updateSegHint(); updateKpis(); }));
 
