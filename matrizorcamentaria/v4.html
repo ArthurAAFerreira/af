@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>V4 — Estrutural — Matriz Orçamentária UTFPR-CT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="../ui-enhancements.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>
+      <i class="fa-solid fa-flask"></i>
+      <a href="../index.html">V4 — Estrutural — Matriz Orçamentária</a>
+    </h1>
+    <p>Gerencie tipos de estruturas, atributos e cadastre laboratórios e instalações por unidade.</p>
+  </header>
+
+  <main>
+    <!-- CONFIGURAÇÃO -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-sliders"></i> Configuração de Referência</div>
+      <div class="panel-body">
+        <div class="config-grid" style="align-items:end">
+          <div class="field">
+            <label for="cfgSelect">Configuração ativa</label>
+            <select id="cfgSelect"><option value="">Selecionar...</option></select>
+          </div>
+          <div class="kpi" style="margin:0"><div class="kpi-label">Estruturas cadastradas</div><div id="kpiEstruturas" class="kpi-value">0</div></div>
+          <div class="kpi" style="margin:0"><div class="kpi-label">Tipos disponíveis</div><div id="kpiTipos" class="kpi-value">0</div></div>
+        </div>
+        <div id="statusMsg" class="status"></div>
+      </div>
+    </section>
+
+    <!-- ADMINISTRAÇÃO: Tipos e Atributos -->
+    <details class="panel" style="overflow:visible">
+      <summary class="panel-header" style="cursor:pointer;user-select:none;list-style:none">
+        <span><i class="fa-solid fa-gear"></i> Gerenciar Tipos de Estrutura e Atributos</span>
+        <i class="fa-solid fa-chevron-down" style="color:var(--muted);font-size:0.8rem"></i>
+      </summary>
+      <div class="panel-body">
+        <!-- Tipos -->
+        <div class="section-divider">Tipos de Estrutura</div>
+        <div class="config-grid">
+          <div class="field">
+            <label for="tipoNome">Nome do tipo</label>
+            <input id="tipoNome" type="text" placeholder="Ex: Laboratório" />
+          </div>
+          <div class="field">
+            <label for="tipoPeso">Peso do tipo (fator)</label>
+            <input id="tipoPeso" type="number" min="0" step="0.01" value="1" />
+          </div>
+          <div class="field" style="align-self:end">
+            <button id="btnAddTipo" class="btn btn-add"><i class="fa-solid fa-plus"></i> Adicionar tipo</button>
+          </div>
+        </div>
+        <div id="tiposLista" style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px"></div>
+
+        <!-- Classes e Atributos -->
+        <div class="section-divider" style="margin-top:20px">Classes de Atributos por Tipo</div>
+        <div class="config-grid">
+          <div class="field">
+            <label for="classTipo">Tipo de estrutura</label>
+            <select id="classTipo"><option value="">Selecionar tipo...</option></select>
+          </div>
+          <div class="field">
+            <label for="classeNome">Nome da classe</label>
+            <input id="classeNome" type="text" placeholder="Ex: Material de Consumo" />
+          </div>
+          <div class="field" style="align-self:end">
+            <button id="btnAddClasse" class="btn btn-add"><i class="fa-solid fa-plus"></i> Adicionar classe</button>
+          </div>
+        </div>
+        <div class="section-divider" style="margin-top:16px">Atributos por Classe</div>
+        <div class="config-grid">
+          <div class="field">
+            <label for="attrClasse">Classe de atributo</label>
+            <select id="attrClasse"><option value="">Selecionar classe...</option></select>
+          </div>
+          <div class="field">
+            <label for="attrDesc">Descrição do atributo</label>
+            <input id="attrDesc" type="text" placeholder="Ex: Totalmente do Almoxarifado" />
+          </div>
+          <div class="field">
+            <label for="attrPeso">Peso (fator)</label>
+            <input id="attrPeso" type="number" min="0" step="0.01" value="1" />
+          </div>
+          <div class="field" style="align-self:end">
+            <button id="btnAddAttr" class="btn btn-add"><i class="fa-solid fa-plus"></i> Adicionar atributo</button>
+          </div>
+        </div>
+        <div id="attrLista" style="margin-top:12px"></div>
+      </div>
+    </details>
+
+    <!-- CADASTRO DE ESTRUTURA -->
+    <section class="panel">
+      <div class="panel-header" style="border-left:4px solid var(--v4)">
+        <span><i class="fa-solid fa-plus-circle" style="color:var(--v4)"></i> Cadastrar Nova Estrutura</span>
+      </div>
+      <div class="panel-body">
+        <div class="config-grid">
+          <div class="field">
+            <label for="eNome">Nome da estrutura</label>
+            <input id="eNome" type="text" placeholder="Ex: Lab. de Redes 1" />
+          </div>
+          <div class="field">
+            <label for="eTipo">Tipo de estrutura</label>
+            <select id="eTipo"><option value="">Selecionar...</option></select>
+          </div>
+          <div class="field">
+            <label for="eUnidade">Unidade responsável</label>
+            <select id="eUnidade"><option value="">Selecionar...</option></select>
+          </div>
+          <div class="field">
+            <label for="eSede">Sede</label>
+            <select id="eSede"><option value="">Selecionar...</option></select>
+          </div>
+          <div class="field">
+            <label for="eSala">Sala / Localização</label>
+            <input id="eSala" type="text" placeholder="Ex: B206" />
+          </div>
+          <div class="field">
+            <label for="eRespNome">Responsável — Nome</label>
+            <input id="eRespNome" type="text" placeholder="Nome completo" />
+          </div>
+          <div class="field">
+            <label for="eRespEmail">Responsável — E-mail</label>
+            <input id="eRespEmail" type="email" placeholder="email@utfpr.edu.br" />
+          </div>
+        </div>
+
+        <!-- ATRIBUTOS DINÂMICOS -->
+        <div id="atributosContainer" style="margin-top:18px">
+          <p style="color:var(--muted);font-size:0.88rem"><i class="fa-solid fa-circle-info"></i> Selecione um tipo de estrutura para configurar os atributos.</p>
+        </div>
+
+        <div class="btn-row">
+          <button id="btnSalvarEstr" class="btn btn-save"><i class="fa-solid fa-floppy-disk"></i> Salvar estrutura</button>
+          <button id="btnLimparEstr" class="btn btn-new"><i class="fa-solid fa-file-circle-plus"></i> Limpar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LISTA DE ESTRUTURAS -->
+    <section class="panel">
+      <div class="panel-header" style="border-left:4px solid var(--v4)">
+        <span><i class="fa-solid fa-list" style="color:var(--v4)"></i> Estruturas Cadastradas</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="filtroUnidade" style="font-size:0.83rem;padding:4px 8px;border:1px solid var(--line);border-radius:6px;background:#fff">
+            <option value="">Todas as unidades</option>
+          </select>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div id="estruturasLista"></div>
+      </div>
+    </section>
+
+    <!-- RESUMO POR UNIDADE -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-chart-bar"></i> Score V4 por Unidade</div>
+      <div class="panel-body">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Unidade</th>
+                <th class="text-right">Nº Estruturas</th>
+                <th class="text-right">Score V4</th>
+              </tr>
+            </thead>
+            <tbody id="resumoBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Arthur Ferreira | ASGEAD-CT</p>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="modules/v4.js"></script>
+  <script src="../ui-enhancements.js"></script>
+</body>
+</html>

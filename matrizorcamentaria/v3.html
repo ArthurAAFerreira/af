@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>V3 — Titulação Docente — Matriz Orçamentária UTFPR-CT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="../ui-enhancements.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>
+      <i class="fa-solid fa-graduation-cap"></i>
+      <a href="../index.html">V3 — Titulação Docente — Matriz Orçamentária</a>
+    </h1>
+    <p>Informe a distribuição dos docentes por nível de titulação em cada unidade acadêmica.</p>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-sliders"></i> Configuração de Referência</div>
+      <div class="panel-body">
+        <div class="config-grid" style="align-items:end">
+          <div class="field">
+            <label for="cfgSelect">Configuração ativa</label>
+            <select id="cfgSelect"><option value="">Selecionar...</option></select>
+          </div>
+          <div class="kpi" style="margin:0"><div class="kpi-label">Fator Grad.</div><div id="kpiGrad" class="kpi-value">—</div></div>
+          <div class="kpi" style="margin:0"><div class="kpi-label">Fator Esp.</div><div id="kpiEsp" class="kpi-value">—</div></div>
+          <div class="kpi" style="margin:0"><div class="kpi-label">Fator Mest.</div><div id="kpiMest" class="kpi-value">—</div></div>
+          <div class="kpi" style="margin:0"><div class="kpi-label">Fator Dout.</div><div id="kpiDout" class="kpi-value">—</div></div>
+          <div class="kpi" style="margin:0"><div class="kpi-label">Unidades</div><div id="kpiUnidades" class="kpi-value">0</div></div>
+        </div>
+        <div id="statusMsg" class="status"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header" style="border-left:4px solid var(--v3)">
+        <span><i class="fa-solid fa-table" style="color:var(--v3)"></i> Dados por Unidade — V3: Titulação Docente</span>
+        <button id="btnSalvarTudo" class="btn btn-save" style="padding:6px 12px;font-size:0.82rem"><i class="fa-solid fa-floppy-disk"></i> Salvar tudo</button>
+      </div>
+      <div class="panel-body">
+        <div class="hint" style="margin-bottom:12px">
+          <i class="fa-solid fa-circle-info"></i>
+          Informe quantos docentes de cada unidade possuem cada nível de titulação. Os fatores de ponderação são definidos na configuração base.
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Unidade</th>
+                <th class="text-right">Graduação</th>
+                <th class="text-right">Especialização</th>
+                <th class="text-right">Mestrado</th>
+                <th class="text-right">Doutorado</th>
+                <th class="text-right">Total Docentes</th>
+                <th class="text-right">Score V3</th>
+              </tr>
+            </thead>
+            <tbody id="v3Body"></tbody>
+            <tfoot>
+              <tr class="row-total">
+                <td>TOTAL</td>
+                <td id="totGrad" class="text-right">—</td>
+                <td id="totEsp" class="text-right">—</td>
+                <td id="totMest" class="text-right">—</td>
+                <td id="totDout" class="text-right">—</td>
+                <td id="totTotal" class="text-right">—</td>
+                <td id="totScore" class="text-right">—</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Arthur Ferreira | ASGEAD-CT</p>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="modules/v3.js"></script>
+  <script src="../ui-enhancements.js"></script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Configuração Base — Matriz Orçamentária UTFPR-CT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="../ui-enhancements.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>
+      <i class="fa-solid fa-sliders"></i>
+      <a href="../index.html">Configuração Base — Matriz Orçamentária</a>
+    </h1>
+    <p>Defina os parâmetros financeiros e os pesos das variáveis para a elaboração da matriz.</p>
+  </header>
+
+  <main>
+    <!-- SELEÇÃO DE CONFIGURAÇÃO -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-folder-open"></i> Configurações Salvas</div>
+      <div class="panel-body">
+        <div class="config-grid">
+          <div class="field">
+            <label for="cfgSelect">Selecionar configuração</label>
+            <select id="cfgSelect"><option value="">Nova configuração</option></select>
+          </div>
+          <div class="field">
+            <label for="cfgAno">Ano de referência</label>
+            <input id="cfgAno" type="number" min="2000" max="2099" value="2026" />
+          </div>
+          <div class="field">
+            <label for="cfgDescricao">Descrição</label>
+            <input id="cfgDescricao" type="text" placeholder="Ex: Cenário Base 2026" />
+          </div>
+          <div class="field" style="align-self:end">
+            <div class="btn-row" style="margin-top:0">
+              <button id="btnSalvar" class="btn btn-save"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+              <button id="btnAtualizar" class="btn btn-update"><i class="fa-solid fa-rotate"></i> Atualizar</button>
+              <button id="btnExcluir" class="btn btn-delete"><i class="fa-solid fa-trash"></i> Excluir</button>
+              <button id="btnNova" class="btn btn-new"><i class="fa-solid fa-file-circle-plus"></i> Nova</button>
+            </div>
+          </div>
+        </div>
+        <div id="statusMsg" class="status"></div>
+      </div>
+    </section>
+
+    <!-- RECURSOS FINANCEIROS -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-money-bill-wave"></i> Recursos Financeiros</div>
+      <div class="panel-body">
+        <div class="config-grid">
+          <div class="field">
+            <label for="recursoLiquido">Recurso Líquido (R$)</label>
+            <input id="recursoLiquido" type="number" min="0" step="0.01" value="0" />
+            <span class="field-hint">Valor total disponível para distribuição</span>
+          </div>
+          <div class="field">
+            <label for="pctTotal">Percentual aplicado à distribuição (%)</label>
+            <input id="pctTotal" type="number" min="0" max="100" step="0.01" value="100" />
+            <span class="field-hint">Percentual do recurso líquido que será distribuído</span>
+          </div>
+          <div class="field">
+            <label for="contratosContinuados">Contratos Continuados (R$)</label>
+            <input id="contratosContinuados" type="number" min="0" step="0.01" value="0" />
+            <span class="field-hint">Valor de previsão para contratos continuados</span>
+          </div>
+          <div class="field">
+            <label for="outrasDespesas">Outras Despesas do Campus (R$)</label>
+            <input id="outrasDespesas" type="number" min="0" step="0.01" value="0" />
+            <span class="field-hint">Outras despesas gerais do campus</span>
+          </div>
+        </div>
+
+        <div style="margin-top:18px">
+          <label style="font-size:0.82rem;font-weight:700;color:#1e3d6b;display:block;margin-bottom:8px">Segurança</label>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+            <div class="radio-group">
+              <label><input type="radio" name="segMode" id="segPct" value="PERCENTUAL" checked /> Percentual (%)</label>
+              <label><input type="radio" name="segMode" id="segFixo" value="FIXO" /> Valor fixo (R$)</label>
+            </div>
+            <div class="field" style="min-width:200px">
+              <input id="segurancaValor" type="number" min="0" step="0.01" value="0" placeholder="0" />
+              <span class="field-hint" id="segHint">% do recurso líquido</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpi-row" style="margin-top:18px">
+          <div class="kpi"><div class="kpi-label">Recurso Líquido</div><div id="kpiRL" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi"><div class="kpi-label">Valor Base (distribuição)</div><div id="kpiVB" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi"><div class="kpi-label">Contratos + Outras Desp.</div><div id="kpiCO" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi"><div class="kpi-label">Segurança</div><div id="kpiSeg" class="kpi-value">R$ 0,00</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PESOS DAS VARIÁVEIS -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-scale-balanced"></i> Pesos das Variáveis (total deve somar 100%)</div>
+      <div class="panel-body">
+        <div class="weights-inline">
+          <div class="field">
+            <label for="pesoV1"><i class="fa-solid fa-circle" style="color:var(--v1)"></i> Peso V1 — Discentes (%)</label>
+            <input id="pesoV1" type="number" min="0" max="100" step="0.01" value="20" />
+          </div>
+          <div class="field">
+            <label for="pesoV2"><i class="fa-solid fa-circle" style="color:var(--v2)"></i> Peso V2 — Docentes/TAEs (%)</label>
+            <input id="pesoV2" type="number" min="0" max="100" step="0.01" value="30" />
+          </div>
+          <div class="field">
+            <label for="pesoV3"><i class="fa-solid fa-circle" style="color:var(--v3)"></i> Peso V3 — Titulação (%)</label>
+            <input id="pesoV3" type="number" min="0" max="100" step="0.01" value="25" />
+          </div>
+          <div class="field">
+            <label for="pesoV4"><i class="fa-solid fa-circle" style="color:var(--v4)"></i> Peso V4 — Estrutural (%)</label>
+            <input id="pesoV4" type="number" min="0" max="100" step="0.01" value="25" />
+          </div>
+        </div>
+        <div id="pesoStatus" class="status ok" style="margin-top:12px">
+          <i class="fa-solid fa-circle-check"></i> Soma dos pesos: <strong id="pesoSoma">100%</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUB-PESOS V1 -->
+    <section class="panel">
+      <div class="panel-header" style="border-left:4px solid var(--v1)"><i class="fa-solid fa-user-graduate" style="color:var(--v1)"></i> Sub-pesos V1 — Discentes</div>
+      <div class="panel-body">
+        <div class="weights-2">
+          <div class="field">
+            <label for="v1PesoGrad">Peso Graduação (%)</label>
+            <input id="v1PesoGrad" type="number" min="0" max="100" step="0.01" value="50" />
+          </div>
+          <div class="field">
+            <label for="v1PesoPos">Peso Pós-Graduação (%)</label>
+            <input id="v1PesoPos" type="number" min="0" max="100" step="0.01" value="50" />
+          </div>
+        </div>
+        <div class="hint"><i class="fa-solid fa-circle-info"></i> Define a proporção entre a contribuição de graduação e pós-graduação no cálculo de V1.</div>
+      </div>
+    </section>
+
+    <!-- SUB-PESOS V2 -->
+    <section class="panel">
+      <div class="panel-header" style="border-left:4px solid var(--v2)"><i class="fa-solid fa-chalkboard-teacher" style="color:var(--v2)"></i> Sub-pesos V2 — Docentes e TAEs</div>
+      <div class="panel-body">
+        <div class="section-divider">Peso entre grupos</div>
+        <div class="weights-2">
+          <div class="field">
+            <label for="v2PesoDocentes">Peso Docentes (%)</label>
+            <input id="v2PesoDocentes" type="number" min="0" max="100" step="0.01" value="60" />
+          </div>
+          <div class="field">
+            <label for="v2PesoTaes">Peso TAEs (%)</label>
+            <input id="v2PesoTaes" type="number" min="0" max="100" step="0.01" value="40" />
+          </div>
+        </div>
+        <div class="section-divider">Pesos por regime de trabalho docente</div>
+        <div class="weights-3">
+          <div class="field">
+            <label for="v2Peso20h">Docente 20h (fator)</label>
+            <input id="v2Peso20h" type="number" min="0" step="0.01" value="1" />
+          </div>
+          <div class="field">
+            <label for="v2Peso40h">Docente 40h (fator)</label>
+            <input id="v2Peso40h" type="number" min="0" step="0.01" value="2" />
+          </div>
+          <div class="field">
+            <label for="v2PesoDE">Docente DE (fator)</label>
+            <input id="v2PesoDE" type="number" min="0" step="0.01" value="3" />
+          </div>
+        </div>
+        <div class="section-divider">Pesos para TAEs e Docentes em Função Administrativa</div>
+        <div class="weights-2">
+          <div class="field">
+            <label for="v2PesoFuncaoParcial">Redução parcial (fator)</label>
+            <input id="v2PesoFuncaoParcial" type="number" min="0" step="0.01" value="1" />
+            <span class="field-hint">TAEs parcial / Docentes função redução</span>
+          </div>
+          <div class="field">
+            <label for="v2PesoFuncaoIntegral">Redução integral (fator)</label>
+            <input id="v2PesoFuncaoIntegral" type="number" min="0" step="0.01" value="2" />
+            <span class="field-hint">TAEs integral / Docentes função integral</span>
+          </div>
+        </div>
+        <div class="hint"><i class="fa-solid fa-circle-info"></i> Os fatores são multiplicadores relativos. Docente DE com fator 3 tem 3× mais peso que Docente 20h com fator 1.</div>
+      </div>
+    </section>
+
+    <!-- SUB-PESOS V3 -->
+    <section class="panel">
+      <div class="panel-header" style="border-left:4px solid var(--v3)"><i class="fa-solid fa-graduation-cap" style="color:var(--v3)"></i> Sub-pesos V3 — Titulação Docente</div>
+      <div class="panel-body">
+        <div class="weights-inline">
+          <div class="field">
+            <label for="v3PesoGrad">Graduação (fator)</label>
+            <input id="v3PesoGrad" type="number" min="0" step="0.01" value="1" />
+          </div>
+          <div class="field">
+            <label for="v3PesoEsp">Especialização (fator)</label>
+            <input id="v3PesoEsp" type="number" min="0" step="0.01" value="2" />
+          </div>
+          <div class="field">
+            <label for="v3PesoMest">Mestrado (fator)</label>
+            <input id="v3PesoMest" type="number" min="0" step="0.01" value="3" />
+          </div>
+          <div class="field">
+            <label for="v3PesoDoutor">Doutorado (fator)</label>
+            <input id="v3PesoDoutor" type="number" min="0" step="0.01" value="4" />
+          </div>
+        </div>
+        <div class="hint"><i class="fa-solid fa-circle-info"></i> Maior titulação implica maior fator de ponderação no cálculo de V3.</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Arthur Ferreira | ASGEAD-CT</p>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="modules/configuracao.js"></script>
+  <script src="../ui-enhancements.js"></script>
+</body>
+</html>

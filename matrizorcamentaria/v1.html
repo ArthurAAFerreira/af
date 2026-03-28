@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>V1 — Discentes — Matriz Orçamentária UTFPR-CT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="../ui-enhancements.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>
+      <i class="fa-solid fa-user-graduate"></i>
+      <a href="../index.html">V1 — Discentes — Matriz Orçamentária</a>
+    </h1>
+    <p>Cadastre carga horária e alunos matriculados por unidade para o cálculo da Variável 1.</p>
+  </header>
+
+  <main>
+    <!-- SELEÇÃO DE CONFIGURAÇÃO -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-sliders"></i> Configuração de Referência</div>
+      <div class="panel-body">
+        <div class="config-grid" style="align-items:end">
+          <div class="field">
+            <label for="cfgSelect">Configuração ativa</label>
+            <select id="cfgSelect"><option value="">Selecionar...</option></select>
+          </div>
+          <div class="kpi" style="margin:0">
+            <div class="kpi-label">Peso V1 — Grad.</div>
+            <div id="kpiPesoGrad" class="kpi-value">—</div>
+          </div>
+          <div class="kpi" style="margin:0">
+            <div class="kpi-label">Peso V1 — Pós</div>
+            <div id="kpiPesoPos" class="kpi-value">—</div>
+          </div>
+          <div class="kpi" style="margin:0">
+            <div class="kpi-label">Unidades carregadas</div>
+            <div id="kpiUnidades" class="kpi-value">0</div>
+          </div>
+        </div>
+        <div id="statusMsg" class="status"></div>
+      </div>
+    </section>
+
+    <!-- TABELA DE DADOS V1 -->
+    <section class="panel">
+      <div class="panel-header" style="border-left:4px solid var(--v1)">
+        <span><i class="fa-solid fa-table" style="color:var(--v1)"></i> Dados por Unidade — Variável 1: Discentes</span>
+        <div class="btn-row" style="margin:0">
+          <button id="btnSalvarTudo" class="btn btn-save" style="padding:6px 12px;font-size:0.82rem"><i class="fa-solid fa-floppy-disk"></i> Salvar tudo</button>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="hint" style="margin-bottom:12px">
+          <i class="fa-solid fa-circle-info"></i>
+          Preencha carga horária (h/semana), alunos matriculados e peso individual de cada unidade. Unidades de graduação devem preencher as colunas "Grad." e unidades de pós, as colunas "Pós".
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Unidade</th>
+                <th>Tipo</th>
+                <th class="text-right">CH Grad. (h)</th>
+                <th class="text-right">CH Pós (h)</th>
+                <th class="text-right">Alunos Grad.</th>
+                <th class="text-right">Alunos Pós</th>
+                <th class="text-right">Peso Unidade</th>
+                <th class="text-right">Score V1</th>
+              </tr>
+            </thead>
+            <tbody id="v1Body"></tbody>
+            <tfoot>
+              <tr class="row-total">
+                <td colspan="2">TOTAL / MÉDIA</td>
+                <td id="totCHGrad" class="text-right">—</td>
+                <td id="totCHPos" class="text-right">—</td>
+                <td id="totAlGrad" class="text-right">—</td>
+                <td id="totAlPos" class="text-right">—</td>
+                <td class="text-right">—</td>
+                <td id="totScore" class="text-right">—</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Arthur Ferreira | ASGEAD-CT</p>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="modules/v1.js"></script>
+  <script src="../ui-enhancements.js"></script>
+</body>
+</html>
