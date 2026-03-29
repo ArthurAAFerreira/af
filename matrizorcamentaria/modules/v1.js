@@ -1,6 +1,7 @@
 import { supabase } from '../services/supabase.js';
 import { brPercent, toNumber } from './formatters.js';
 import { renderNav } from './nav.js';
+import { canEdit } from './auth.js';
 
 renderNav('v1.html');
 
@@ -106,6 +107,7 @@ function updateTotals() {
 }
 
 async function saveAll() {
+  if (!canEdit('v1')) { setStatus('Sem permissão. Desbloqueie no Início.', 'warn'); return; }
   const cfgId = toNumber($('cfgSelect').value);
   if (!cfgId) { setStatus('Selecione uma configuração.', 'warn'); return; }
   const payload = rows.map(r => ({
@@ -122,10 +124,18 @@ async function saveAll() {
   setStatus(`${payload.length} registros salvos com sucesso.`);
 }
 
+function applyAuth() {
+  const ok = canEdit('v1');
+  const el = $('btnSalvarTudo'); if (!el) return;
+  el.disabled = !ok;
+  if (!ok) el.title = 'Sem permissão — desbloqueie no Início';
+}
+
 async function init() {
   await loadConfigs();
   $('cfgSelect').addEventListener('change', e => loadData(e.target.value));
   $('btnSalvarTudo').addEventListener('click', saveAll);
+  applyAuth();
 }
 
 init().catch(console.error);

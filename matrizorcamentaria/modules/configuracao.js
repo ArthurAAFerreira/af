@@ -1,6 +1,7 @@
 import { supabase } from '../services/supabase.js';
 import { brMoney, brPercent, toNumber } from './formatters.js';
 import { renderNav } from './nav.js';
+import { canEdit } from './auth.js';
 
 renderNav('configuracao.html');
 
@@ -162,6 +163,7 @@ async function loadConfig(id) {
 }
 
 async function save(isUpdate) {
+  if (!canEdit('configuracao')) { setStatus('Sem permissão. Desbloqueie no Início.', 'warn'); return; }
   const payload = getFormData();
   if (!payload.descricao && !payload.ano) { setStatus('Preencha ao menos o ano.', 'warn'); return; }
   const soma = payload.peso_v1 + payload.peso_v2 + payload.peso_v3 + payload.peso_v4;
@@ -183,6 +185,7 @@ async function save(isUpdate) {
 }
 
 async function remove() {
+  if (!canEdit('configuracao')) { setStatus('Sem permissão. Desbloqueie no Início.', 'warn'); return; }
   if (!currentId) { setStatus('Selecione uma configuração para excluir.', 'warn'); return; }
   if (!confirm('Excluir esta configuração? Todos os dados vinculados serão removidos.')) return;
   const { error } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base').delete().eq('id', currentId);
@@ -190,6 +193,15 @@ async function remove() {
   setStatus('Configuração excluída.');
   clearForm();
   await loadConfigs();
+}
+
+function applyAuth() {
+  const ok = canEdit('configuracao');
+  ['btnSalvar', 'btnAtualizar', 'btnExcluir'].forEach(id => {
+    const el = $(id); if (!el) return;
+    el.disabled = !ok;
+    if (!ok) el.title = 'Sem permissão — desbloqueie no Início';
+  });
 }
 
 async function init() {
@@ -202,6 +214,7 @@ async function init() {
   $('btnAtualizar').addEventListener('click', () => save(true));
   $('btnExcluir').addEventListener('click', remove);
   $('btnNova').addEventListener('click', clearForm);
+  applyAuth();
 
   ['recursoBruto','pctTotal','contratosContinuados','outrasDespesas','segurancaValor'].forEach(id => $(id)?.addEventListener('input', updateKpis));
   ['pesoV1','pesoV2','pesoV3','pesoV4'].forEach(id => $(id).addEventListener('input', updatePesoStatus));

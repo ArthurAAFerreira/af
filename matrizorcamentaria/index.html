@@ -20,6 +20,24 @@
   <main>
     <section class="panel">
       <div class="panel-header">
+        <span><i class="fa-solid fa-shield-halved"></i> Controle de Acesso</span>
+        <div id="authBadge" class="step-badge badge-muted"><i class="fa-solid fa-lock"></i> Bloqueado</div>
+      </div>
+      <div class="panel-body">
+        <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
+          <div class="field" style="flex:1;min-width:200px;max-width:320px;margin:0">
+            <label for="authSenha">Senha de acesso</label>
+            <input id="authSenha" type="password" placeholder="Digite a senha..." autocomplete="off" />
+          </div>
+          <button id="btnUnlock" class="btn btn-save"><i class="fa-solid fa-lock-open"></i> Desbloquear</button>
+          <button id="btnLock" class="btn btn-delete" style="display:none"><i class="fa-solid fa-lock"></i> Bloquear</button>
+        </div>
+        <div id="authMsg" class="status" style="margin-top:8px;display:none"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">
         <span><i class="fa-solid fa-circle-info"></i> Visão Geral do Fluxo</span>
         <div id="cfgBadge" class="step-badge badge-muted" style="font-size:0.8rem; padding:4px 12px; border-radius:99px;"><i class="fa-solid fa-circle-exclamation"></i> Sem configuração ativa</div>
       </div>
@@ -158,5 +176,55 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module" src="modules/dashboard.js"></script>
   <script src="../ui-enhancements.js"></script>
+  <script type="module">
+    import { unlock, lock, getAuth } from './modules/auth.js';
+    const badge = document.getElementById('authBadge');
+    const btnUnlock = document.getElementById('btnUnlock');
+    const btnLock = document.getElementById('btnLock');
+    const inp = document.getElementById('authSenha');
+    const msg = document.getElementById('authMsg');
+
+    function renderAuthState() {
+      const { label } = getAuth();
+      if (label) {
+        badge.innerHTML = `<i class="fa-solid fa-lock-open"></i> ${label}`;
+        badge.style.cssText = 'background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;font-size:0.8rem;padding:4px 12px;border-radius:99px;font-weight:600';
+        btnUnlock.style.display = 'none';
+        btnLock.style.display = '';
+        inp.value = '';
+      } else {
+        badge.innerHTML = '<i class="fa-solid fa-lock"></i> Bloqueado';
+        badge.style.cssText = '';
+        badge.className = 'step-badge badge-muted';
+        btnUnlock.style.display = '';
+        btnLock.style.display = 'none';
+      }
+    }
+
+    btnUnlock.addEventListener('click', () => {
+      const label = unlock(inp.value);
+      msg.style.display = '';
+      if (label) {
+        msg.className = 'status ok';
+        msg.innerHTML = `<i class="fa-solid fa-circle-check"></i> Acesso desbloqueado: <strong>${label}</strong>`;
+        renderAuthState();
+      } else {
+        msg.className = 'status err';
+        msg.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Senha incorreta.';
+      }
+    });
+
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') btnUnlock.click(); });
+
+    btnLock.addEventListener('click', () => {
+      lock();
+      msg.style.display = '';
+      msg.className = 'status warn';
+      msg.innerHTML = '<i class="fa-solid fa-lock"></i> Acesso bloqueado.';
+      renderAuthState();
+    });
+
+    renderAuthState();
+  </script>
 </body>
 </html>

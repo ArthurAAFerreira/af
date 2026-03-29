@@ -446,10 +446,17 @@ totais AS (
 indice AS (
   SELECT
     c.*,
+    t.total_v1, t.total_v2, t.total_v3, t.total_v4,
     CASE WHEN t.total_v1 > 0 THEN c.score_v1 / t.total_v1 ELSE 0 END AS idx_v1,
     CASE WHEN t.total_v2 > 0 THEN c.score_v2 / t.total_v2 ELSE 0 END AS idx_v2,
     CASE WHEN t.total_v3 > 0 THEN c.score_v3 / t.total_v3 ELSE 0 END AS idx_v3,
-    CASE WHEN t.total_v4 > 0 THEN c.score_v4 / t.total_v4 ELSE 0 END AS idx_v4
+    CASE WHEN t.total_v4 > 0 THEN c.score_v4 / t.total_v4 ELSE 0 END AS idx_v4,
+    NULLIF(
+      CASE WHEN t.total_v1 > 0 THEN c.peso_v1 ELSE 0 END
+      + CASE WHEN t.total_v2 > 0 THEN c.peso_v2 ELSE 0 END
+      + CASE WHEN t.total_v3 > 0 THEN c.peso_v3 ELSE 0 END
+      + CASE WHEN t.total_v4 > 0 THEN c.peso_v4 ELSE 0 END, 0
+    ) AS active_w_sum
   FROM combined c JOIN totais t ON t.configuracao_id = c.configuracao_id
 )
 SELECT
@@ -458,13 +465,24 @@ SELECT
   i.nome,
   i.tipo,
   i.score_v1, i.score_v2, i.score_v3, i.score_v4,
-  (i.idx_v1 * i.peso_v1 + i.idx_v2 * i.peso_v2 + i.idx_v3 * i.peso_v3 + i.idx_v4 * i.peso_v4) / 100.0 AS indice_composto,
+  COALESCE(
+    ( CASE WHEN i.total_v1 > 0 THEN i.idx_v1 * i.peso_v1 ELSE 0 END
+    + CASE WHEN i.total_v2 > 0 THEN i.idx_v2 * i.peso_v2 ELSE 0 END
+    + CASE WHEN i.total_v3 > 0 THEN i.idx_v3 * i.peso_v3 ELSE 0 END
+    + CASE WHEN i.total_v4 > 0 THEN i.idx_v4 * i.peso_v4 ELSE 0 END
+    ) / i.active_w_sum, 0
+  ) AS indice_composto,
   cfg.recurso_bruto,
   cfg.recurso_liquido,
   cfg.pct_total,
   cfg.recurso_liquido * cfg.pct_total / 100.0 AS valor_base,
-  (i.idx_v1 * i.peso_v1 + i.idx_v2 * i.peso_v2 + i.idx_v3 * i.peso_v3 + i.idx_v4 * i.peso_v4) / 100.0
-    * cfg.recurso_liquido * cfg.pct_total / 100.0 AS valor_estimado
+  COALESCE(
+    ( CASE WHEN i.total_v1 > 0 THEN i.idx_v1 * i.peso_v1 ELSE 0 END
+    + CASE WHEN i.total_v2 > 0 THEN i.idx_v2 * i.peso_v2 ELSE 0 END
+    + CASE WHEN i.total_v3 > 0 THEN i.idx_v3 * i.peso_v3 ELSE 0 END
+    + CASE WHEN i.total_v4 > 0 THEN i.idx_v4 * i.peso_v4 ELSE 0 END
+    ) / i.active_w_sum, 0
+  ) * cfg.recurso_liquido * cfg.pct_total / 100.0 AS valor_estimado
 FROM indice i, cfg;
 
 COMMIT;

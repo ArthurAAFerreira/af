@@ -83,9 +83,10 @@
         </div>
         <div class="kpi-row" style="margin-top:16px">
           <div class="kpi"><div class="kpi-label">Recurso Bruto</div><div id="kpiRB" class="kpi-value">R$ 0,00</div></div>
-          <div class="kpi"><div class="kpi-label">Deduções</div><div id="kpiDed" class="kpi-value">R$ 0,00</div></div>
-          <div class="kpi" style="border:2px solid var(--accent)"><div class="kpi-label">Recurso Líquido</div><div id="kpiRL" class="kpi-value">R$ 0,00</div></div>
-          <div class="kpi" style="border:2px solid var(--ok);background:var(--ok-bg)"><div class="kpi-label">Base de Distribuição</div><div id="kpiVB" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi"><div class="kpi-label">Contratos + Outras Desp.</div><div id="kpiCO" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi"><div class="kpi-label">Segurança</div><div id="kpiSeg" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi" style="border:2px solid var(--accent)"><div class="kpi-label">Recurso Líquido (calculado)</div><div id="kpiRL" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi"><div class="kpi-label">Base de Distribuição</div><div id="kpiVB" class="kpi-value">R$ 0,00</div></div>
         </div>
       </div>
     </section>
@@ -104,39 +105,56 @@
           <i class="fa-solid fa-circle-check"></i> Soma: <strong id="pesoSoma">100%</strong>
         </div>
 
-        <details style="margin-top:16px">
-          <summary style="cursor:pointer;font-size:0.84rem;font-weight:600;color:var(--accent)"><i class="fa-solid fa-chevron-right"></i> Sub-pesos V1, V2, V3</summary>
-          <div style="margin-top:12px;display:grid;gap:16px">
-            <div>
-              <div class="section-divider">V1 — Discentes</div>
-              <div class="weights-2">
-                <div class="field"><label>Graduação (%)</label><input id="sv1Grad" type="number" min="0" step="0.01" value="50" /></div>
-                <div class="field"><label>Pós-Graduação (%)</label><input id="sv1Pos" type="number" min="0" step="0.01" value="50" /></div>
-              </div>
-            </div>
-            <div>
-              <div class="section-divider">V2 — Docentes e TAEs</div>
-              <div class="weights-inline">
-                <div class="field"><label>Docentes (%)</label><input id="sv2Docs" type="number" value="60" min="0" step="0.01" /></div>
-                <div class="field"><label>TAEs (%)</label><input id="sv2Taes" type="number" value="40" min="0" step="0.01" /></div>
-                <div class="field"><label>20h (fator)</label><input id="sv2h20" type="number" value="1" min="0" step="0.01" /></div>
-                <div class="field"><label>40h (fator)</label><input id="sv2h40" type="number" value="2" min="0" step="0.01" /></div>
-                <div class="field"><label>DE (fator)</label><input id="sv2DE" type="number" value="3" min="0" step="0.01" /></div>
-                <div class="field"><label>Func. Parcial</label><input id="sv2FP" type="number" value="1" min="0" step="0.01" /></div>
-                <div class="field"><label>Func. Integral</label><input id="sv2FI" type="number" value="2" min="0" step="0.01" /></div>
-              </div>
-            </div>
-            <div>
-              <div class="section-divider">V3 — Titulação</div>
-              <div class="weights-inline">
-                <div class="field"><label>Grad. (fator)</label><input id="sv3Grad" type="number" value="1" min="0" step="0.01" /></div>
-                <div class="field"><label>Esp. (fator)</label><input id="sv3Esp" type="number" value="2" min="0" step="0.01" /></div>
-                <div class="field"><label>Mest. (fator)</label><input id="sv3Mest" type="number" value="3" min="0" step="0.01" /></div>
-                <div class="field"><label>Dout. (fator)</label><input id="sv3Dout" type="number" value="4" min="0" step="0.01" /></div>
-              </div>
-            </div>
-          </div>
-        </details>
+      </div>
+    </section>
+
+    <!-- SUB-PESOS V1 -->
+    <section class="panel">
+      <div class="panel-header" style="border-left:4px solid var(--v1)"><i class="fa-solid fa-user-graduate" style="color:var(--v1)"></i> Sub-pesos V1 — Discentes</div>
+      <div class="panel-body">
+        <div class="weights-2">
+          <div class="field"><label for="sv1Grad">Peso Graduação (%)</label><input id="sv1Grad" type="number" min="0" max="100" step="0.01" value="50" /></div>
+          <div class="field"><label for="sv1Pos">Peso Pós-Graduação (%)</label><input id="sv1Pos" type="number" min="0" max="100" step="0.01" value="50" /></div>
+        </div>
+        <div class="hint"><i class="fa-solid fa-circle-info"></i> Define a proporção entre a contribuição de graduação e pós-graduação no cálculo de V1.</div>
+      </div>
+    </section>
+
+    <!-- SUB-PESOS V2 -->
+    <section class="panel">
+      <div class="panel-header" style="border-left:4px solid var(--v2)"><i class="fa-solid fa-chalkboard-teacher" style="color:var(--v2)"></i> Sub-pesos V2 — Docentes e TAEs</div>
+      <div class="panel-body">
+        <div class="section-divider">Peso entre grupos</div>
+        <div class="weights-2">
+          <div class="field"><label for="sv2Docs">Peso Docentes (%)</label><input id="sv2Docs" type="number" min="0" max="100" step="0.01" value="60" /></div>
+          <div class="field"><label for="sv2Taes">Peso TAEs (%)</label><input id="sv2Taes" type="number" min="0" max="100" step="0.01" value="40" /></div>
+        </div>
+        <div class="section-divider">Pesos por regime de trabalho docente</div>
+        <div class="weights-3">
+          <div class="field"><label for="sv2h20">Docente 20h (fator)</label><input id="sv2h20" type="number" min="0" step="0.01" value="1" /></div>
+          <div class="field"><label for="sv2h40">Docente 40h (fator)</label><input id="sv2h40" type="number" min="0" step="0.01" value="2" /></div>
+          <div class="field"><label for="sv2DE">Docente DE (fator)</label><input id="sv2DE" type="number" min="0" step="0.01" value="3" /></div>
+        </div>
+        <div class="section-divider">Pesos para TAEs e Docentes em Função Administrativa</div>
+        <div class="weights-2">
+          <div class="field"><label for="sv2FP">Redução parcial (fator)</label><input id="sv2FP" type="number" min="0" step="0.01" value="1" /><span class="field-hint">TAEs parcial / Docentes função redução</span></div>
+          <div class="field"><label for="sv2FI">Redução integral (fator)</label><input id="sv2FI" type="number" min="0" step="0.01" value="2" /><span class="field-hint">TAEs integral / Docentes função integral</span></div>
+        </div>
+        <div class="hint"><i class="fa-solid fa-circle-info"></i> Os fatores são multiplicadores relativos. Docente DE com fator 3 tem 3× mais peso que Docente 20h com fator 1.</div>
+      </div>
+    </section>
+
+    <!-- SUB-PESOS V3 -->
+    <section class="panel">
+      <div class="panel-header" style="border-left:4px solid var(--v3)"><i class="fa-solid fa-graduation-cap" style="color:var(--v3)"></i> Sub-pesos V3 — Titulação Docente</div>
+      <div class="panel-body">
+        <div class="weights-inline">
+          <div class="field"><label for="sv3Grad">Graduação (fator)</label><input id="sv3Grad" type="number" min="0" step="0.01" value="1" /></div>
+          <div class="field"><label for="sv3Esp">Especialização (fator)</label><input id="sv3Esp" type="number" min="0" step="0.01" value="2" /></div>
+          <div class="field"><label for="sv3Mest">Mestrado (fator)</label><input id="sv3Mest" type="number" min="0" step="0.01" value="3" /></div>
+          <div class="field"><label for="sv3Dout">Doutorado (fator)</label><input id="sv3Dout" type="number" min="0" step="0.01" value="4" /></div>
+        </div>
+        <div class="hint"><i class="fa-solid fa-circle-info"></i> Maior titulação implica maior fator de ponderação no cálculo de V3.</div>
       </div>
     </section>
 

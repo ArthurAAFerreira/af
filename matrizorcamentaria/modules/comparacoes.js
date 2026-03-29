@@ -39,9 +39,12 @@ function computeSimResult(sim, v1Data, v2Data, v3Data, v4Data) {
   const rows = Object.entries(uMap).map(([uid, d]) => ({ ...d, unidade_id: Number(uid) }));
   const totV1 = rows.reduce((s, r) => s + r.v1, 0), totV2 = rows.reduce((s, r) => s + r.v2, 0);
   const totV3 = rows.reduce((s, r) => s + r.v3, 0), totV4 = rows.reduce((s, r) => s + r.v4, 0);
+  const activeW = (totV1>0?sim.peso_v1:0) + (totV2>0?sim.peso_v2:0) + (totV3>0?sim.peso_v3:0) + (totV4>0?sim.peso_v4:0);
   return rows.map(r => {
-    const idx = (totV1>0?r.v1/totV1:0)*sim.peso_v1/100 + (totV2>0?r.v2/totV2:0)*sim.peso_v2/100
-              + (totV3>0?r.v3/totV3:0)*sim.peso_v3/100 + (totV4>0?r.v4/totV4:0)*sim.peso_v4/100;
+    const idx = activeW > 0
+      ? ((totV1>0?r.v1/totV1*sim.peso_v1:0) + (totV2>0?r.v2/totV2*sim.peso_v2:0)
+       + (totV3>0?r.v3/totV3*sim.peso_v3:0) + (totV4>0?r.v4/totV4*sim.peso_v4:0)) / activeW
+      : 0;
     return { ...r, indice: idx, valor: idx * vb };
   });
 }

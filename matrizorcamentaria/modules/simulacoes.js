@@ -1,6 +1,7 @@
 import { supabase } from '../services/supabase.js';
 import { brMoney, brPercent, toNumber } from './formatters.js';
 import { renderNav } from './nav.js';
+import { canEdit } from './auth.js';
 
 renderNav('simulacoes.html');
 
@@ -26,7 +27,8 @@ function updateKpis() {
   const pct = toNumber($('simPct').value);
   const vb = rl * pct / 100;
   $('kpiRB').textContent = brMoney(rb);
-  $('kpiDed').textContent = brMoney(cc + od + segVal);
+  $('kpiCO').textContent = brMoney(cc + od);
+  $('kpiSeg').textContent = brMoney(segVal);
   $('kpiRL').textContent = brMoney(rl);
   $('kpiVB').textContent = brMoney(vb);
 }
@@ -91,10 +93,13 @@ function computeResult() {
   const totV2 = rows.reduce((s, r) => s + r.v2, 0);
   const totV3 = rows.reduce((s, r) => s + r.v3, 0);
   const totV4 = rows.reduce((s, r) => s + r.v4, 0);
+  const activeW = (totV1>0?s.peso_v1:0) + (totV2>0?s.peso_v2:0) + (totV3>0?s.peso_v3:0) + (totV4>0?s.peso_v4:0);
 
   return rows.map(r => {
-    const idx = (totV1>0?r.v1/totV1:0)*s.peso_v1/100 + (totV2>0?r.v2/totV2:0)*s.peso_v2/100
-              + (totV3>0?r.v3/totV3:0)*s.peso_v3/100 + (totV4>0?r.v4/totV4:0)*s.peso_v4/100;
+    const idx = activeW > 0
+      ? ((totV1>0?r.v1/totV1*s.peso_v1:0) + (totV2>0?r.v2/totV2*s.peso_v2:0)
+       + (totV3>0?r.v3/totV3*s.peso_v3:0) + (totV4>0?r.v4/totV4*s.peso_v4:0)) / activeW
+      : 0;
     return { ...r, indice: idx, valor: idx * vb };
   }).sort((a, b) => a.sigla.localeCompare(b.sigla));
 }
@@ -194,6 +199,7 @@ async function loadSim(id) {
 }
 
 async function save(isUpdate) {
+  if (!canEdit('simulacoes')) { setStatus('Sem permissão. Desbloqueie no Início.', 'warn'); return; }
   const d = getFormData();
   if (!d.nome) { setStatus('Informe o nome da simulação.', 'warn'); return; }
   const soma = d.peso_v1 + d.peso_v2 + d.peso_v3 + d.peso_v4;
@@ -215,6 +221,7 @@ async function save(isUpdate) {
 }
 
 async function remove() {
+  if (!canEdit('simulacoes')) { setStatus('Sem permissão. Desbloqueie no Início.', 'warn'); return; }
   if (!currentId) { setStatus('Selecione uma simulação.', 'warn'); return; }
   if (!confirm('Excluir esta simulação?')) return;
   const { error } = await supabase.schema('utfprct').from('matriz_orc_simulacoes').delete().eq('id', currentId);
@@ -253,7 +260,17 @@ async function init() {
   ['sv1Grad','sv1Pos','sv2Docs','sv2Taes','sv2h20','sv2h40','sv2DE','sv2FP','sv2FI','sv3Grad','sv3Esp','sv3Mest','sv3Dout']
     .forEach(id => $(id).addEventListener('input', renderPreview));
 
+  applyAuth();
   updateKpis(); updatePesoStatus(); updateSegHint();
+}
+
+function applyAuth() {
+  const ok = canEdit('simulacoes');
+  ['btnSalvar', 'btnAtualizar', 'btnExcluir', 'btnCopiarCfg'].forEach(id => {
+    const el = $(id); if (!el) return;
+    el.disabled = !ok;
+    if (!ok) el.title = 'Sem permissão — desbloqueie no Início';
+  });
 }
 
 init().catch(console.error);

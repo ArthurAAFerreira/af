@@ -1,6 +1,7 @@
 import { supabase } from '../services/supabase.js';
 import { toNumber } from './formatters.js';
 import { renderNav } from './nav.js';
+import { canEdit } from './auth.js';
 
 renderNav('v4.html');
 
@@ -75,6 +76,7 @@ function populateTipoSelects() {
 }
 
 async function addTipo() {
+  if (!canEdit('estruturas')) { setStatus('Sem permissão. Desbloqueie no Início.', 'warn'); return; }
   const nome = $('tipoNome').value.trim();
   const peso = toNumber($('tipoPeso').value);
   if (!nome) { setStatus('Informe o nome do tipo.', 'warn'); return; }
@@ -104,6 +106,7 @@ function populateClasseSelect() {
 }
 
 async function addClasse() {
+  if (!canEdit('estruturas')) { setStatus('Sem permissão. Desbloqueie no Início.', 'warn'); return; }
   const tipoId = toNumber($('classTipo').value);
   const nome = $('classeNome').value.trim();
   if (!tipoId || !nome) { setStatus('Selecione o tipo e informe o nome da classe.', 'warn'); return; }
@@ -133,6 +136,7 @@ function renderAttrLista() {
 }
 
 async function addAtributo() {
+  if (!canEdit('estruturas')) { setStatus('Sem permissão. Desbloqueie no Início.', 'warn'); return; }
   const classeId = toNumber($('attrClasse').value);
   const descricao = $('attrDesc').value.trim();
   const peso = toNumber($('attrPeso').value);
@@ -299,6 +303,7 @@ window.removeEstrutura = async function(id) {
 };
 
 async function saveEstrutura() {
+  if (!canEdit('estruturas')) { setStatus('Sem permissão. Desbloqueie no Início.', 'warn'); return; }
   if (!currentCfgId) { setStatus('Selecione uma configuração.', 'warn'); return; }
   const nome = $('eNome').value.trim();
   const tipoId = toNumber($('eTipo').value);
@@ -394,6 +399,16 @@ async function init() {
   $('btnSalvarEstr').addEventListener('click', saveEstrutura);
   $('btnLimparEstr').addEventListener('click', limparFormEstr);
   $('filtroUnidade').addEventListener('change', () => renderEstruturas(estruturasCache));
+  applyAuth();
+}
+
+function applyAuth() {
+  const ok = canEdit('estruturas');
+  ['btnAddTipo', 'btnAddClasse', 'btnAddAttr', 'btnSalvarEstr'].forEach(id => {
+    const el = $(id); if (!el) return;
+    el.disabled = !ok;
+    if (!ok) el.title = 'Sem permissão — desbloqueie no Início';
+  });
 }
 
 init().catch(console.error);
