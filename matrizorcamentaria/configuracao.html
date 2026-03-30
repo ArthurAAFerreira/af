@@ -36,20 +36,18 @@
             <label for="anoNovo">Novo ano</label>
             <input id="anoNovo" type="number" min="2024" max="2099" value="2027" />
           </div>
+          <div class="field">
+            <label for="duplicarPara">Duplicar para o ano</label>
+            <input id="duplicarPara" type="number" min="2024" max="2099" placeholder="Ex: 2027" />
+          </div>
           <div class="field" style="align-self:end">
             <div class="btn-row" style="margin-top:0">
               <button id="btnSalvar" class="btn btn-save"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
               <button id="btnAtivar" class="btn btn-update" style="display:none"><i class="fa-solid fa-circle-check"></i> Ativar</button>
               <button id="btnExcluir" class="btn btn-delete"><i class="fa-solid fa-trash"></i> Excluir</button>
+              <button id="btnDuplicar" class="btn btn-new"><i class="fa-solid fa-copy"></i> Duplicar</button>
             </div>
           </div>
-        </div>
-        <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)">
-          <div class="field" style="flex:1;min-width:180px;max-width:220px;margin:0">
-            <label for="duplicarPara">Duplicar configuração para o ano</label>
-            <input id="duplicarPara" type="number" min="2024" max="2099" placeholder="Ex: 2027" />
-          </div>
-          <button id="btnDuplicar" class="btn btn-new"><i class="fa-solid fa-copy"></i> Duplicar</button>
         </div>
         <div id="statusMsg" class="status"></div>
       </div>
