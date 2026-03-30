@@ -228,7 +228,7 @@ function matchHeader(h) {
 }
 
 function parseCSV(text) {
-  const sep = text.indexOf(';') > text.indexOf(',') && text.split('\n')[0].includes(';') ? ';' : ',';
+  const sep = ';';
   const lines = text.split(/\r?\n/).filter(l => l.trim());
   if (lines.length < 2) return { headers: [], rows: [] };
   const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g,''));
