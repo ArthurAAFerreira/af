@@ -20,7 +20,10 @@
   <main>
     <!-- SELEÇÃO DE CONFIGURAÇÃO -->
     <section class="panel">
-      <div class="panel-header"><i class="fa-solid fa-sliders"></i> Configuração de Referência</div>
+      <div class="panel-header">
+        <span><i class="fa-solid fa-sliders"></i> Configuração de Referência</span>
+        <div id="v1ModoBadge" style="display:none;font-size:0.8rem;padding:4px 12px;border-radius:99px;font-weight:600"></div>
+      </div>
       <div class="panel-body">
         <div class="config-grid" style="align-items:end">
           <div class="field">
@@ -48,14 +51,22 @@
     <section class="panel">
       <div class="panel-header" style="border-left:4px solid var(--v1)">
         <span><i class="fa-solid fa-table" style="color:var(--v1)"></i> Dados por Unidade — Variável 1: Discentes</span>
-        <div class="btn-row" style="margin:0">
+        <div style="display:flex;gap:8px;align-items:center">
+          <div style="display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;font-size:0.8rem">
+            <button id="btnViewManual" onclick="setViewMode('MANUAL')" style="padding:4px 12px;border:none;cursor:pointer;font-weight:600;background:#1565c0;color:#fff"><i class="fa-solid fa-pencil"></i> Sistema</button>
+            <button id="btnViewImportado" onclick="setViewMode('IMPORTADO')" style="padding:4px 12px;border:none;cursor:pointer;font-weight:500;background:#f5f5f5;color:#666"><i class="fa-solid fa-file-csv"></i> Importado</button>
+          </div>
           <button id="btnSalvarTudo" class="btn btn-save" style="padding:6px 12px;font-size:0.82rem"><i class="fa-solid fa-floppy-disk"></i> Salvar tudo</button>
         </div>
       </div>
       <div class="panel-body">
-        <div class="hint" style="margin-bottom:12px">
+        <div id="hintManual" class="hint" style="margin-bottom:12px">
           <i class="fa-solid fa-circle-info"></i>
-          Preencha carga horária (h/semana), alunos matriculados e peso individual de cada unidade. Unidades de graduação devem preencher as colunas "Grad." e unidades de pós, as colunas "Pós".
+          Preencha carga horária (h/semana), alunos matriculados e peso individual de cada unidade.
+        </div>
+        <div id="hintImportado" class="hint" style="margin-bottom:12px;display:none;background:#e8f5e9;border-color:#a5d6a7">
+          <i class="fa-solid fa-file-csv" style="color:#2e7d32"></i>
+          <strong style="color:#2e7d32">Versão Importado</strong> — dados agregados do CSV importado. Somente leitura. Para editar, use a seção de importação abaixo.
         </div>
         <div class="table-wrap">
           <table>
@@ -87,6 +98,52 @@
         </div>
       </div>
     </section>
+
+    <!-- IMPORTAÇÃO CSV -->
+    <details id="importSection" style="margin-bottom:24px">
+      <summary style="cursor:pointer;padding:12px 20px;background:var(--panel-bg);border:1px solid var(--line);border-radius:8px;font-weight:600;font-size:0.9rem;color:#1e3d6b;display:flex;align-items:center;gap:10px;list-style:none;user-select:none">
+        <i class="fa-solid fa-file-csv" style="color:#2e7d32"></i>
+        Importação de Dados CSV — Variável 1 Discentes
+        <span id="importCount" style="margin-left:auto;font-size:0.78rem;font-weight:500;color:var(--muted)">0 linhas importadas</span>
+        <i class="fa-solid fa-chevron-down" id="importChevron" style="font-size:0.75rem;color:var(--muted)"></i>
+      </summary>
+      <div style="border:1px solid var(--line);border-top:none;border-radius:0 0 8px 8px;padding:20px;background:#fff">
+        <div class="hint" style="margin-bottom:16px">
+          <i class="fa-solid fa-circle-info"></i>
+          O CSV deve ter as colunas (em qualquer ordem): <strong>departamento, professor, disciplina, turma, nome_disc, cht, nivel_ensino, quantidade_alunos, situacao_turma</strong>.
+          A primeira linha deve ser o cabeçalho. Separador: vírgula ou ponto-e-vírgula.
+          A coluna <em>departamento</em> deve corresponder exatamente à sigla da unidade cadastrada.
+          Nível de ensino: <em>G</em> ou <em>GRAD</em> ou <em>Graduação</em> = Graduação; demais = Pós-Graduação.
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
+          <div class="field" style="flex:1;min-width:260px;margin:0">
+            <label for="csvFile">Selecionar arquivo CSV</label>
+            <input type="file" id="csvFile" accept=".csv,.txt" style="padding:6px" />
+          </div>
+          <button id="btnImportar" class="btn btn-save"><i class="fa-solid fa-upload"></i> Importar CSV</button>
+          <button id="btnLimparImport" class="btn btn-delete"><i class="fa-solid fa-trash"></i> Limpar importação</button>
+        </div>
+        <div id="importStatus" class="status" style="display:none;margin-bottom:12px"></div>
+        <div class="table-wrap" style="max-height:400px;overflow-y:auto">
+          <table id="importTable" style="font-size:0.8rem">
+            <thead>
+              <tr>
+                <th>Departamento</th>
+                <th>Professor</th>
+                <th>Disciplina</th>
+                <th>Turma</th>
+                <th>Nome Disc.</th>
+                <th class="text-right">CHT</th>
+                <th>Nível</th>
+                <th class="text-right">Qtd. Alunos</th>
+                <th>Situação</th>
+              </tr>
+            </thead>
+            <tbody id="importBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </details>
   </main>
 
   <footer>

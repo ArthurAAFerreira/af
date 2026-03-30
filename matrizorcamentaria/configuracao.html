@@ -57,49 +57,59 @@
     <section class="panel">
       <div class="panel-header"><i class="fa-solid fa-money-bill-wave"></i> Recursos Financeiros</div>
       <div class="panel-body">
-        <div class="config-grid">
-          <div class="field">
+        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end">
+          <div class="field" style="flex:2;min-width:160px">
             <label for="recursoBruto">Recurso Bruto (R$)</label>
             <input id="recursoBruto" type="number" min="0" step="0.01" value="0" />
-            <span class="field-hint">Valor total antes das deduções (contratos, despesas, segurança)</span>
           </div>
-          <div class="field">
-            <label for="pctTotal">Percentual aplicado à distribuição (%)</label>
-            <input id="pctTotal" type="number" min="0" max="100" step="0.01" value="100" />
-            <span class="field-hint">Percentual do recurso líquido (já deduzido) a distribuir</span>
+          <div class="field" style="flex:1;min-width:130px">
+            <label>Segurança</label>
+            <div style="display:flex;gap:10px;align-items:center">
+              <div style="display:flex;flex-direction:column;gap:2px;font-size:0.82rem">
+                <label style="font-weight:400;display:flex;align-items:center;gap:4px"><input type="radio" name="segMode" id="segPct" value="PERCENTUAL" checked /> %</label>
+                <label style="font-weight:400;display:flex;align-items:center;gap:4px"><input type="radio" name="segMode" id="segFixo" value="FIXO" /> R$</label>
+              </div>
+              <div style="flex:1">
+                <input id="segurancaValor" type="number" min="0" step="0.01" value="0" placeholder="0" />
+                <span class="field-hint" id="segHint">% do recurso bruto</span>
+              </div>
+            </div>
           </div>
-          <div class="field">
+          <div class="field" style="flex:2;min-width:160px">
             <label for="contratosContinuados">Contratos Continuados (R$)</label>
             <input id="contratosContinuados" type="number" min="0" step="0.01" value="0" />
-            <span class="field-hint">Valor de previsão para contratos continuados</span>
           </div>
-          <div class="field">
-            <label for="outrasDespesas">Outras Despesas do Campus (R$)</label>
+          <div class="field" style="flex:2;min-width:160px">
+            <label for="outrasDespesas">Outras Despesas (R$)</label>
             <input id="outrasDespesas" type="number" min="0" step="0.01" value="0" />
-            <span class="field-hint">Outras despesas gerais do campus</span>
           </div>
-        </div>
-
-        <div style="margin-top:18px">
-          <label style="font-size:0.82rem;font-weight:700;color:#1e3d6b;display:block;margin-bottom:8px">Segurança</label>
-          <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
-            <div class="radio-group">
-              <label><input type="radio" name="segMode" id="segPct" value="PERCENTUAL" checked /> Percentual (%)</label>
-              <label><input type="radio" name="segMode" id="segFixo" value="FIXO" /> Valor fixo (R$)</label>
-            </div>
-            <div class="field" style="min-width:200px">
-              <input id="segurancaValor" type="number" min="0" step="0.01" value="0" placeholder="0" />
-              <span class="field-hint" id="segHint">% do recurso bruto</span>
-            </div>
+          <div class="field" style="flex:1;min-width:120px">
+            <label for="pctTotal">% para Distribuir</label>
+            <input id="pctTotal" type="number" min="0" max="100" step="0.01" value="100" />
           </div>
         </div>
 
         <div class="kpi-row" style="margin-top:18px">
-          <div class="kpi"><div class="kpi-label">Recurso Bruto</div><div id="kpiRB" class="kpi-value">R$ 0,00</div></div>
-          <div class="kpi"><div class="kpi-label">Contratos + Outras Desp.</div><div id="kpiCO" class="kpi-value">R$ 0,00</div></div>
-          <div class="kpi"><div class="kpi-label">Segurança</div><div id="kpiSeg" class="kpi-value">R$ 0,00</div></div>
-          <div class="kpi" style="border:2px solid var(--accent)"><div class="kpi-label">Recurso Líquido (calculado)</div><div id="kpiRL" class="kpi-value">R$ 0,00</div></div>
-          <div class="kpi"><div class="kpi-label">Base de Distribuição</div><div id="kpiVB" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi" style="background:#e3f0fb;border:1.5px solid #90caf9">
+            <div class="kpi-label" style="color:#1565c0">Recurso Bruto</div>
+            <div id="kpiRB" class="kpi-value" style="color:#1565c0">R$ 0,00</div>
+          </div>
+          <div class="kpi" style="background:#fff3e0;border:1.5px solid #ffcc80">
+            <div class="kpi-label" style="color:#e65100">Contratos + Outras Desp.</div>
+            <div id="kpiCO" class="kpi-value" style="color:#e65100">R$ 0,00</div>
+          </div>
+          <div class="kpi" style="background:#fce4ec;border:1.5px solid #f48fb1">
+            <div class="kpi-label" style="color:#c62828">Segurança</div>
+            <div id="kpiSeg" class="kpi-value" style="color:#c62828">R$ 0,00</div>
+          </div>
+          <div class="kpi" style="background:#e8f5e9;border:2px solid #66bb6a">
+            <div class="kpi-label" style="color:#2e7d32">Recurso Líquido (calculado)</div>
+            <div id="kpiRL" class="kpi-value" style="color:#2e7d32">R$ 0,00</div>
+          </div>
+          <div class="kpi" style="background:#ede7f6;border:1.5px solid #b39ddb">
+            <div class="kpi-label" style="color:#4527a0">Base de Distribuição</div>
+            <div id="kpiVB" class="kpi-value" style="color:#4527a0">R$ 0,00</div>
+          </div>
         </div>
       </div>
     </section>
@@ -147,6 +157,19 @@
           </div>
         </div>
         <div class="hint"><i class="fa-solid fa-circle-info"></i> Define a proporção entre a contribuição de graduação e pós-graduação no cálculo de V1.</div>
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line)">
+          <label style="font-size:0.82rem;font-weight:700;color:#1e3d6b;display:block;margin-bottom:8px"><i class="fa-solid fa-database"></i> Fonte dos dados V1</label>
+          <div style="display:flex;gap:20px;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer">
+              <input type="radio" name="v1Modo" id="v1ModoManual" value="MANUAL" checked />
+              <span><i class="fa-solid fa-pencil" style="color:#1565c0"></i> Versão Sistema <span style="font-size:0.78rem;color:var(--muted)">(digitação manual na página V1)</span></span>
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer">
+              <input type="radio" name="v1Modo" id="v1ModoImportado" value="IMPORTADO" />
+              <span><i class="fa-solid fa-file-csv" style="color:#2e7d32"></i> Versão Importado <span style="font-size:0.78rem;color:var(--muted)">(CSV importado na página V1)</span></span>
+            </label>
+          </div>
+        </div>
       </div>
     </section>
 

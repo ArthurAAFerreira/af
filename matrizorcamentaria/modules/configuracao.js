@@ -54,6 +54,7 @@ function getFormData() {
     v3_peso_especializacao: toNumber($('v3PesoEsp').value),
     v3_peso_mestrado: toNumber($('v3PesoMest').value),
     v3_peso_doutorado: toNumber($('v3PesoDoutor').value),
+    v1_modo: document.querySelector('input[name="v1Modo"]:checked')?.value || 'MANUAL',
   };
 }
 
@@ -83,6 +84,8 @@ function fillForm(cfg) {
   $('v3PesoEsp').value = cfg.v3_peso_especializacao;
   $('v3PesoMest').value = cfg.v3_peso_mestrado;
   $('v3PesoDoutor').value = cfg.v3_peso_doutorado;
+  const modoEl = document.querySelector(`input[name="v1Modo"][value="${cfg.v1_modo || 'MANUAL'}"]`);
+  if (modoEl) modoEl.checked = true;
   updateKpis();
   updatePesoStatus();
   updateSegHint();
@@ -106,6 +109,8 @@ function clearFields() {
   $('v2PesoFuncaoParcial').value = 1; $('v2PesoFuncaoIntegral').value = 2;
   $('v3PesoGrad').value = 1; $('v3PesoEsp').value = 2;
   $('v3PesoMest').value = 3; $('v3PesoDoutor').value = 4;
+  const manualEl = document.querySelector('input[name="v1Modo"][value="MANUAL"]');
+  if (manualEl) manualEl.checked = true;
   updateKpis(); updatePesoStatus(); updateSegHint(); updateAtivoBadge();
 }
 
