@@ -213,10 +213,16 @@ const COL_MAP = {
 };
 
 function matchHeader(h) {
-  const norm = h.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().replace(/\s+/g,'_');
+  const norm = h.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().replace(/[\s.]+/g,'_').replace(/_+$/,'');
+  // 1st pass: exact field name or exact alias match
   for (const [field, aliases] of Object.entries(COL_MAP)) {
-    const normAliases = aliases.map(a => a.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'_'));
-    if (normAliases.includes(norm) || norm.includes(field) || field.includes(norm)) return field;
+    if (norm === field) return field;
+    const normAliases = aliases.map(a => a.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\s.]+/g,'_'));
+    if (normAliases.includes(norm)) return field;
+  }
+  // 2nd pass: substring, only if norm starts with the field name (avoids 'situacao_turma' matching 'turma')
+  for (const [field] of Object.entries(COL_MAP)) {
+    if (norm.startsWith(field) || field.startsWith(norm)) return field;
   }
   return null;
 }
