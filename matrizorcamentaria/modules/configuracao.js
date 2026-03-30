@@ -6,6 +6,7 @@ import { canEdit } from './auth.js';
 renderNav('configuracao.html');
 
 let currentId = null;
+let currentAtivo = false;
 
 const $ = id => document.getElementById(id);
 
@@ -29,8 +30,6 @@ function getFormData() {
   const rb = toNumber($('recursoBruto').value);
   const rl = calcLiquido();
   return {
-    ano: toNumber($('cfgAno').value),
-    descricao: $('cfgDescricao').value.trim() || null,
     recurso_bruto: rb,
     recurso_liquido: rl,
     pct_total: toNumber($('pctTotal').value),
@@ -55,14 +54,12 @@ function getFormData() {
     v3_peso_especializacao: toNumber($('v3PesoEsp').value),
     v3_peso_mestrado: toNumber($('v3PesoMest').value),
     v3_peso_doutorado: toNumber($('v3PesoDoutor').value),
-    ativo: true,
   };
 }
 
 function fillForm(cfg) {
   currentId = cfg.id;
-  $('cfgAno').value = cfg.ano;
-  $('cfgDescricao').value = cfg.descricao || '';
+  currentAtivo = cfg.ativo;
   $('recursoBruto').value = cfg.recurso_bruto ?? cfg.recurso_liquido;
   $('pctTotal').value = cfg.pct_total;
   $('contratosContinuados').value = cfg.contratos_continuados;
@@ -89,13 +86,12 @@ function fillForm(cfg) {
   updateKpis();
   updatePesoStatus();
   updateSegHint();
+  updateAtivoBadge();
 }
 
-function clearForm() {
+function clearFields() {
   currentId = null;
-  $('cfgSelect').value = '';
-  $('cfgAno').value = new Date().getFullYear();
-  $('cfgDescricao').value = '';
+  currentAtivo = false;
   $('recursoBruto').value = 0;
   $('pctTotal').value = 100;
   $('contratosContinuados').value = 0;
@@ -110,7 +106,14 @@ function clearForm() {
   $('v2PesoFuncaoParcial').value = 1; $('v2PesoFuncaoIntegral').value = 2;
   $('v3PesoGrad').value = 1; $('v3PesoEsp').value = 2;
   $('v3PesoMest').value = 3; $('v3PesoDoutor').value = 4;
-  updateKpis(); updatePesoStatus(); updateSegHint();
+  updateKpis(); updatePesoStatus(); updateSegHint(); updateAtivoBadge();
+}
+
+function updateAtivoBadge() {
+  const badge = $('cfgAtivoBadge');
+  const btnAtivar = $('btnAtivar');
+  badge.style.display = currentAtivo ? '' : 'none';
+  if (btnAtivar) btnAtivar.style.display = (currentId && !currentAtivo) ? '' : 'none';
 }
 
 function updateKpis() {
@@ -141,63 +144,122 @@ function updatePesoStatus() {
 
 function updateSegHint() {
   const modo = document.querySelector('input[name="segMode"]:checked').value;
-  $('segHint').textContent = modo === 'PERCENTUAL' ? '% do recurso líquido' : 'Valor fixo em R$';
+  $('segHint').textContent = modo === 'PERCENTUAL' ? '% do recurso bruto' : 'Valor fixo em R$';
 }
 
-async function loadConfigs() {
-  const sel = $('cfgSelect');
-  sel.innerHTML = '<option value="">Nova configuração</option>';
-  const { data } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base').select('id,ano,descricao,ativo').order('id', { ascending: false });
+async function loadAnoSelect(selectAno = null) {
+  const { data } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base')
+    .select('id,ano,ativo').order('ano', { ascending: false });
+  const sel = $('anoSelect');
+  sel.innerHTML = '<option value="">Selecionar...</option>';
   (data || []).forEach(c => {
     const opt = document.createElement('option');
-    opt.value = c.id;
-    opt.textContent = `${c.ano}${c.descricao ? ' — ' + c.descricao : ''}${c.ativo ? ' ✓' : ''}`;
+    opt.value = c.ano;
+    opt.textContent = `${c.ano}${c.ativo ? ' ✓' : ''}`;
+    opt.dataset.id = c.id;
+    opt.dataset.ativo = c.ativo;
     sel.appendChild(opt);
   });
+  const newOpt = document.createElement('option');
+  newOpt.value = '__novo__';
+  newOpt.textContent = '+ Novo ano...';
+  sel.appendChild(newOpt);
+
+  if (selectAno) {
+    sel.value = String(selectAno);
+  } else {
+    const active = (data || []).find(c => c.ativo);
+    if (active) sel.value = String(active.ano);
+  }
+  onAnoSelectChange(sel.value);
 }
 
-async function loadConfig(id) {
-  if (!id) { clearForm(); return; }
-  const { data } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base').select('*').eq('id', id).single();
-  if (data) fillForm(data);
+async function onAnoSelectChange(val) {
+  $('novoAnoWrap').style.display = val === '__novo__' ? '' : 'none';
+  if (val && val !== '__novo__') {
+    const { data } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base')
+      .select('*').eq('ano', val).order('id', { ascending: false }).limit(1).maybeSingle();
+    if (data) fillForm(data);
+    else clearFields();
+  } else if (!val) {
+    clearFields();
+  }
 }
 
-async function save(isUpdate) {
+async function save() {
   if (!canEdit('configuracao')) { setStatus('Sem permissão. Desbloqueie no Início.', 'warn'); return; }
+  const sel = $('anoSelect');
+  const ano = sel.value === '__novo__' ? toNumber($('anoNovo').value) : toNumber(sel.value);
+  if (!ano) { setStatus('Selecione ou informe um ano válido.', 'warn'); return; }
+
   const payload = getFormData();
-  if (!payload.descricao && !payload.ano) { setStatus('Preencha ao menos o ano.', 'warn'); return; }
   const soma = payload.peso_v1 + payload.peso_v2 + payload.peso_v3 + payload.peso_v4;
   if (Math.abs(soma - 100) > 0.01) { setStatus(`Soma dos pesos é ${brPercent(soma)}. Deve ser 100%.`, 'warn'); return; }
 
-  if (isUpdate) {
-    if (!currentId) { setStatus('Selecione uma configuração para atualizar.', 'warn'); return; }
-    const { error } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base').update(payload).eq('id', currentId);
-    if (error) { setStatus('Erro ao atualizar: ' + error.message, 'err'); return; }
-    setStatus('Configuração atualizada com sucesso.');
+  if (currentId && sel.value !== '__novo__') {
+    const { error } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base')
+      .update(payload).eq('id', currentId);
+    if (error) { setStatus('Erro ao salvar: ' + error.message, 'err'); return; }
+    setStatus(`Configuração ${ano} salva.`);
   } else {
-    const { data, error } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base').insert(payload).select('id').single();
-    if (error || !data) { setStatus('Erro ao salvar: ' + (error?.message || 'sem retorno'), 'err'); return; }
-    currentId = data.id;
-    setStatus('Configuração salva com sucesso.');
+    const { data: existing } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base')
+      .select('id').eq('ano', ano).maybeSingle();
+    if (existing) { setStatus(`Já existe uma configuração para ${ano}. Selecione o ano na lista.`, 'warn'); return; }
+    payload.ano = ano;
+    payload.ativo = false;
+    const { data: ins, error } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base')
+      .insert(payload).select('id').single();
+    if (error || !ins) { setStatus('Erro ao salvar: ' + (error?.message || 'sem retorno'), 'err'); return; }
+    currentId = ins.id;
+    currentAtivo = false;
+    setStatus(`Configuração ${ano} criada. Clique em "Ativar" para torná-la a configuração oficial.`);
   }
-  await loadConfigs();
-  $('cfgSelect').value = String(currentId);
+  await loadAnoSelect(ano);
 }
 
 async function remove() {
   if (!canEdit('configuracao')) { setStatus('Sem permissão. Desbloqueie no Início.', 'warn'); return; }
-  if (!currentId) { setStatus('Selecione uma configuração para excluir.', 'warn'); return; }
-  if (!confirm('Excluir esta configuração? Todos os dados vinculados serão removidos.')) return;
+  if (!currentId) { setStatus('Nenhuma configuração carregada.', 'warn'); return; }
+  const ano = $('anoSelect').value;
+  if (!confirm(`Excluir a configuração de ${ano}?\n\nTodos os dados de V1, V2, V3 e V4 vinculados a este ano serão removidos.`)) return;
   const { error } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base').delete().eq('id', currentId);
   if (error) { setStatus('Erro ao excluir: ' + error.message, 'err'); return; }
-  setStatus('Configuração excluída.');
-  clearForm();
-  await loadConfigs();
+  setStatus(`Configuração ${ano} excluída.`);
+  clearFields();
+  await loadAnoSelect();
+}
+
+async function activate() {
+  if (!canEdit('configuracao')) { setStatus('Sem permissão. Desbloqueie no Início.', 'warn'); return; }
+  if (!currentId) { setStatus('Nenhuma configuração carregada.', 'warn'); return; }
+  await supabase.schema('utfprct').from('matriz_orc_configuracao_base').update({ ativo: false }).neq('id', 0);
+  const { error } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base').update({ ativo: true }).eq('id', currentId);
+  if (error) { setStatus('Erro ao ativar: ' + error.message, 'err'); return; }
+  currentAtivo = true;
+  setStatus(`Configuração ${$('anoSelect').value} marcada como ativa.`);
+  const ano = $('anoSelect').value;
+  await loadAnoSelect(ano);
+}
+
+async function duplicar() {
+  if (!canEdit('configuracao')) { setStatus('Sem permissão. Desbloqueie no Início.', 'warn'); return; }
+  if (!currentId) { setStatus('Carregue uma configuração antes de duplicar.', 'warn'); return; }
+  const anoDestino = toNumber($('duplicarPara').value);
+  if (!anoDestino) { setStatus('Informe o ano de destino.', 'warn'); return; }
+  const { data: existing } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base')
+    .select('id').eq('ano', anoDestino).maybeSingle();
+  if (existing) { setStatus(`Já existe uma configuração para ${anoDestino}.`, 'warn'); return; }
+  const payload = { ...getFormData(), ano: anoDestino, ativo: false };
+  const { error } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base').insert(payload);
+  if (error) { setStatus('Erro ao duplicar: ' + error.message, 'err'); return; }
+  setStatus(`Configuração duplicada para ${anoDestino}. Selecione o ano para editá-la.`);
+  $('duplicarPara').value = '';
+  await loadAnoSelect(anoDestino);
 }
 
 function applyAuth() {
   const ok = canEdit('configuracao');
-  ['btnSalvar', 'btnAtualizar', 'btnExcluir'].forEach(id => {
+  ['btnSalvar', 'btnAtivar', 'btnExcluir', 'btnDuplicar'].forEach(id => {
     const el = $(id); if (!el) return;
     el.disabled = !ok;
     if (!ok) el.title = 'Sem permissão — desbloqueie no Início';
@@ -205,15 +267,13 @@ function applyAuth() {
 }
 
 async function init() {
-  await loadConfigs();
-  const { data: active } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base').select('*').eq('ativo', true).order('id', { ascending: false }).limit(1).maybeSingle();
-  if (active) { $('cfgSelect').value = String(active.id); fillForm(active); }
+  await loadAnoSelect();
 
-  $('cfgSelect').addEventListener('change', e => loadConfig(e.target.value));
-  $('btnSalvar').addEventListener('click', () => save(false));
-  $('btnAtualizar').addEventListener('click', () => save(true));
+  $('anoSelect').addEventListener('change', e => onAnoSelectChange(e.target.value));
+  $('btnSalvar').addEventListener('click', save);
+  $('btnAtivar').addEventListener('click', activate);
   $('btnExcluir').addEventListener('click', remove);
-  $('btnNova').addEventListener('click', clearForm);
+  $('btnDuplicar').addEventListener('click', duplicar);
   applyAuth();
 
   ['recursoBruto','pctTotal','contratosContinuados','outrasDespesas','segurancaValor'].forEach(id => $(id)?.addEventListener('input', updateKpis));

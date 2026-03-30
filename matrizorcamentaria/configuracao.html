@@ -18,31 +18,38 @@
   </header>
 
   <main>
-    <!-- SELEÇÃO DE CONFIGURAÇÃO -->
+    <!-- SELEÇÃO DE CONFIGURAÇÃO POR ANO -->
     <section class="panel">
-      <div class="panel-header"><i class="fa-solid fa-folder-open"></i> Configurações Salvas</div>
+      <div class="panel-header">
+        <span><i class="fa-solid fa-calendar-alt"></i> Ano de Referência</span>
+        <div id="cfgAtivoBadge" style="display:none;background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;font-size:0.8rem;padding:4px 12px;border-radius:99px;font-weight:600">
+          <i class="fa-solid fa-circle-check"></i> Ativo
+        </div>
+      </div>
       <div class="panel-body">
         <div class="config-grid">
           <div class="field">
-            <label for="cfgSelect">Selecionar configuração</label>
-            <select id="cfgSelect"><option value="">Nova configuração</option></select>
+            <label for="anoSelect">Ano</label>
+            <select id="anoSelect"><option value="">Selecionar...</option></select>
           </div>
-          <div class="field">
-            <label for="cfgAno">Ano de referência</label>
-            <input id="cfgAno" type="number" min="2000" max="2099" value="2026" />
-          </div>
-          <div class="field">
-            <label for="cfgDescricao">Descrição</label>
-            <input id="cfgDescricao" type="text" placeholder="Ex: Cenário Base 2026" />
+          <div class="field" id="novoAnoWrap" style="display:none">
+            <label for="anoNovo">Novo ano</label>
+            <input id="anoNovo" type="number" min="2024" max="2099" value="2027" />
           </div>
           <div class="field" style="align-self:end">
             <div class="btn-row" style="margin-top:0">
               <button id="btnSalvar" class="btn btn-save"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
-              <button id="btnAtualizar" class="btn btn-update"><i class="fa-solid fa-rotate"></i> Atualizar</button>
+              <button id="btnAtivar" class="btn btn-update" style="display:none"><i class="fa-solid fa-circle-check"></i> Ativar</button>
               <button id="btnExcluir" class="btn btn-delete"><i class="fa-solid fa-trash"></i> Excluir</button>
-              <button id="btnNova" class="btn btn-new"><i class="fa-solid fa-file-circle-plus"></i> Nova</button>
             </div>
           </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)">
+          <div class="field" style="flex:1;min-width:180px;max-width:220px;margin:0">
+            <label for="duplicarPara">Duplicar configuração para o ano</label>
+            <input id="duplicarPara" type="number" min="2024" max="2099" placeholder="Ex: 2027" />
+          </div>
+          <button id="btnDuplicar" class="btn btn-new"><i class="fa-solid fa-copy"></i> Duplicar</button>
         </div>
         <div id="statusMsg" class="status"></div>
       </div>
