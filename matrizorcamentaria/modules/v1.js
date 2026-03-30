@@ -33,7 +33,8 @@ window.setViewMode = function(mode) {
   $('btnViewImportado').style.cssText = `padding:4px 12px;border:none;cursor:pointer;font-weight:${isImportado?600:500};background:${isImportado?'#2e7d32':'#f5f5f5'};color:${isImportado?'#fff':'#666'}`;
   $('hintManual').style.display    = isImportado ? 'none' : '';
   $('hintImportado').style.display = isImportado ? '' : 'none';
-  $('btnSalvarTudo').style.display = isImportado ? 'none' : '';
+  $('btnSalvarTudo').style.display  = isImportado ? 'none' : '';
+  $('btnSalvarPesos').style.display = isImportado ? '' : 'none';
   if (currentCfg) loadRows(currentCfg.id, mode);
 };
 
@@ -146,9 +147,8 @@ function renderTable(readOnly) {
     const cell = f => readOnly
       ? `<td class="text-right">${fmtNum(r[f])}</td>`
       : `<td class="text-right"><input type="number" min="0" step="0.5" value="${r[f]}" data-i="${i}" data-f="${f}" style="width:90px" /></td>`;
-    const cellPu = readOnly
-      ? `<td class="text-right">${fmtNum(r.peso_unidade)}</td>`
-      : `<td class="text-right"><input type="number" min="0" step="0.01" value="${r.peso_unidade}" data-i="${i}" data-f="peso_unidade" style="width:70px" /></td>`;
+    // peso_unidade is ALWAYS editable regardless of mode
+    const cellPu = `<td class="text-right"><input type="number" min="0" step="0.01" value="${r.peso_unidade}" data-i="${i}" data-f="peso_unidade" style="width:70px" /></td>`;
     return `<tr>
       <td><strong>${r.sigla}</strong><br><span style="font-size:0.78rem;color:var(--muted)">${r.nome}</span></td>
       <td><span style="font-size:0.75rem;padding:2px 8px;border-radius:99px;background:${TIPO_COLORS[r.tipo]}18;color:${TIPO_COLORS[r.tipo]};font-weight:600">${TIPOS[r.tipo]||r.tipo}</span></td>
@@ -157,16 +157,14 @@ function renderTable(readOnly) {
       <td class="text-right" data-score="${i}" style="font-variant-numeric:tabular-nums">${score}</td>
     </tr>`;
   }).join('');
-  if (!readOnly) {
-    body.querySelectorAll('input').forEach(inp => {
-      inp.addEventListener('input', () => {
-        const i = Number(inp.dataset.i), f = inp.dataset.f;
-        rows[i][f] = toNumber(inp.value);
-        body.querySelector(`[data-score="${i}"]`).textContent = calcScore(rows[i]).toLocaleString('pt-BR', { maximumFractionDigits: 4 });
-        updateTotals();
-      });
+  body.querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const i = Number(inp.dataset.i), f = inp.dataset.f;
+      rows[i][f] = toNumber(inp.value);
+      body.querySelector(`[data-score="${i}"]`).textContent = calcScore(rows[i]).toLocaleString('pt-BR', { maximumFractionDigits: 4 });
+      updateTotals();
     });
-  }
+  });
   updateTotals();
 }
 
@@ -178,6 +176,33 @@ function updateTotals() {
   $('totAlGrad').textContent = alG.toLocaleString('pt-BR');
   $('totAlPos').textContent  = alP.toLocaleString('pt-BR');
   $('totScore').textContent  = sc.toLocaleString('pt-BR', { maximumFractionDigits: 4 });
+}
+
+// ── Save pesos (importado mode) — preserves existing CH/alunos ───────────────
+async function savePesos() {
+  if (!canEdit('v1')) { setStatus('Sem permissão. Desbloqueie no Início.', 'warn'); return; }
+  const cfgId = toNumber($('cfgSelect').value);
+  if (!cfgId) { setStatus('Selecione uma configuração.', 'warn'); return; }
+  const { data: existing } = await supabase.schema('utfprct').from('matriz_orc_v1_unidade')
+    .select('unidade_id,carga_horaria_graduacao,carga_horaria_pos,alunos_graduacao,alunos_pos')
+    .eq('configuracao_id', cfgId);
+  const mapEx = new Map((existing || []).map(e => [e.unidade_id, e]));
+  const payload = rows.map(r => {
+    const ex = mapEx.get(r.unidade_id) || {};
+    return {
+      configuracao_id: cfgId,
+      unidade_id:              r.unidade_id,
+      peso_unidade:            r.peso_unidade,
+      carga_horaria_graduacao: toNumber(ex.carga_horaria_graduacao),
+      carga_horaria_pos:       toNumber(ex.carga_horaria_pos),
+      alunos_graduacao:        toNumber(ex.alunos_graduacao),
+      alunos_pos:              toNumber(ex.alunos_pos),
+    };
+  });
+  const { error } = await supabase.schema('utfprct').from('matriz_orc_v1_unidade')
+    .upsert(payload, { onConflict: 'configuracao_id,unidade_id' });
+  if (error) { setStatus('Erro ao salvar pesos: ' + error.message, 'err'); return; }
+  setStatus(`Pesos de ${payload.length} unidades salvos.`);
 }
 
 // ── Save manual ────────────────────────────────────────────────────────────────
@@ -323,7 +348,7 @@ async function loadImportedRaw(cfgId) {
 // ── Auth ───────────────────────────────────────────────────────────────────────
 function applyAuth() {
   const ok = canEdit('v1');
-  ['btnSalvarTudo','btnImportar','btnLimparImport'].forEach(id => {
+  ['btnSalvarTudo','btnSalvarPesos','btnImportar','btnLimparImport'].forEach(id => {
     const el = $(id); if (!el) return;
     el.disabled = !ok;
     if (!ok) el.title = 'Sem permissão — desbloqueie no Início';
@@ -335,6 +360,7 @@ async function init() {
   await loadConfigs();
   $('cfgSelect').addEventListener('change', e => loadData(e.target.value));
   $('btnSalvarTudo').addEventListener('click', saveAll);
+  $('btnSalvarPesos').addEventListener('click', savePesos);
   $('btnImportar').addEventListener('click', importCSV);
   $('btnLimparImport').addEventListener('click', clearImport);
   $('importSection').addEventListener('toggle', function() {

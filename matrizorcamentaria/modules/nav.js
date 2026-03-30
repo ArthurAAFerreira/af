@@ -1,4 +1,18 @@
+import { getAuth } from './auth.js';
+
+const PAGE_PERM = {
+  'configuracao.html': 'configuracao',
+  'unidades.html':     'unidades',
+  'v1.html':           'v1',
+  'v2.html':           'v2',
+  'v3.html':           'v3',
+  'v4.html':           'estruturas',
+  'simulacoes.html':   'simulacoes',
+};
+
 export function renderNav(activePage) {
+  const { perms } = getAuth();
+  const canEditPage = p => perms.includes('*') || perms.includes(p);
   const pages = [
     { href: 'index.html',        icon: 'fa-house',         label: 'Início',       step: null },
     { href: 'configuracao.html', icon: 'fa-sliders',       label: 'Configuração', step: '1' },
@@ -19,11 +33,16 @@ export function renderNav(activePage) {
 
   nav.innerHTML = pages.map(p => {
     const isActive = p.href === activePage;
+    const perm = PAGE_PERM[p.href];
+    const editable = perm && canEditPage(perm);
     const stepBadge = p.step ? `<span class="nav-step">${p.step}</span>` : '';
-    return `<a href="${p.href}" class="${isActive ? 'active' : ''}" aria-current="${isActive ? 'page' : 'false'}">
+    const editDot = editable ? '<span class="nav-edit-dot" title="Editável"></span>' : '';
+    const classes = [isActive ? 'active' : '', editable ? 'nav-editable' : ''].filter(Boolean).join(' ');
+    return `<a href="${p.href}" class="${classes}" aria-current="${isActive ? 'page' : 'false'}">
       ${stepBadge}
       <i class="fa-solid ${p.icon}"></i>
       <span class="nav-label">${p.label}</span>
+      ${editDot}
     </a>`;
   }).join('');
 
