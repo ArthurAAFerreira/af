@@ -22,14 +22,24 @@
     <section class="panel">
       <div class="panel-header"><i class="fa-solid fa-sliders"></i> Selecionar Simulações</div>
       <div class="panel-body">
+        <div class="hint" style="margin-bottom:16px">
+          <i class="fa-solid fa-circle-info"></i>
+          Selecione o <strong>ano da configuração</strong> cujos dados de variáveis (V1–V4) serão usados no cálculo. Use <strong>⭐ Real</strong> para representar a configuração oficial ativa.
+        </div>
+        <div class="config-grid" style="align-items:end;margin-bottom:12px;grid-template-columns:1fr">
+          <div class="field" style="max-width:380px">
+            <label for="cfgAno"><i class="fa-solid fa-calendar-alt"></i> Configuração — ano dos dados das variáveis</label>
+            <select id="cfgAno"><option value="">Carregando...</option></select>
+          </div>
+        </div>
         <div class="config-grid" style="align-items:end">
           <div class="field">
             <label for="simA">Simulação A (base)</label>
-            <select id="simA"><option value="">Selecione...</option></select>
+            <select id="simA"><option value="">Carregando...</option></select>
           </div>
           <div class="field">
             <label for="simB">Simulação B (comparar)</label>
-            <select id="simB"><option value="">Selecione...</option></select>
+            <select id="simB"><option value="">Carregando...</option></select>
           </div>
           <div class="field" style="align-self:end">
             <button id="btnComparar" class="btn btn-save"><i class="fa-solid fa-chart-bar"></i> Comparar</button>

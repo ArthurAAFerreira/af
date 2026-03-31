@@ -9,6 +9,7 @@ const TIPOS = { GRADUACAO:'Graduação', POS_GRADUACAO:'Pós-Graduação', ADMIN
 const TIPO_COLORS = { GRADUACAO:'#1565c0', POS_GRADUACAO:'#6a1b9a', ADMINISTRATIVO:'#2e7d32', GESTAO_DIRETORIA:'#e65100' };
 let allRows = [];
 let simAData = null, simBData = null;
+let activeCfgId = null;
 
 function setStatus(msg, cls = 'ok') {
   const el = $('statusMsg');
@@ -49,26 +50,32 @@ function computeSimResult(sim, v1Data, v2Data, v3Data, v4Data) {
   });
 }
 
+async function loadSimData(id) {
+  if (id === 'REAL') {
+    const { data } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base')
+      .select('*').eq('ativo', true).order('id', { ascending: false }).limit(1).maybeSingle();
+    return data ? { ...data, nome: `⭐ Real ${data.ano}`, _isReal: true } : null;
+  }
+  const { data } = await supabase.schema('utfprct').from('matriz_orc_simulacoes').select('*').eq('id', id).single();
+  return data || null;
+}
+
 async function comparar() {
   const idA = $('simA').value, idB = $('simB').value;
-  if (!idA || !idB) { setStatus('Selecione as duas simulações.', 'warn'); return; }
-  if (idA === idB) { setStatus('Selecione simulações diferentes.', 'warn'); return; }
+  if (!idA || !idB) { setStatus('Selecione as duas opções.', 'warn'); return; }
+  if (idA === idB) { setStatus('Selecione opções diferentes.', 'warn'); return; }
 
-  const [{ data: sA }, { data: sB }] = await Promise.all([
-    supabase.schema('utfprct').from('matriz_orc_simulacoes').select('*').eq('id', idA).single(),
-    supabase.schema('utfprct').from('matriz_orc_simulacoes').select('*').eq('id', idB).single(),
-  ]);
-  if (!sA || !sB) { setStatus('Erro ao carregar simulações.', 'err'); return; }
+  const cfgId = toNumber($('cfgAno').value);
+  if (!cfgId) { setStatus('Selecione o ano da configuração.', 'warn'); return; }
+
+  const [sA, sB] = await Promise.all([loadSimData(idA), loadSimData(idB)]);
+  if (!sA || !sB) { setStatus('Erro ao carregar dados.', 'err'); return; }
   simAData = sA; simBData = sB;
 
-  const { data: cfg } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base')
-    .select('id').eq('ativo', true).order('id', { ascending: false }).limit(1).maybeSingle();
-  if (!cfg) { setStatus('Nenhuma configuração ativa.', 'warn'); return; }
-
   const [r1, r2, r3, r4] = await Promise.all([
-    supabase.schema('utfprct').from('matriz_orc_v1_unidade').select('*').eq('configuracao_id', cfg.id),
-    supabase.schema('utfprct').from('matriz_orc_v2_unidade').select('*').eq('configuracao_id', cfg.id),
-    supabase.schema('utfprct').from('matriz_orc_v3_unidade').select('*').eq('configuracao_id', cfg.id),
+    supabase.schema('utfprct').from('matriz_orc_v1_unidade').select('*').eq('configuracao_id', cfgId),
+    supabase.schema('utfprct').from('matriz_orc_v2_unidade').select('*').eq('configuracao_id', cfgId),
+    supabase.schema('utfprct').from('matriz_orc_v3_unidade').select('*').eq('configuracao_id', cfgId),
     supabase.schema('utfprct').from('vw_matriz_orc_resultado').select('unidade_id,sigla,nome,tipo,score_v4'),
   ]);
 
@@ -172,17 +179,54 @@ function renderTable(rows) {
 }
 
 async function init() {
-  const { data } = await supabase.schema('utfprct').from('matriz_orc_simulacoes').select('id,nome,descricao').order('id', { ascending: false });
+  const [{ data: cfgs }, { data: sims }] = await Promise.all([
+    supabase.schema('utfprct').from('matriz_orc_configuracao_base')
+      .select('id,ano,descricao,ativo').order('ano', { ascending: false }),
+    supabase.schema('utfprct').from('matriz_orc_simulacoes')
+      .select('id,nome,descricao').order('id', { ascending: false }),
+  ]);
+
+  // Year selector
+  const cfgSel = $('cfgAno');
+  cfgSel.innerHTML = '';
+  (cfgs || []).forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = `${c.ano}${c.descricao ? ' — ' + c.descricao : ''}${c.ativo ? ' ★ ativa' : ''}`;
+    if (c.ativo) { opt.selected = true; activeCfgId = c.id; }
+    cfgSel.appendChild(opt);
+  });
+
+  // Simulation selects — add Real first, then separator, then sims
   ['simA', 'simB'].forEach(selId => {
     const sel = $(selId);
-    sel.innerHTML = '<option value="">Selecione...</option>';
-    (data || []).forEach(s => {
+    sel.innerHTML = '';
+    const realOpt = document.createElement('option');
+    realOpt.value = 'REAL';
+    realOpt.textContent = '⭐ Real (configuração ativa)';
+    realOpt.style.fontWeight = '700';
+    sel.appendChild(realOpt);
+
+    const sep = document.createElement('option');
+    sep.disabled = true;
+    sep.textContent = '──────────────';
+    sel.appendChild(sep);
+
+    const empty = document.createElement('option');
+    empty.value = '';
+    empty.textContent = 'Selecione uma simulação...';
+    sel.appendChild(empty);
+
+    (sims || []).forEach(s => {
       const opt = document.createElement('option');
       opt.value = s.id;
       opt.textContent = s.nome + (s.descricao ? ` — ${s.descricao}` : '');
       sel.appendChild(opt);
     });
   });
+
+  // Default: A = Real
+  $('simA').value = 'REAL';
 
   $('btnComparar').addEventListener('click', comparar);
   $('filtroTipo').addEventListener('change', () => { if (allRows.length) renderTable(allRows); });
