@@ -32,7 +32,7 @@ function getFormData() {
   return {
     recurso_bruto: rb,
     recurso_liquido: rl,
-    pct_total: toNumber($('pctTotal').value),
+    pct_total: 100,
     contratos_continuados: toNumber($('contratosContinuados').value),
     outras_despesas_campus: toNumber($('outrasDespesas').value),
     seguranca_modo: document.querySelector('input[name="segMode"]:checked').value,
@@ -62,7 +62,6 @@ function fillForm(cfg) {
   currentId = cfg.id;
   currentAtivo = cfg.ativo;
   $('recursoBruto').value = cfg.recurso_bruto ?? cfg.recurso_liquido;
-  $('pctTotal').value = cfg.pct_total;
   $('contratosContinuados').value = cfg.contratos_continuados;
   $('outrasDespesas').value = cfg.outras_despesas_campus;
   document.querySelector(`input[name="segMode"][value="${cfg.seguranca_modo}"]`).checked = true;
@@ -96,7 +95,6 @@ function clearFields() {
   currentId = null;
   currentAtivo = false;
   $('recursoBruto').value = 0;
-  $('pctTotal').value = 100;
   $('contratosContinuados').value = 0;
   $('outrasDespesas').value = 0;
   document.querySelector('input[name="segMode"][value="PERCENTUAL"]').checked = true;
@@ -123,19 +121,16 @@ function updateAtivoBadge() {
 
 function updateKpis() {
   const rb = toNumber($('recursoBruto').value);
-  const pct = toNumber($('pctTotal').value);
   const cc = toNumber($('contratosContinuados').value);
   const od = toNumber($('outrasDespesas').value);
   const modo = document.querySelector('input[name="segMode"]:checked').value;
   const sv = toNumber($('segurancaValor').value);
   const segVal = modo === 'PERCENTUAL' ? rb * sv / 100 : sv;
   const rl = Math.max(0, rb - cc - od - segVal);
-  const vb = rl * pct / 100;
   $('kpiRB').textContent = brMoney(rb);
   $('kpiCO').textContent = brMoney(cc + od);
   $('kpiSeg').textContent = brMoney(segVal);
   $('kpiRL').textContent = brMoney(rl);
-  $('kpiVB').textContent = brMoney(vb);
 }
 
 function updatePesoStatus() {
@@ -270,7 +265,7 @@ function applyAuth() {
     if (!ok) el.title = 'Sem permissão — desbloqueie no Início';
   });
   [
-    'recursoBruto','pctTotal','contratosContinuados','outrasDespesas','segurancaValor',
+    'recursoBruto','contratosContinuados','outrasDespesas','segurancaValor',
     'pesoV1','pesoV2','pesoV3','pesoV4',
     'v1PesoGrad','v1PesoPos',
     'v2PesoDocentes','v2PesoTaes','v2Peso20h','v2Peso40h','v2PesoDE','v2PesoFuncaoParcial','v2PesoFuncaoIntegral',

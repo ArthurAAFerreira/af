@@ -7,6 +7,7 @@ const PAGE_PERM = {
   'v2.html':           'v2',
   'v3.html':           'v3',
   'v4.html':           'estruturas',
+  'fixo.html':         'configuracao',
   'simulacoes.html':   'simulacoes',
 };
 
@@ -21,10 +22,11 @@ export function renderNav(activePage) {
     { href: 'v2.html',           icon: 'fa-chalkboard-teacher', label: 'Docentes/TAEs', step: '4' },
     { href: 'v3.html',           icon: 'fa-graduation-cap','label': 'Titulação',  step: '5' },
     { href: 'v4.html',           icon: 'fa-flask',         label: 'Estrutural',   step: '6' },
-    { href: 'resultado.html',    icon: 'fa-chart-pie',     label: 'Resultado',    step: '7' },
-    { href: 'simulacoes.html',   icon: 'fa-vials',         label: 'Simulações',   step: '8' },
-    { href: 'comparativo.html',  icon: 'fa-code-compare',  label: 'Comparativo',  step: '9' },
-    { href: 'comparacoes.html',  icon: 'fa-chart-bar',     label: 'Comparações',  step: '10' },
+    { href: 'fixo.html',         icon: 'fa-lock',          label: 'Fixo',         step: '7' },
+    { href: 'resultado.html',    icon: 'fa-chart-pie',     label: 'Resultado',    step: '8' },
+    { href: 'simulacoes.html',   icon: 'fa-vials',         label: 'Simulações',   step: '9' },
+    { href: 'comparativo.html',  icon: 'fa-code-compare',  label: 'Comparativo',  step: '10' },
+    { href: 'comparacoes.html',  icon: 'fa-chart-bar',     label: 'Comparações',  step: '11' },
   ];
 
   const nav = document.createElement('nav');

@@ -42,7 +42,7 @@
         <div id="cfgBadge" class="step-badge badge-muted" style="font-size:0.8rem; padding:4px 12px; border-radius:99px;"><i class="fa-solid fa-circle-exclamation"></i> Sem configuração ativa</div>
       </div>
       <div class="panel-body">
-        <div class="note-grid" style="grid-template-columns:repeat(6,1fr)">
+        <div class="note-grid" style="grid-template-columns:repeat(7,1fr)">
           <div class="note-card">
             <strong><i class="fa-solid fa-sliders" style="color:var(--accent)"></i> Configuração Base</strong>
             Defina os pesos das variáveis, recurso líquido, contratos continuados, outras despesas e segurança.
@@ -66,6 +66,10 @@
           <div class="note-card">
             <strong><i class="fa-solid fa-flask" style="color:var(--v4)"></i> V4 — Estrutural</strong>
             Laboratórios e estruturas cadastradas com atributos ponderados por unidade.
+          </div>
+          <div class="note-card">
+            <strong><i class="fa-solid fa-lock" style="color:#e65100"></i> Fixo</strong>
+            Defina valores fixos a serem destinados diretamente a unidades cadastradas como Fixo, antes da distribuição calculada.
           </div>
         </div>
       </div>
@@ -111,27 +115,33 @@
             <div class="step-desc">Cadastro de laboratórios e estruturas com atributos e responsáveis por unidade.</div>
             <div id="badgeV4" class="step-badge badge-muted"><i class="fa-solid fa-arrow-right"></i> Acessar</div>
           </a>
-          <a class="step-card" href="resultado.html" style="animation-delay:0.35s">
+          <a class="step-card" href="fixo.html" style="animation-delay:0.35s">
+            <div class="step-icon" style="background:linear-gradient(135deg,#bf360c,#e65100)"><i class="fa-solid fa-lock"></i></div>
+            <div class="step-title">7 — Fixo</div>
+            <div class="step-desc">Defina valores fixos por unidade a descontar antes da distribuição calculada.</div>
+            <div class="step-badge badge-muted"><i class="fa-solid fa-arrow-right"></i> Acessar</div>
+          </a>
+          <a class="step-card" href="resultado.html" style="animation-delay:0.40s">
             <div class="step-icon" style="background:linear-gradient(135deg,#0d47a1,#1565c0)"><i class="fa-solid fa-chart-pie"></i></div>
-            <div class="step-title">7 — Resultado</div>
+            <div class="step-title">8 — Resultado</div>
             <div class="step-desc">Distribuição calculada do recurso por unidade com índice composto e valores estimados.</div>
             <div class="step-badge badge-muted"><i class="fa-solid fa-arrow-right"></i> Acessar</div>
           </a>
-          <a class="step-card" href="simulacoes.html" style="animation-delay:0.40s">
+          <a class="step-card" href="simulacoes.html" style="animation-delay:0.45s">
             <div class="step-icon" style="background:linear-gradient(135deg,#1b5e20,#2e7d32)"><i class="fa-solid fa-vials"></i></div>
-            <div class="step-title">8 — Simulações</div>
+            <div class="step-title">9 — Simulações</div>
             <div class="step-desc">Crie cenários alternativos com diferentes pesos e recursos sem alterar a configuração oficial.</div>
             <div class="step-badge badge-muted"><i class="fa-solid fa-arrow-right"></i> Acessar</div>
           </a>
-          <a class="step-card" href="comparativo.html" style="animation-delay:0.45s">
+          <a class="step-card" href="comparativo.html" style="animation-delay:0.50s">
             <div class="step-icon" style="background:linear-gradient(135deg,#4a148c,#6a1b9a)"><i class="fa-solid fa-code-compare"></i></div>
-            <div class="step-title">9 — Comparativo</div>
+            <div class="step-title">10 — Comparativo</div>
             <div class="step-desc">Compare os valores reais (configuração ativa) com os de uma simulação por unidade.</div>
             <div class="step-badge badge-muted"><i class="fa-solid fa-arrow-right"></i> Acessar</div>
           </a>
-          <a class="step-card" href="comparacoes.html" style="animation-delay:0.50s">
+          <a class="step-card" href="comparacoes.html" style="animation-delay:0.55s">
             <div class="step-icon" style="background:linear-gradient(135deg,#bf360c,#e64a19)"><i class="fa-solid fa-chart-bar"></i></div>
-            <div class="step-title">10 — Comparações</div>
+            <div class="step-title">11 — Comparações</div>
             <div class="step-desc">Compare duas simulações entre si e veja a variação em R$ e % por unidade.</div>
             <div class="step-badge badge-muted"><i class="fa-solid fa-arrow-right"></i> Acessar</div>
           </a>

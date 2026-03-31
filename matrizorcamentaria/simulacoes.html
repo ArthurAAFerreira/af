@@ -58,10 +58,6 @@
             <input id="simRB" type="number" min="0" step="0.01" value="0" />
           </div>
           <div class="field">
-            <label for="simPct">% Distribuído</label>
-            <input id="simPct" type="number" min="0" max="100" step="0.01" value="100" />
-          </div>
-          <div class="field">
             <label for="simCC">Contratos Continuados (R$)</label>
             <input id="simCC" type="number" min="0" step="0.01" value="0" />
           </div>
@@ -85,7 +81,7 @@
           <div class="kpi"><div class="kpi-label">Contratos + Outras Desp.</div><div id="kpiCO" class="kpi-value">R$ 0,00</div></div>
           <div class="kpi"><div class="kpi-label">Segurança</div><div id="kpiSeg" class="kpi-value">R$ 0,00</div></div>
           <div class="kpi" style="border:2px solid var(--accent)"><div class="kpi-label">Recurso Líquido (calculado)</div><div id="kpiRL" class="kpi-value">R$ 0,00</div></div>
-          <div class="kpi"><div class="kpi-label">Base de Distribuição</div><div id="kpiVB" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi" style="border:2px solid var(--ok);background:var(--ok-bg)"><div class="kpi-label">Recurso Líquido (base)</div><div id="kpiVB" class="kpi-value">R$ 0,00</div></div>
         </div>
       </div>
     </section>
@@ -156,6 +152,24 @@
         <div class="hint"><i class="fa-solid fa-circle-info"></i> Maior titulação implica maior fator de ponderação no cálculo de V3.</div>
       </div>
     </section>
+
+    <!-- OVERRIDE POR UNIDADE -->
+    <details id="overrideSection" style="margin-bottom:16px">
+      <summary style="cursor:pointer;padding:12px 20px;background:var(--panel-bg);border:1px solid var(--line);border-radius:8px;font-weight:600;font-size:0.9rem;color:#1e3d6b;display:flex;align-items:center;gap:10px;list-style:none;user-select:none">
+        <i class="fa-solid fa-sliders" style="color:#e65100"></i>
+        Sobrescrever tipo de valor por unidade (apenas nesta simulação)
+        <span id="overrideCount" style="margin-left:auto;font-size:0.78rem;font-weight:500;color:var(--muted)">nenhum override</span>
+        <i class="fa-solid fa-chevron-down" id="overrideChevron" style="font-size:0.75rem;color:var(--muted)"></i>
+      </summary>
+      <div style="border:1px solid var(--line);border-top:none;border-radius:0 0 8px 8px;padding:16px;background:#fff">
+        <div class="hint" style="margin-bottom:12px">
+          <i class="fa-solid fa-circle-info"></i>
+          Permite alterar se uma unidade será <strong>Fixa</strong> ou <strong>Calculada</strong> somente para esta simulação.
+          Quando fixo, insira o valor que será destinado diretamente a essa unidade.
+        </div>
+        <div id="overrideBody"><span style="color:var(--muted);font-size:0.85rem">Carregando unidades...</span></div>
+      </div>
+    </details>
 
     <!-- PREVIEW DE RESULTADO -->
     <section class="panel" id="previewPanel" style="display:none">

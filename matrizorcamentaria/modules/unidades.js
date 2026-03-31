@@ -22,6 +22,9 @@ async function loadUnidades() {
   renderTable(allUnidades);
 }
 
+const FIXO_BADGE = '<span style="font-size:0.75rem;padding:2px 8px;border-radius:99px;background:#fff3e0;color:#e65100;font-weight:600"><i class="fa-solid fa-lock"></i> Fixo</span>';
+const CALC_BADGE = '<span style="font-size:0.75rem;padding:2px 8px;border-radius:99px;background:#e3f0fb;color:#1565c0;font-weight:600"><i class="fa-solid fa-calculator"></i> Calc.</span>';
+
 function renderTable(list) {
   $('totalUnidades').textContent = list.length;
   const body = $('unidadesBody');
@@ -34,6 +37,7 @@ function renderTable(list) {
     <td>${u.nome}</td>
     <td><span style="font-size:0.78rem;padding:2px 10px;border-radius:99px;background:${TIPO_COLORS[u.tipo]}18;color:${TIPO_COLORS[u.tipo]};font-weight:600">${TIPOS[u.tipo] || u.tipo}</span></td>
     <td>${u.campus || '—'}</td>
+    <td>${u.tipo_valor === 'FIXO' ? FIXO_BADGE : CALC_BADGE}</td>
     <td>${u.ativo ? '<span style="color:var(--ok);font-weight:700"><i class="fa-solid fa-circle-check"></i> Ativa</span>' : '<span style="color:var(--muted)"><i class="fa-solid fa-circle-xmark"></i> Inativa</span>'}</td>
     <td class="text-center">
       <button onclick="editUnidade(${u.id})" class="btn btn-secondary" style="padding:4px 10px;font-size:0.78rem"><i class="fa-solid fa-pen"></i></button>
@@ -49,6 +53,8 @@ window.editUnidade = function(id) {
   $('uSigla').value = u.sigla;
   $('uNome').value = u.nome;
   $('uTipo').value = u.tipo;
+  const tv = document.querySelector(`input[name="uTipoValor"][value="${u.tipo_valor || 'CALCULADO'}"]`);
+  if (tv) tv.checked = true;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
@@ -58,6 +64,8 @@ function clearForm() {
   $('uSigla').value = '';
   $('uNome').value = '';
   $('uTipo').value = 'GRADUACAO';
+  const tvCalc = document.querySelector('input[name="uTipoValor"][value="CALCULADO"]');
+  if (tvCalc) tvCalc.checked = true;
 }
 
 async function save(isUpdate) {
@@ -66,10 +74,11 @@ async function save(isUpdate) {
   const sigla = $('uSigla').value.trim().toUpperCase();
   const nome = $('uNome').value.trim();
   const tipo = $('uTipo').value;
+  const tipo_valor = document.querySelector('input[name="uTipoValor"]:checked')?.value || 'CALCULADO';
 
   if (!sigla || !nome) { setStatus('Preencha sigla e nome.', 'warn'); return; }
 
-  const payload = { campus, sigla, nome, tipo, ativo: true };
+  const payload = { campus, sigla, nome, tipo, tipo_valor, ativo: true };
 
   if (isUpdate) {
     if (!currentId) { setStatus('Selecione uma unidade para atualizar.', 'warn'); return; }
@@ -108,6 +117,7 @@ function applyAuth() {
   ['uCampus', 'uSigla', 'uNome', 'uTipo'].forEach(id => {
     const el = $(id); if (el) el.disabled = !ok;
   });
+  document.querySelectorAll('input[name="uTipoValor"]').forEach(r => r.disabled = !ok);
 }
 
 async function init() {

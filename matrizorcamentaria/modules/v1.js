@@ -333,7 +333,7 @@ async function loadImportedRaw(cfgId) {
     .select('*').eq('configuracao_id', cfgId).order('departamento').order('disciplina');
   const body = $('importBody');
   $('importCount').textContent = `${(data||[]).length} linhas importadas`;
-  if (!data || data.length === 0) { body.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:16px">Nenhum dado importado</td></tr>'; return; }
+  if (!data || data.length === 0) { body.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:16px">Nenhum dado importado</td></tr>'; return; }
   body.innerHTML = data.map(r => `<tr>
     <td>${r.departamento||''}</td>
     <td>${r.professor||''}</td>
