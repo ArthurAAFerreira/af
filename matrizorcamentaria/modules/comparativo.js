@@ -58,9 +58,10 @@ async function comparar() {
     .select('*').eq('ativo', true).order('id', { ascending: false }).limit(1).maybeSingle();
   if (!cfg) { setStatus('Nenhuma configuração ativa.', 'warn'); return; }
 
+  const v1Table = cfg.v1_modo === 'IMPORTADO' ? 'vw_matriz_orc_v1_importado' : 'matriz_orc_v1_unidade';
   const simFetches = simIds.map(id => supabase.schema('utfprct').from('matriz_orc_simulacoes').select('*').eq('id', id).single());
   const [r1, r2, r3, r4, { data: realRows }, ...simResults] = await Promise.all([
-    supabase.schema('utfprct').from('matriz_orc_v1_unidade').select('*').eq('configuracao_id', cfg.id),
+    supabase.schema('utfprct').from(v1Table).select('*').eq('configuracao_id', cfg.id),
     supabase.schema('utfprct').from('matriz_orc_v2_unidade').select('*').eq('configuracao_id', cfg.id),
     supabase.schema('utfprct').from('matriz_orc_v3_unidade').select('*').eq('configuracao_id', cfg.id),
     supabase.schema('utfprct').from('vw_matriz_orc_resultado').select('unidade_id,sigla,nome,tipo,score_v4'),

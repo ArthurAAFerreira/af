@@ -231,11 +231,12 @@ async function remove() {
 
 /* ─── Load unit data for preview ────────────────────────────── */
 async function loadUnitData() {
-  const { data: cfg } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base').select('id').eq('ativo', true).order('id', { ascending: false }).limit(1).maybeSingle();
+  const { data: cfg } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base').select('id,v1_modo').eq('ativo', true).order('id', { ascending: false }).limit(1).maybeSingle();
   if (!cfg) return;
   const cfgId = cfg.id;
+  const v1Table = cfg.v1_modo === 'IMPORTADO' ? 'vw_matriz_orc_v1_importado' : 'matriz_orc_v1_unidade';
   const [r1, r2, r3, r4] = await Promise.all([
-    supabase.schema('utfprct').from('matriz_orc_v1_unidade').select('*').eq('configuracao_id', cfgId),
+    supabase.schema('utfprct').from(v1Table).select('*').eq('configuracao_id', cfgId),
     supabase.schema('utfprct').from('matriz_orc_v2_unidade').select('*').eq('configuracao_id', cfgId),
     supabase.schema('utfprct').from('matriz_orc_v3_unidade').select('*').eq('configuracao_id', cfgId),
     supabase.schema('utfprct').from('vw_matriz_orc_resultado').select('unidade_id,sigla,nome,tipo,score_v4'),

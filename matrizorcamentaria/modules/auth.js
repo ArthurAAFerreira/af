@@ -5,7 +5,7 @@
 // =============================================================================
 export const SENHAS = {
   '154358':      { perms: ['simulacoes'],                               label: 'Simulações' },
-  '154358dirge': { perms: ['configuracao'],                            label: 'Configuração' },
+  '154358dirge': { perms: ['configuracao', 'simulacoes'],                            label: 'Configuração' },
   'dirpladlu':   { perms: ['configuracao', 'simulacoes', 'estruturas'], label: 'Planejamento/DLU' },
   'federer':     { perms: ['*'],                                        label: 'Acesso Total' },
 };

@@ -68,12 +68,16 @@ async function comparar() {
   const cfgId = toNumber($('cfgAno').value);
   if (!cfgId) { setStatus('Selecione o ano da configuração.', 'warn'); return; }
 
-  const [sA, sB] = await Promise.all([loadSimData(idA), loadSimData(idB)]);
+  const [{ data: cfgData }, [sA, sB]] = await Promise.all([
+    supabase.schema('utfprct').from('matriz_orc_configuracao_base').select('v1_modo').eq('id', cfgId).single(),
+    Promise.all([loadSimData(idA), loadSimData(idB)]),
+  ]);
   if (!sA || !sB) { setStatus('Erro ao carregar dados.', 'err'); return; }
   simAData = sA; simBData = sB;
 
+  const v1Table = cfgData?.v1_modo === 'IMPORTADO' ? 'vw_matriz_orc_v1_importado' : 'matriz_orc_v1_unidade';
   const [r1, r2, r3, r4] = await Promise.all([
-    supabase.schema('utfprct').from('matriz_orc_v1_unidade').select('*').eq('configuracao_id', cfgId),
+    supabase.schema('utfprct').from(v1Table).select('*').eq('configuracao_id', cfgId),
     supabase.schema('utfprct').from('matriz_orc_v2_unidade').select('*').eq('configuracao_id', cfgId),
     supabase.schema('utfprct').from('matriz_orc_v3_unidade').select('*').eq('configuracao_id', cfgId),
     supabase.schema('utfprct').from('vw_matriz_orc_resultado').select('unidade_id,sigla,nome,tipo,score_v4'),
