@@ -269,6 +269,16 @@ function applyAuth() {
     el.disabled = !ok;
     if (!ok) el.title = 'Sem permissão — desbloqueie no Início';
   });
+  [
+    'recursoBruto','pctTotal','contratosContinuados','outrasDespesas','segurancaValor',
+    'pesoV1','pesoV2','pesoV3','pesoV4',
+    'v1PesoGrad','v1PesoPos',
+    'v2PesoDocentes','v2PesoTaes','v2Peso20h','v2Peso40h','v2PesoDE','v2PesoFuncaoParcial','v2PesoFuncaoIntegral',
+    'v3PesoGrad','v3PesoEsp','v3PesoMest','v3PesoDoutor',
+    'anoNovo','duplicarPara',
+  ].forEach(id => { const el = $(id); if (el) el.disabled = !ok; });
+  document.querySelectorAll('input[name="segMode"]').forEach(r => r.disabled = !ok);
+  document.querySelectorAll('input[name="v1Modo"]').forEach(r => r.disabled = !ok);
 }
 
 async function init() {

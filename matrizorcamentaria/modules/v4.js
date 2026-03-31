@@ -295,6 +295,7 @@ window.editEstrutura = async function(id) {
 };
 
 window.removeEstrutura = async function(id) {
+  if (!canEdit('estruturas')) { setStatus('Sem permissão — desbloqueie no Início.', 'warn'); return; }
   if (!confirm('Desativar esta estrutura?')) return;
   const { error } = await supabase.schema('utfprct').from('matriz_orc_estruturas').update({ ativo: false }).eq('id', id);
   if (error) { setStatus('Erro: ' + error.message, 'err'); return; }
@@ -408,6 +409,13 @@ function applyAuth() {
     const el = $(id); if (!el) return;
     el.disabled = !ok;
     if (!ok) el.title = 'Sem permissão — desbloqueie no Início';
+  });
+  [
+    'tipoNome','tipoPeso','classeNome','attrDesc','attrPeso',
+    'eNome','eSala','eRespNome','eRespEmail',
+  ].forEach(id => { const el = $(id); if (el) el.disabled = !ok; });
+  ['classTipo','attrClasse','eTipo','eUnidade','eSede'].forEach(id => {
+    const el = $(id); if (el) el.disabled = !ok;
   });
 }
 

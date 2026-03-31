@@ -105,6 +105,9 @@ function applyAuth() {
     el.disabled = !ok;
     if (!ok) el.title = 'Sem permissão — desbloqueie no Início';
   });
+  ['uCampus', 'uSigla', 'uNome', 'uTipo'].forEach(id => {
+    const el = $(id); if (el) el.disabled = !ok;
+  });
 }
 
 async function init() {

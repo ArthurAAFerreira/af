@@ -72,27 +72,33 @@ function calcScore(r) {
 const FIELDS = ['docentes_graduacao','docentes_especializacao','docentes_mestrado','docentes_doutorado'];
 
 function renderTable() {
+  const editable = canEdit('v3');
   const body = $('v3Body');
   body.innerHTML = rows.map((r, i) => {
     const total = r.docentes_graduacao + r.docentes_especializacao + r.docentes_mestrado + r.docentes_doutorado;
     return `<tr>
       <td><strong>${r.sigla}</strong><br><span style="font-size:0.75rem;padding:2px 8px;border-radius:99px;background:${TIPO_COLORS[r.tipo]}18;color:${TIPO_COLORS[r.tipo]};font-weight:600">${TIPOS[r.tipo]||r.tipo}</span></td>
-      ${FIELDS.map(f => `<td class="text-right"><input type="number" min="0" step="1" value="${r[f]}" data-i="${i}" data-f="${f}" style="width:80px" /></td>`).join('')}
+      ${FIELDS.map(f => editable
+        ? `<td class="text-right"><input type="number" min="0" step="1" value="${r[f]}" data-i="${i}" data-f="${f}" style="width:80px" /></td>`
+        : `<td class="text-right">${r[f].toLocaleString('pt-BR')}</td>`
+      ).join('')}
       <td class="text-right" data-total="${i}">${total}</td>
       <td class="text-right" data-score="${i}" style="font-variant-numeric:tabular-nums">${calcScore(r).toLocaleString('pt-BR',{maximumFractionDigits:2})}</td>
     </tr>`;
   }).join('');
 
-  body.querySelectorAll('input').forEach(inp => {
-    inp.addEventListener('input', () => {
-      const i = Number(inp.dataset.i);
-      rows[i][inp.dataset.f] = toNumber(inp.value);
-      const total = FIELDS.reduce((s, f) => s + rows[i][f], 0);
-      body.querySelector(`[data-total="${i}"]`).textContent = total;
-      body.querySelector(`[data-score="${i}"]`).textContent = calcScore(rows[i]).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
-      updateTotals();
+  if (editable) {
+    body.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', () => {
+        const i = Number(inp.dataset.i);
+        rows[i][inp.dataset.f] = toNumber(inp.value);
+        const total = FIELDS.reduce((s, f) => s + rows[i][f], 0);
+        body.querySelector(`[data-total="${i}"]`).textContent = total;
+        body.querySelector(`[data-score="${i}"]`).textContent = calcScore(rows[i]).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+        updateTotals();
+      });
     });
-  });
+  }
   updateTotals();
 }
 

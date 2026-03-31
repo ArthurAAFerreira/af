@@ -74,21 +74,27 @@ function calcScore(r) {
 const FIELDS = ['docentes_20h','docentes_40h','docentes_de','taes_parcial','taes_integral','docentes_funcao_parcial','docentes_funcao_integral'];
 
 function renderTable() {
+  const editable = canEdit('v2');
   const body = $('v2Body');
   body.innerHTML = rows.map((r, i) => `<tr>
     <td><strong>${r.sigla}</strong><br><span style="font-size:0.75rem;padding:2px 8px;border-radius:99px;background:${TIPO_COLORS[r.tipo]}18;color:${TIPO_COLORS[r.tipo]};font-weight:600">${TIPOS[r.tipo]||r.tipo}</span></td>
-    ${FIELDS.map(f => `<td class="text-right"><input type="number" min="0" step="1" value="${r[f]}" data-i="${i}" data-f="${f}" style="width:72px" /></td>`).join('')}
+    ${FIELDS.map(f => editable
+      ? `<td class="text-right"><input type="number" min="0" step="1" value="${r[f]}" data-i="${i}" data-f="${f}" style="width:72px" /></td>`
+      : `<td class="text-right">${r[f].toLocaleString('pt-BR')}</td>`
+    ).join('')}
     <td class="text-right" data-score="${i}" style="font-variant-numeric:tabular-nums">${calcScore(r).toLocaleString('pt-BR',{maximumFractionDigits:4})}</td>
   </tr>`).join('');
 
-  body.querySelectorAll('input').forEach(inp => {
-    inp.addEventListener('input', () => {
-      const i = Number(inp.dataset.i);
-      rows[i][inp.dataset.f] = toNumber(inp.value);
-      body.querySelector(`[data-score="${i}"]`).textContent = calcScore(rows[i]).toLocaleString('pt-BR', { maximumFractionDigits: 4 });
-      updateTotals();
+  if (editable) {
+    body.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', () => {
+        const i = Number(inp.dataset.i);
+        rows[i][inp.dataset.f] = toNumber(inp.value);
+        body.querySelector(`[data-score="${i}"]`).textContent = calcScore(rows[i]).toLocaleString('pt-BR', { maximumFractionDigits: 4 });
+        updateTotals();
+      });
     });
-  });
+  }
   updateTotals();
 }
 

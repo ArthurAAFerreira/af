@@ -1,7 +1,7 @@
 import { supabase } from '../services/supabase.js';
 import { brMoney, brPercent, toNumber } from './formatters.js';
 import { renderNav } from './nav.js';
-import { canEdit } from './auth.js';
+import { canEdit, SENHAS } from './auth.js';
 
 renderNav('simulacoes.html');
 
@@ -13,6 +13,28 @@ function setStatus(msg, cls = 'ok') {
   const el = $('statusMsg');
   el.className = `status ${cls}`;
   el.innerHTML = `<i class="fa-solid fa-${cls === 'ok' ? 'circle-check' : cls === 'warn' ? 'triangle-exclamation' : 'circle-xmark'}"></i> ${msg}`;
+}
+
+function requireAuth() {
+  if (!canEdit('simulacoes')) {
+    setStatus('Sem permissão — insira a senha de edição no Início.', 'warn');
+    return false;
+  }
+  return true;
+}
+
+/* ─── Auth: disable/enable all editable fields ───────────────── */
+function applyAuth() {
+  const enabled = canEdit('simulacoes');
+  const fieldIds = [
+    'simNome','simDescricao','simRB','simPct','simCC','simOD','simSegVal',
+    'simPV1','simPV2','simPV3','simPV4',
+    'sv1Grad','sv1Pos',
+    'sv2Docs','sv2Taes','sv2h20','sv2h40','sv2DE','sv2FP','sv2FI',
+    'sv3Grad','sv3Esp','sv3Mest','sv3Dout',
+  ];
+  fieldIds.forEach(id => { const el = $(id); if (el) el.disabled = !enabled; });
+  document.querySelectorAll('input[name="simSegMode"]').forEach(r => r.disabled = !enabled);
 }
 
 /* ─── KPI update ─────────────────────────────────────────────── */
@@ -51,7 +73,6 @@ function updateSegHint() {
 function computeResult() {
   const s = getFormData();
   const vb = s.recurso_liquido * s.pct_total / 100;
-
   const unidadeScores = {};
 
   v1Data.forEach(r => {
@@ -146,20 +167,22 @@ function getFormData() {
 }
 
 function fillForm(sim) {
-  currentId = sim.id;
-  $('simNome').value = sim.nome; $('simDescricao').value = sim.descricao || '';
-  $('simRB').value = sim.recurso_bruto; $('simPct').value = sim.pct_total;
-  $('simCC').value = sim.contratos_continuados; $('simOD').value = sim.outras_despesas_campus;
-  document.querySelector(`input[name="simSegMode"][value="${sim.seguranca_modo}"]`).checked = true;
-  $('simSegVal').value = sim.seguranca_valor;
-  $('simPV1').value = sim.peso_v1; $('simPV2').value = sim.peso_v2;
-  $('simPV3').value = sim.peso_v3; $('simPV4').value = sim.peso_v4;
-  $('sv1Grad').value = sim.v1_peso_graduacao; $('sv1Pos').value = sim.v1_peso_pos_graduacao;
-  $('sv2Docs').value = sim.v2_peso_docentes; $('sv2Taes').value = sim.v2_peso_taes;
-  $('sv2h20').value = sim.v2_peso_20h; $('sv2h40').value = sim.v2_peso_40h; $('sv2DE').value = sim.v2_peso_de;
-  $('sv2FP').value = sim.v2_peso_funcao_parcial; $('sv2FI').value = sim.v2_peso_funcao_integral;
-  $('sv3Grad').value = sim.v3_peso_graduacao; $('sv3Esp').value = sim.v3_peso_especializacao;
-  $('sv3Mest').value = sim.v3_peso_mestrado; $('sv3Dout').value = sim.v3_peso_doutorado;
+  currentId = sim.id || null;
+  $('simNome').value = sim.nome || ''; $('simDescricao').value = sim.descricao || '';
+  $('simRB').value = sim.recurso_bruto ?? 0; $('simPct').value = sim.pct_total ?? 100;
+  $('simCC').value = sim.contratos_continuados ?? 0; $('simOD').value = sim.outras_despesas_campus ?? 0;
+  const segModo = sim.seguranca_modo || 'PERCENTUAL';
+  const segModoEl = document.querySelector(`input[name="simSegMode"][value="${segModo}"]`);
+  if (segModoEl) segModoEl.checked = true;
+  $('simSegVal').value = sim.seguranca_valor ?? 0;
+  $('simPV1').value = sim.peso_v1 ?? 20; $('simPV2').value = sim.peso_v2 ?? 30;
+  $('simPV3').value = sim.peso_v3 ?? 25; $('simPV4').value = sim.peso_v4 ?? 25;
+  $('sv1Grad').value = sim.v1_peso_graduacao ?? 50; $('sv1Pos').value = sim.v1_peso_pos_graduacao ?? 50;
+  $('sv2Docs').value = sim.v2_peso_docentes ?? 60; $('sv2Taes').value = sim.v2_peso_taes ?? 40;
+  $('sv2h20').value = sim.v2_peso_20h ?? 1; $('sv2h40').value = sim.v2_peso_40h ?? 2; $('sv2DE').value = sim.v2_peso_de ?? 3;
+  $('sv2FP').value = sim.v2_peso_funcao_parcial ?? 1; $('sv2FI').value = sim.v2_peso_funcao_integral ?? 2;
+  $('sv3Grad').value = sim.v3_peso_graduacao ?? 1; $('sv3Esp').value = sim.v3_peso_especializacao ?? 2;
+  $('sv3Mest').value = sim.v3_peso_mestrado ?? 3; $('sv3Dout').value = sim.v3_peso_doutorado ?? 4;
   updateKpis(); updatePesoStatus(); updateSegHint(); renderPreview();
 }
 
@@ -171,20 +194,11 @@ function clearForm() {
   updateKpis(); updatePesoStatus();
 }
 
-async function copiarCfgAtiva() {
-  const { data: cfg } = await supabase.schema('utfprct').from('matriz_orc_configuracao_base').select('*').eq('ativo', true).order('id', { ascending: false }).limit(1).maybeSingle();
-  if (!cfg) { setStatus('Nenhuma configuração ativa encontrada.', 'warn'); return; }
-  fillForm({ ...cfg, id: null, nome: `Cópia de ${cfg.ano}${cfg.descricao?' — '+cfg.descricao:''}`, descricao: null,
-    recurso_bruto: cfg.recurso_bruto ?? cfg.recurso_liquido });
-  currentId = null; $('simSelect').value = '';
-  setStatus('Campos preenchidos com base na configuração ativa. Edite e salve como nova simulação.', 'ok');
-}
-
 /* ─── CRUD ───────────────────────────────────────────────────── */
 async function loadSims() {
   const { data } = await supabase.schema('utfprct').from('matriz_orc_simulacoes').select('id,nome,descricao').order('id', { ascending: false });
   const sel = $('simSelect');
-  sel.innerHTML = '<option value="">Nova simulação</option>';
+  sel.innerHTML = '<option value="">— Selecione uma simulação —</option>';
   (data || []).forEach(s => {
     const opt = document.createElement('option');
     opt.value = s.id; opt.textContent = s.nome + (s.descricao ? ` — ${s.descricao}` : '');
@@ -198,15 +212,15 @@ async function loadSim(id) {
   if (data) fillForm(data);
 }
 
-async function save(isUpdate) {
-  if (!canEdit('simulacoes')) { setStatus('Sem permissão. Desbloqueie no Início.', 'warn'); return; }
+/* ─── Salvar: creates new if no currentId, updates if has currentId ── */
+async function save() {
+  if (!requireAuth()) return;
   const d = getFormData();
   if (!d.nome) { setStatus('Informe o nome da simulação.', 'warn'); return; }
   const soma = d.peso_v1 + d.peso_v2 + d.peso_v3 + d.peso_v4;
   if (Math.abs(soma - 100) > 0.01) { setStatus(`Soma dos pesos = ${brPercent(soma)}. Deve ser 100%.`, 'warn'); return; }
 
-  if (isUpdate) {
-    if (!currentId) { setStatus('Selecione uma simulação.', 'warn'); return; }
+  if (currentId) {
     const { error } = await supabase.schema('utfprct').from('matriz_orc_simulacoes').update(d).eq('id', currentId);
     if (error) { setStatus('Erro: ' + error.message, 'err'); return; }
     setStatus('Simulação atualizada.');
@@ -220,10 +234,83 @@ async function save(isUpdate) {
   $('simSelect').value = String(currentId);
 }
 
+/* ─── Nova: clear form for new entry ─────────────────────────── */
+function novaSim() {
+  if (!requireAuth()) return;
+  clearForm();
+  $('simNome').focus();
+  setStatus('Nova simulação: preencha o nome e clique em Salvar.', 'ok');
+}
+
+/* ─── Copiar Config: modal with all real configs + sims ─────── */
+async function showCopyModal() {
+  if (!requireAuth()) return;
+  const [{ data: cfgs }, { data: sims }] = await Promise.all([
+    supabase.schema('utfprct').from('matriz_orc_configuracao_base').select('*').order('ano', { ascending: false }),
+    supabase.schema('utfprct').from('matriz_orc_simulacoes').select('*').order('id', { ascending: false }),
+  ]);
+
+  const list = $('copyList');
+  list.innerHTML = '';
+
+  const addSection = (iconCls, label) => {
+    const hdr = document.createElement('div');
+    hdr.style.cssText = 'font-size:.75rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.05em;padding:10px 12px 4px';
+    hdr.innerHTML = `<i class="${iconCls}"></i> ${label}`;
+    list.appendChild(hdr);
+  };
+
+  const addItem = (text, onClick) => {
+    const btn = document.createElement('button');
+    btn.style.cssText = 'display:block;width:100%;text-align:left;padding:9px 14px;border:none;background:none;cursor:pointer;border-radius:8px;font-size:.9rem;color:#1e293b';
+    btn.textContent = text;
+    btn.addEventListener('mouseover', () => btn.style.background = '#f1f5f9');
+    btn.addEventListener('mouseout', () => btn.style.background = 'none');
+    btn.addEventListener('click', onClick);
+    list.appendChild(btn);
+  };
+
+  if (cfgs && cfgs.length) {
+    addSection('fa-solid fa-star', 'Configurações Reais');
+    cfgs.forEach(c => {
+      const label = `Real ${c.ano}${c.descricao ? ' — ' + c.descricao : ''}${c.ativo ? ' ✓ ativa' : ''}`;
+      addItem(label, () => {
+        fillForm({ ...c, id: null, nome: `Cópia Real ${c.ano}${c.descricao ? ' — ' + c.descricao : ''}`, descricao: null, recurso_bruto: c.recurso_bruto ?? c.recurso_liquido });
+        currentId = null; $('simSelect').value = '';
+        $('copyModal').style.display = 'none';
+        setStatus('Campos preenchidos. Edite o nome e salve como nova simulação.', 'ok');
+      });
+    });
+  }
+
+  if (sims && sims.length) {
+    addSection('fa-solid fa-vials', 'Simulações');
+    sims.forEach(s => {
+      addItem(s.nome + (s.descricao ? ` — ${s.descricao}` : ''), () => {
+        fillForm({ ...s, id: null, nome: `Cópia de ${s.nome}`, descricao: null });
+        currentId = null; $('simSelect').value = '';
+        $('copyModal').style.display = 'none';
+        setStatus('Campos preenchidos. Edite o nome e salve como nova simulação.', 'ok');
+      });
+    });
+  }
+
+  $('copyModal').style.display = 'flex';
+}
+
+/* ─── Excluir: requires password re-entry ────────────────────── */
 async function remove() {
-  if (!canEdit('simulacoes')) { setStatus('Sem permissão. Desbloqueie no Início.', 'warn'); return; }
-  if (!currentId) { setStatus('Selecione uma simulação.', 'warn'); return; }
-  if (!confirm('Excluir esta simulação?')) return;
+  if (!requireAuth()) return;
+  if (!currentId) { setStatus('Selecione uma simulação para excluir.', 'warn'); return; }
+
+  const senha = prompt('Para confirmar a exclusão, insira novamente sua senha de acesso:');
+  if (!senha) return;
+  const entry = SENHAS[senha];
+  if (!entry || (!entry.perms.includes('*') && !entry.perms.includes('simulacoes'))) {
+    setStatus('Senha incorreta. Exclusão cancelada.', 'err');
+    return;
+  }
+
   const { error } = await supabase.schema('utfprct').from('matriz_orc_simulacoes').delete().eq('id', currentId);
   if (error) { setStatus('Erro: ' + error.message, 'err'); return; }
   setStatus('Simulação excluída.'); clearForm(); await loadSims();
@@ -249,11 +336,12 @@ async function init() {
   await Promise.all([loadSims(), loadUnitData()]);
 
   $('simSelect').addEventListener('change', e => loadSim(e.target.value));
-  $('btnSalvar').addEventListener('click', () => save(false));
-  $('btnAtualizar').addEventListener('click', () => save(true));
+  $('btnSalvar').addEventListener('click', save);
   $('btnExcluir').addEventListener('click', remove);
-  $('btnNova').addEventListener('click', clearForm);
-  $('btnCopiarCfg').addEventListener('click', copiarCfgAtiva);
+  $('btnNova').addEventListener('click', novaSim);
+  $('btnCopiarCfg').addEventListener('click', showCopyModal);
+  $('btnCopyModalClose').addEventListener('click', () => $('copyModal').style.display = 'none');
+  $('copyModal').addEventListener('click', e => { if (e.target === $('copyModal')) $('copyModal').style.display = 'none'; });
 
   ['simRB','simPct','simCC','simOD','simSegVal'].forEach(id => $(id).addEventListener('input', () => { updateKpis(); renderPreview(); }));
   ['simPV1','simPV2','simPV3','simPV4'].forEach(id => $(id).addEventListener('input', () => { updatePesoStatus(); renderPreview(); }));
@@ -263,15 +351,6 @@ async function init() {
 
   applyAuth();
   updateKpis(); updatePesoStatus(); updateSegHint();
-}
-
-function applyAuth() {
-  const ok = canEdit('simulacoes');
-  ['btnSalvar', 'btnAtualizar', 'btnExcluir', 'btnCopiarCfg'].forEach(id => {
-    const el = $(id); if (!el) return;
-    el.disabled = !ok;
-    if (!ok) el.title = 'Sem permissão — desbloqueie no Início';
-  });
 }
 
 init().catch(console.error);

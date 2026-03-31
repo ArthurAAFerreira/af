@@ -207,7 +207,7 @@
       if (label) {
         msg.className = 'status ok';
         msg.innerHTML = `<i class="fa-solid fa-circle-check"></i> Acesso desbloqueado: <strong>${label}</strong>`;
-        renderAuthState();
+        setTimeout(() => location.reload(), 400);
       } else {
         msg.className = 'status err';
         msg.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Senha incorreta.';

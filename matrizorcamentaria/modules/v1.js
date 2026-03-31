@@ -141,14 +141,16 @@ function calcScore(r) {
 function fmtNum(n) { return toNumber(n).toLocaleString('pt-BR', { maximumFractionDigits: 2 }); }
 
 function renderTable(readOnly) {
+  const editable = canEdit('v1');
   const body = $('v1Body');
   body.innerHTML = rows.map((r, i) => {
     const score = calcScore(r).toLocaleString('pt-BR', { maximumFractionDigits: 4 });
-    const cell = f => readOnly
+    const cell = f => (readOnly || !editable)
       ? `<td class="text-right">${fmtNum(r[f])}</td>`
       : `<td class="text-right"><input type="number" min="0" step="0.5" value="${r[f]}" data-i="${i}" data-f="${f}" style="width:90px" /></td>`;
-    // peso_unidade is ALWAYS editable regardless of mode
-    const cellPu = `<td class="text-right"><input type="number" min="0" step="0.01" value="${r.peso_unidade}" data-i="${i}" data-f="peso_unidade" style="width:70px" /></td>`;
+    const cellPu = !editable
+      ? `<td class="text-right">${fmtNum(r.peso_unidade)}</td>`
+      : `<td class="text-right"><input type="number" min="0" step="0.01" value="${r.peso_unidade}" data-i="${i}" data-f="peso_unidade" style="width:70px" /></td>`;
     return `<tr>
       <td><strong>${r.sigla}</strong><br><span style="font-size:0.78rem;color:var(--muted)">${r.nome}</span></td>
       <td><span style="font-size:0.75rem;padding:2px 8px;border-radius:99px;background:${TIPO_COLORS[r.tipo]}18;color:${TIPO_COLORS[r.tipo]};font-weight:600">${TIPOS[r.tipo]||r.tipo}</span></td>
@@ -157,14 +159,16 @@ function renderTable(readOnly) {
       <td class="text-right" data-score="${i}" style="font-variant-numeric:tabular-nums">${score}</td>
     </tr>`;
   }).join('');
-  body.querySelectorAll('input').forEach(inp => {
-    inp.addEventListener('input', () => {
-      const i = Number(inp.dataset.i), f = inp.dataset.f;
-      rows[i][f] = toNumber(inp.value);
-      body.querySelector(`[data-score="${i}"]`).textContent = calcScore(rows[i]).toLocaleString('pt-BR', { maximumFractionDigits: 4 });
-      updateTotals();
+  if (editable) {
+    body.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', () => {
+        const i = Number(inp.dataset.i), f = inp.dataset.f;
+        rows[i][f] = toNumber(inp.value);
+        body.querySelector(`[data-score="${i}"]`).textContent = calcScore(rows[i]).toLocaleString('pt-BR', { maximumFractionDigits: 4 });
+        updateTotals();
+      });
     });
-  });
+  }
   updateTotals();
 }
 
