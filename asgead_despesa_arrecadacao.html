@@ -10,6 +10,37 @@
   <link rel="stylesheet" href="ui-enhancements.css" />
 
   <style>
+    /* Password Gate */
+    #password-gate {
+      position: fixed; inset: 0; z-index: 9999;
+      background: linear-gradient(135deg, #001f3f, #003366);
+      display: flex; align-items: center; justify-content: center;
+    }
+    #password-gate .gate-box {
+      background: #fff; border-radius: 10px; padding: 40px 36px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4); text-align: center;
+      max-width: 380px; width: 90%;
+    }
+    #password-gate .gate-box i { font-size: 2.5rem; color: #003366; margin-bottom: 14px; }
+    #password-gate .gate-box h2 { margin: 0 0 6px; color: #001f3f; font-size: 1.25rem; }
+    #password-gate .gate-box p { margin: 0 0 20px; color: #555; font-size: 0.9rem; }
+    #password-gate input {
+      width: 100%; box-sizing: border-box; padding: 10px 14px;
+      border: 1px solid #ccc; border-radius: 6px; font-size: 1rem;
+      margin-bottom: 12px; outline: none;
+    }
+    #password-gate input:focus { border-color: #003366; }
+    #password-gate button {
+      width: 100%; padding: 11px; background: #003366; color: #fff;
+      border: none; border-radius: 6px; font-size: 1rem; font-weight: bold;
+      cursor: pointer; transition: background 0.2s;
+    }
+    #password-gate button:hover { background: #002244; }
+    #password-gate .gate-error {
+      color: #c0392b; font-size: 0.85rem; margin-top: 8px;
+      display: none;
+    }
+
     body { font-family: Arial, sans-serif; margin: 0; background-color: #f9f9fb; color: #333; }
 
     /* Header */
@@ -114,6 +145,16 @@
 </head>
 
 <body>
+  <div id="password-gate">
+    <div class="gate-box">
+      <i class="fa-solid fa-lock"></i>
+      <h2>Acesso Restrito</h2>
+      <p>Digite a senha para continuar</p>
+      <input type="password" id="gate-input" placeholder="Senha" onkeydown="if(event.key==='Enter') verificarSenha()" />
+      <button onclick="verificarSenha()"><i class="fa-solid fa-key"></i> Entrar</button>
+      <div class="gate-error" id="gate-error">Senha incorreta. Tente novamente.</div>
+    </div>
+  </div>
   <header>
     <h1>
       <i class="fa-solid fa-database"></i>
@@ -286,6 +327,29 @@
     </div>
   </footer>
 
+  <script>
+    (function() {
+      const SENHAS = ['federer', 'dirpladlu', 'dirgepaulo'];
+      if (sessionStorage.getItem('af_despesas_auth') === '1') {
+        document.addEventListener('DOMContentLoaded', function() {
+          document.getElementById('password-gate').style.display = 'none';
+        });
+      }
+      window.verificarSenha = function() {
+        const val = document.getElementById('gate-input').value.trim();
+        const err = document.getElementById('gate-error');
+        if (SENHAS.includes(val)) {
+          sessionStorage.setItem('af_despesas_auth', '1');
+          document.getElementById('password-gate').style.display = 'none';
+          err.style.display = 'none';
+        } else {
+          err.style.display = 'block';
+          document.getElementById('gate-input').value = '';
+          document.getElementById('gate-input').focus();
+        }
+      };
+    })();
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
