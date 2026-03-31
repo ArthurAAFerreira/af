@@ -234,7 +234,6 @@ const COL_MAP = {
   cht:               ['cht','ch','carga_horaria','carga horaria','ch_total','ch total'],
   nivel_ensino:      ['nivel_ensino','nivel','nível','nivel de ensino','nível de ensino'],
   quantidade_alunos: ['quantidade_alunos','qtd_alunos','qtd alunos','alunos','quant_alunos','quantidadedealunos'],
-  situacao_turma:    ['situacao_turma','situacao','situação','status','situacao turma','situação turma'],
 };
 
 function matchHeader(h) {
@@ -293,7 +292,6 @@ async function importCSV() {
     cht:              parseFloat(String(r.cht).replace(',','.')) || 0,
     nivel_ensino:     r.nivel_ensino || null,
     quantidade_alunos: parseInt(r.quantidade_alunos) || 0,
-    situacao_turma:   r.situacao_turma || null,
   }));
 
   setImportStatus(`Importando ${payload.length} linhas…`, 'warn');
@@ -341,7 +339,6 @@ async function loadImportedRaw(cfgId) {
     <td class="text-right">${toNumber(r.cht).toLocaleString('pt-BR')}</td>
     <td>${r.nivel_ensino||''}</td>
     <td class="text-right">${r.quantidade_alunos||0}</td>
-    <td>${r.situacao_turma||''}</td>
   </tr>`).join('');
 }
 
