@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Valores Fixos — Matriz Orçamentária UTFPR-CT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="../ui-enhancements.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>
+      <i class="fa-solid fa-lock"></i>
+      <a href="../index.html">Valores Fixos — Matriz Orçamentária</a>
+    </h1>
+    <p>Defina o valor fixo a ser destinado diretamente as unidades cadastradas como <strong>Fixo</strong>. Esses valores são descontados antes da distribuição calculada.</p>
+  </header>
+
+  <main>
+    <!-- SELEÇÃO DE CONFIGURAÇÃO -->
+    <section class="panel">
+      <div class="panel-header">
+        <span><i class="fa-solid fa-calendar-alt"></i> Configuração de Referência</span>
+        <div id="authBadge" style="font-size:0.8rem;padding:4px 12px;border-radius:99px;font-weight:600;background:#fce4ec;color:#c62828;border:1px solid #f48fb1">
+          <i class="fa-solid fa-lock"></i> Requer senha de Configuração
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="config-grid" style="align-items:end">
+          <div class="field">
+            <label for="cfgSelect">Ano / Configuração</label>
+            <select id="cfgSelect"><option value="">Selecionar...</option></select>
+          </div>
+          <div>
+            <button id="btnSalvar" class="btn btn-save" disabled title="Sem permissão — desbloqueie no Início">
+              <i class="fa-solid fa-floppy-disk"></i> Salvar valores fixos
+            </button>
+          </div>
+        </div>
+        <div id="statusMsg" class="status" style="margin-top:8px"></div>
+      </div>
+    </section>
+
+    <!-- TABELA DE UNIDADES FIXAS -->
+    <section class="panel" id="fixoPanel" style="display:none">
+      <div class="panel-header" style="border-left:4px solid #e65100">
+        <span><i class="fa-solid fa-table" style="color:#e65100"></i> Unidades com Valor Fixo</span>
+        <div id="kpiFixoTotal" class="kpi" style="margin:0;padding:6px 16px">
+          <span class="kpi-label">Total Fixo: </span>
+          <strong id="totalFixo" class="kpi-value" style="font-size:1rem;color:#e65100">R$ 0,00</strong>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="hint" style="margin-bottom:12px">
+          <i class="fa-solid fa-circle-info"></i>
+          Apenas unidades cadastradas com tipo de valor <strong>Fixo</strong> aparecem aqui.
+          Para alterar o tipo de valor, acesse a página <a href="unidades.html">Unidades</a>.
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Sigla</th>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th class="text-right">Valor Fixo (R$)</th>
+              </tr>
+            </thead>
+            <tbody id="fixoBody"></tbody>
+          </table>
+        </div>
+        <div id="emptyMsg" style="display:none;text-align:center;color:var(--muted);padding:24px">
+          <i class="fa-solid fa-circle-info"></i> Nenhuma unidade ativa cadastrada como <strong>Fixo</strong>.
+          Acesse a página <a href="unidades.html">Unidades</a> para alterar o tipo de valor.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Arthur Ferreira | ASGEAD-CT</p>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="modules/fixo.js"></script>
+  <script src="../ui-enhancements.js"></script>
+</body>
+</html>
