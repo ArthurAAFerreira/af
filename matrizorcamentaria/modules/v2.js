@@ -78,11 +78,13 @@ function renderTable() {
   const body = $('v2Body');
   body.innerHTML = rows.map((r, i) => `<tr>
     <td><strong>${r.sigla}</strong><br><span style="font-size:0.75rem;padding:2px 8px;border-radius:99px;background:${TIPO_COLORS[r.tipo]}18;color:${TIPO_COLORS[r.tipo]};font-weight:600">${TIPOS[r.tipo]||r.tipo}</span></td>
-    ${FIELDS.map(f => editable
-      ? `<td class="text-right"><input type="number" min="0" step="1" value="${r[f]}" data-i="${i}" data-f="${f}" style="width:72px" /></td>`
-      : `<td class="text-right">${r[f].toLocaleString('pt-BR')}</td>`
-    ).join('')}
-    <td class="text-right" data-score="${i}" style="font-variant-numeric:tabular-nums">${calcScore(r).toLocaleString('pt-BR',{maximumFractionDigits:4})}</td>
+    ${FIELDS.map((f, fi) => {
+      const sep = (fi === 3 || fi === 5) ? ' col-sep' : '';
+      return editable
+        ? `<td class="text-right${sep}"><input type="number" min="0" step="1" value="${r[f]}" data-i="${i}" data-f="${f}" style="width:72px" /></td>`
+        : `<td class="text-right${sep}">${r[f].toLocaleString('pt-BR')}</td>`;
+    }).join('')}
+    <td class="text-right col-sep" data-score="${i}" style="font-variant-numeric:tabular-nums">${calcScore(r).toLocaleString('pt-BR',{maximumFractionDigits:4})}</td>
   </tr>`).join('');
 
   if (editable) {

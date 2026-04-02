@@ -515,6 +515,8 @@ td input:focus {
 }
 .text-right  { text-align: right; }
 .text-center { text-align: center; }
+thead th.col-sep { border-left: 2px solid rgba(255,255,255,0.28); }
+tbody td.col-sep, tfoot td.col-sep { border-left: 2px solid #b8d4f5; }
 .row-total td {
   background: #eef5ff;
   font-weight: 800;
