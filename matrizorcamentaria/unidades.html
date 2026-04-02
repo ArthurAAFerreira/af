@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Unidades — Matriz Orçamentária UTFPR-CT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="../ui-enhancements.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>
+      <i class="fa-solid fa-building"></i>
+      <a href="../index.html">Unidades — Matriz Orçamentária</a>
+    </h1>
+    <p>Cadastre e gerencie as unidades acadêmicas, programas de pós-graduação e setores administrativos.</p>
+  </header>
+
+  <main>
+    <!-- FORMULÁRIO DE CADASTRO -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-plus-circle"></i> Cadastrar / Editar Unidade</div>
+      <div class="panel-body">
+        <div class="config-grid">
+          <div class="field">
+            <label for="uCampus">Campus</label>
+            <select id="uCampus">
+              <option value="CT">CT — Curitiba</option>
+              <option value="AP">AP — Apucarana</option>
+              <option value="CM">CM — Campo Mourão</option>
+              <option value="CP">CP — Cornélio Procópio</option>
+              <option value="DV">DV — Dois Vizinhos</option>
+              <option value="FB">FB — Francisco Beltrão</option>
+              <option value="GP">GP — Guarapuava</option>
+              <option value="LD">LD — Londrina</option>
+              <option value="MD">MD — Medianeira</option>
+              <option value="PB">PB — Pato Branco</option>
+              <option value="PG">PG — Ponta Grossa</option>
+              <option value="SH">SH — Santa Helena</option>
+              <option value="TO">TO — Toledo</option>
+              <option value="UT">UT — Umuarama</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="uSigla">Sigla</label>
+            <input id="uSigla" type="text" placeholder="Ex: DAINF" maxlength="20" style="text-transform:uppercase" />
+          </div>
+          <div class="field">
+            <label for="uNome">Nome completo</label>
+            <input id="uNome" type="text" placeholder="Ex: Depto. Acadêmico de Informática" />
+          </div>
+          <div class="field">
+            <label for="uTipo">Tipo</label>
+            <select id="uTipo">
+              <option value="GRADUACAO">Graduação</option>
+              <option value="POS_GRADUACAO">Pós-Graduação</option>
+              <option value="ADMINISTRATIVO">Administrativo</option>
+              <option value="GESTAO_DIRETORIA">Gestão / Diretoria</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Tipo de Valor</label>
+            <div style="display:flex;gap:20px;margin-top:6px">
+              <label style="font-weight:400;display:flex;align-items:center;gap:6px;cursor:pointer">
+                <input type="radio" name="uTipoValor" value="CALCULADO" checked />
+                <i class="fa-solid fa-calculator" style="color:#1565c0"></i> Calculado
+              </label>
+              <label style="font-weight:400;display:flex;align-items:center;gap:6px;cursor:pointer">
+                <input type="radio" name="uTipoValor" value="FIXO" />
+                <i class="fa-solid fa-lock" style="color:#e65100"></i> Fixo
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button id="btnSalvar" class="btn btn-save"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+          <button id="btnAtualizar" class="btn btn-update"><i class="fa-solid fa-rotate"></i> Atualizar selecionada</button>
+          <button id="btnExcluir" class="btn btn-delete"><i class="fa-solid fa-trash"></i> Desativar selecionada</button>
+          <button id="btnNova" class="btn btn-new"><i class="fa-solid fa-file-circle-plus"></i> Limpar</button>
+        </div>
+        <div id="statusMsg" class="status"></div>
+      </div>
+    </section>
+
+    <!-- FILTROS E LISTA -->
+    <section class="panel">
+      <div class="panel-header">
+        <span><i class="fa-solid fa-list"></i> Unidades Cadastradas</span>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <select id="filtroTipo" style="font-size:0.83rem;padding:4px 8px;border:1px solid var(--line);border-radius:6px;background:#fff">
+            <option value="">Todos os tipos</option>
+            <option value="GRADUACAO">Graduação</option>
+            <option value="POS_GRADUACAO">Pós-Graduação</option>
+            <option value="ADMINISTRATIVO">Administrativo</option>
+            <option value="GESTAO_DIRETORIA">Gestão/Diretoria</option>
+          </select>
+          <div class="kpi" style="padding:4px 12px;margin:0">
+            <span class="kpi-label">Total: </span>
+            <strong id="totalUnidades" class="kpi-value" style="font-size:1rem">0</strong>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Sigla</th>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>Campus</th>
+                <th>Valor</th>
+                <th>Status</th>
+                <th class="text-center">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="unidadesBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Arthur Ferreira | ASGEAD-CT</p>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="modules/unidades.js"></script>
+  <script src="../ui-enhancements.js"></script>
+</body>
+</html>

@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Menu Principal</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #0057b8;
+      --primary-dark: #00336b;
+      --bg: #f2f6fb;
+      --surface: #ffffff;
+      --text: #1f2937;
+      --muted: #5b6472;
+      --shadow: 0 10px 30px rgba(0, 40, 90, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      background: radial-gradient(circle at top right, #1b7bf5 0%, var(--primary-dark) 65%);
+      color: white;
+      padding: 52px 20px 38px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0, 33, 78, 0.28);
+    }
+
+    header h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 4px;
+    }
+
+    .intro-title {
+      font-weight: 700;
+      color: var(--primary-dark);
+      letter-spacing: -0.01em;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(230px, 1fr));
+      column-gap: 1.35rem;
+      row-gap: 0.81rem;
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    .menu-grid > [class*="col-"] {
+      display: flex;
+      width: auto;
+      max-width: none;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .menu-grid > .menu-wide-card {
+      grid-column: 1 / -1;
+    }
+
+    .menu-wide-card .card-body {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      text-align: left;
+      gap: 14px;
+      padding: 20px 24px;
+    }
+
+    .menu-wide-card .menu-icon {
+      margin-bottom: 0 !important;
+    }
+
+    .menu-wide-card .card-title {
+      min-height: auto;
+      justify-content: flex-start;
+    }
+
+    .menu-wide-card .card-text {
+      margin-bottom: 0;
+    }
+
+    .menu-card.menu-featured {
+      border: 0;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 34%),
+        linear-gradient(130deg, #0e6e96 0%, #1f89b5 46%, #27b3c2 100%);
+      box-shadow: 0 18px 34px rgba(5, 56, 74, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      overflow: hidden;
+    }
+
+    .menu-card.menu-featured::after {
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.46), rgba(224, 247, 255, 0.2));
+      height: 5px;
+    }
+
+    .menu-featured .menu-wide-card-link {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      text-decoration: none;
+      color: #f4fcff;
+      padding: 20px 24px;
+    }
+
+    .menu-featured .menu-wide-card-link > div {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .menu-featured .menu-icon {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      margin-bottom: 0 !important;
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.16), 0 6px 14px rgba(6, 42, 60, 0.25);
+    }
+
+    .menu-featured .menu-icon::before {
+      content: "ℹ";
+      font-family: inherit;
+      font-weight: 800;
+      font-style: normal;
+      text-transform: none;
+      font-size: 1.18rem;
+      line-height: 1;
+    }
+
+    .menu-featured .card-title {
+      color: #042338;
+      min-height: auto;
+      justify-content: flex-start;
+      margin: 0 0 4px;
+      font-size: 1.16rem;
+      font-weight: 800;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.28);
+    }
+
+    .menu-featured .card-text {
+      color: rgba(5, 41, 62, 0.95);
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .menu-featured .featured-arrow {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      font-size: 0.95rem;
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.12);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .menu-featured .featured-arrow i {
+      display: none;
+    }
+
+    .menu-featured .featured-arrow::before {
+      content: "➜";
+      line-height: 1;
+    }
+
+    .menu-featured:hover .featured-arrow {
+      transform: translateX(2px);
+      background: rgba(255, 255, 255, 0.28);
+    }
+
+    .menu-card {
+      border: 0;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      position: relative;
+      background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+      width: 100%;
+    }
+
+    .menu-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 15px 35px rgba(0, 50, 110, 0.2);
+    }
+
+    .menu-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), #4b9cff);
+    }
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 24px 21px;
+      gap: 8px;
+    }
+
+    .card-title {
+      min-height: 41px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .card-text {
+      color: var(--muted);
+      margin-bottom: 17px;
+      flex-grow: 1;
+    }
+
+    .menu-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 87, 184, 0.1);
+      color: var(--primary);
+      font-size: 1.4rem;
+    }
+
+    .btn-enter {
+      background: var(--primary);
+      border-color: var(--primary);
+      min-width: 130px;
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 8px 18px;
+    }
+
+    .menu-card.is-restricted-card {
+      position: relative;
+    }
+
+    .card-lock-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #114180 0%, #0b2d58 100%);
+      color: #ffffff;
+      box-shadow: 0 6px 14px rgba(6, 29, 62, 0.32);
+      pointer-events: none;
+    }
+
+    .card-lock-badge i {
+      display: none;
+    }
+
+    .card-lock-badge::before {
+      content: "🔒";
+      font-size: 0.92rem;
+      line-height: 1;
+    }
+
+    .btn-enter:hover,
+    .btn-enter:focus {
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+
+    body.is-index {
+      padding-bottom: 86px;
+    }
+
+    body.is-index footer {
+      position: fixed;
+      left: 10px;
+      right: 10px;
+      bottom: 8px;
+      z-index: 1050;
+      background: rgba(8, 27, 56, 0.93);
+      color: #ecf4ff;
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(170, 210, 255, 0.22);
+      box-shadow: 0 12px 26px rgba(3, 18, 43, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
+      margin-top: 0;
+    }
+
+    .footer-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      font-size: 0.88rem;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      justify-content: flex-end;
+    }
+
+    .footer-links a {
+      color: #d9ebff;
+      text-decoration: none;
+      transition: color 0.2s ease;
+      font-size: 0.86rem;
+      white-space: nowrap;
+    }
+
+    .footer-links a:hover {
+      color: #8fc8ff;
+    }
+
+    @media (max-width: 992px) {
+      .menu-grid {
+        grid-template-columns: repeat(2, minmax(220px, 1fr));
+      }
+    }
+
+    @media (max-width: 576px) {
+      .menu-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .menu-wide-card .card-body {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .menu-featured .menu-wide-card-link {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .menu-wide-card .card-title {
+        justify-content: center;
+      }
+
+      body.is-index {
+        padding-bottom: 124px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .footer-links {
+        justify-content: center;
+      }
+
+      header h1 {
+        font-size: 2.1rem;
+      }
+
+      .card-title {
+        min-height: auto;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="ui-enhancements.css" />
+</head>
+<body>
+
+  <header>
+    <h1>Menu Principal</h1>
+    <p>Conjunto de ferramentas desenvolvidas por Arthur Ferreira</p>
+    <p>Espero que seja útil para facilitar seu dia a dia</p>
+  </header>
+
+  <main class="container my-5">
+    <div class="row g-4 menu-grid">
+
+      <div class="col-md-6">
+        <div class="card menu-card h-100">
+          <div class="card-body text-center">
+            <i class="fa-solid fa-comments menu-icon mb-2"></i>
+            <h5 class="card-title">Chats Públicos UTFPR-CT</h5>
+            <p class="card-text">Acesse os chats com assuntos gerais para a UTFPR-CT.</p>
+            <a href="consultasutfprct.html" class="btn btn-primary btn-enter">Entrar</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card menu-card h-100 is-restricted-card">
+          <span class="card-lock-badge" aria-hidden="true"><i class="fa-solid fa-lock"></i></span>
+          <div class="card-body text-center">
+            <i class="fa-solid fa-lock menu-icon mb-2"></i>
+            <h5 class="card-title">Interno DIRPLAD/ASGEAD-CT</h5>
+            <p class="card-text">Consultas relacionadas à DIRPLAD-CT (ASGEAD/DEOFI).</p>
+            <a href="asgead_interno.html" class="btn btn-primary btn-enter">Entrar</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card menu-card h-100 is-restricted-card">
+          <span class="card-lock-badge" aria-hidden="true"><i class="fa-solid fa-lock"></i></span>
+          <div class="card-body text-center">
+            <i class="fa-solid fa-user-shield menu-icon mb-2"></i>
+            <h5 class="card-title">AF - Restrito</h5>
+            <p class="card-text">Restrito - referente automações, scripts e comandos pessoais</p>
+            <a href="ASGEAD-CT_AF.html" class="btn btn-primary btn-enter">Entrar</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card menu-card h-100">
+          <div class="card-body text-center">
+            <i class="fa-solid fa-tools menu-icon mb-2"></i>
+            <h5 class="card-title">Ferramentas - CABA-CT</h5>
+            <p class="card-text">Acesse ferramentas de apoio da CABA-CT.</p>
+            <a href="CABA-CT.html" class="btn btn-primary btn-enter">Entrar</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card menu-card h-100">
+          <div class="card-body text-center">
+            <i class="fa-solid fa-database menu-icon mb-2"></i>
+            <h5 class="card-title">Despesas Gerais e Arrecadação Própria</h5>
+            <p class="card-text">Consulte os valores arrecadados, incluindo projetos, repasses e valores disponíveis das Unidades da UTFPR-CT.</p>
+            <a href="asgead_despesa_arrecadacao.html" class="btn btn-primary btn-enter">Entrar</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card menu-card h-100">
+          <div class="card-body text-center">
+            <i class="fa-solid fa-file-contract menu-icon mb-2"></i>
+            <h5 class="card-title">Contratos Continuados</h5>
+            <p class="card-text">Acesse as planilhas, dados e chats para realizar alterações simplificadas nas base de dados das consultas. Restrito</p>
+            <a href="GestaoContratual.html" class="btn btn-primary btn-enter">Entrar</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card menu-card h-100">
+          <div class="card-body text-center">
+            <i class="fa-solid fa-plane-departure menu-icon mb-2"></i>
+            <h5 class="card-title">Despesas SCDP - Diárias, Passagens e Ressarcimentos</h5>
+            <p class="card-text">Acesse as consultas e controles referentes a diárias, passagens e ressarcimentos do SCDP.</p>
+            <a href="ASGEAD-CT_SCDP.html" class="btn btn-primary btn-enter">Entrar</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card menu-card h-100">
+          <div class="card-body text-center">
+            <i class="fa-solid fa-landmark menu-icon mb-2"></i>
+            <h5 class="card-title">Chats Públicos UTFPR-LD</h5>
+            <p class="card-text">Acesse os chats públicos da UTFPR-LD e teste vídeos na própria página.</p>
+            <a href="utfprld/index.html" class="btn btn-primary btn-enter">Entrar</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card menu-card h-100">
+          <div class="card-body text-center">
+            <i class="fa-solid fa-landmark menu-icon mb-2"></i>
+            <h5 class="card-title">Arrecadação UTFPR</h5>
+            <p class="card-text">Espaço para apresentação dos relatório de valores arrecadas.</p>
+            <a href="UTFPR_arrecadacao.html" class="btn btn-primary btn-enter">Entrar</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 menu-wide-card">
+        <div class="card menu-card menu-featured h-100">
+          <a href="demais-sistemas.html" class="menu-wide-card-link" aria-label="Abrir Demais Sistemas e Instruções">
+            <i class="fa-solid fa-circle-info menu-icon" aria-hidden="true"></i>
+            <div>
+              <h5 class="card-title">Demais Sistemas e Instruções</h5>
+              <p class="card-text">Acesse links úteis, orientações e vídeos rápidos de apoio.</p>
+            </div>
+            <span class="featured-arrow" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <span>&copy; 2025 Arthur Ferreira | Todos os direitos reservados</span>
+      <div class="footer-links">
+        <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i> arthurferreira@utfpr.edu.br</a>
+        <a href="mailto:deofi-ct@utfpr.edu.br"><i class="fa-solid fa-envelope"></i> deofi-ct@utfpr.edu.br</a>
+        <a href="mailto:arthuraaferreira@gmail.com"><i class="fa-solid fa-envelope-circle-check"></i> arthuraaferreira@gmail.com</a>
+        <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i> ArthurAAFerreira</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="ui-enhancements.js"></script>
+</body>
+</html>

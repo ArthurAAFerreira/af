@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ferramentas CABA-CT</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="ui-enhancements.css" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f9f9fb;
+      color: #333;
+    }
+
+    /* Banner */
+    header {
+      background: linear-gradient(135deg, #001f3f, #003366);
+      color: white;
+      padding: 50px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+    }
+
+    header p {
+      font-size: 1rem;
+      margin-top: 10px;
+      opacity: 0.9;
+    }
+
+    /* Container dos chats */
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      padding: 30px 0;
+    }
+
+    /* Cada chat individual */
+    .chat-item {
+      width: 90%;
+      box-sizing: border-box;
+      border-radius: 6px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+      background-color: white;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    /* --- NOVO ESTILO DO CABEÇALHO (Título + Subtítulo) --- */
+    .chat-header {
+      padding: 15px 20px;
+      background-color: #e6f0ff;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .chat-header:hover {
+      background-color: #cce0ff;
+    }
+
+    .chat-header h2 {
+      margin: 0;
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #003366;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-subtitle {
+      margin-top: 5px;
+      font-size: 0.9rem;
+      color: #666;
+      font-weight: normal;
+    }
+
+    /* Wrapper para o conteúdo oculto (apenas o iframe agora) */
+    .chat-content-wrapper {
+        display: none; /* Inicialmente escondido */
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    /* Estilo padrão do Iframe */
+    .chat-content-wrapper iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
+      display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    footer {
+      background: #001f3f;
+      color: #ccc;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.85rem;
+    }
+
+    footer a {
+      color: #66ccff;
+      margin: 0 8px;
+      font-size: 1.1rem;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    footer a:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1><i class="fa-solid fa-tools"></i> Ferramentas CABA-CT</h1>
+    <p>Análises e Processos Internos</p>
+  </header>
+
+  <div class="chat-container">
+
+    <div class="chat-item">
+      <div class="chat-header">
+        <h2>Análise de Orçamento para Reavaliação de Bem <i class="fa-solid fa-chevron-down"></i></h2>
+        <div class="chat-subtitle">
+          Informe os links de orçamento e obtenha o texto, média e pdf dos sites.
+        </div>
+      </div>
+      <div class="chat-content-wrapper">
+        <iframe src="https://n8n.arthuraaferreira.com.br/form/9af8ec35-e001-4a9c-911c-a8c4a4583f49"></iframe>
+      </div>
+    </div>
+
+    <div class="chat-item">
+      <div class="chat-header">
+        <h2>CABA-CT - Análise Processos de Baixa (1) <i class="fa-solid fa-chevron-down"></i></h2>
+        <div class="chat-subtitle">
+          Ferramenta para análise e conferência de processos de baixa.
+        </div>
+      </div>
+      <div class="chat-content-wrapper">
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/1e94b767-0cea-4694-8246-4388a6ca3573/chat"></iframe>
+      </div>
+    </div>
+
+    <div class="chat-item">
+      <div class="chat-header">
+        <h2>CABA-CT - Análise Processos de Baixa (2) <i class="fa-solid fa-chevron-down"></i></h2>
+        <div class="chat-subtitle">
+          Ferramenta auxiliar para análise de processos de baixa.
+        </div>
+      </div>
+      <div class="chat-content-wrapper">
+        <iframe src="https://n8n.arthuraaferreira.com.br/webhook/1e94b767-0cea-4694-8246-4388a6ca3573/chat"></iframe>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Arthur Ferreira | CABA-CT</p>
+    <div class="mt-2">
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script>
+    // Agora selecionamos a div inteira do cabeçalho
+    const headers = document.querySelectorAll('.chat-header');
+
+    headers.forEach(header => {
+      header.addEventListener('click', () => {
+        // O conteúdo é o próximo elemento irmão (o wrapper do iframe)
+        const content = header.nextElementSibling;
+        const icon = header.querySelector('i');
+
+        if (content.style.display === 'block') {
+          content.style.display = 'none';
+          icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+        } else {
+          content.style.display = 'block';
+          icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+        }
+      });
+    });
+  </script>
+
+  <script src="ui-enhancements.js"></script>
+
+</body>
+</html>

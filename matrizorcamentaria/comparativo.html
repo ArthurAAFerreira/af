@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Comparativo Real × Simulação — Matriz Orçamentária UTFPR-CT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="../ui-enhancements.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>
+      <i class="fa-solid fa-code-compare"></i>
+      <a href="../index.html">Comparativo Real × Simulação — Matriz Orçamentária</a>
+    </h1>
+    <p>Compare os valores da configuração oficial com até 5 simulações lado a lado, por unidade.</p>
+  </header>
+
+  <main>
+    <!-- SELEÇÃO -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-sliders"></i> Selecionar Simulações (até 5)</div>
+      <div class="panel-body">
+        <div class="config-grid">
+          <div class="field"><label>Simulação 1</label><select class="sim-sel"><option value="">Não usar</option></select></div>
+          <div class="field"><label>Simulação 2</label><select class="sim-sel"><option value="">Não usar</option></select></div>
+          <div class="field"><label>Simulação 3</label><select class="sim-sel"><option value="">Não usar</option></select></div>
+          <div class="field"><label>Simulação 4</label><select class="sim-sel"><option value="">Não usar</option></select></div>
+          <div class="field"><label>Simulação 5</label><select class="sim-sel"><option value="">Não usar</option></select></div>
+          <div class="field" style="align-self:end">
+            <button id="btnComparar" class="btn btn-save"><i class="fa-solid fa-code-compare"></i> Comparar</button>
+          </div>
+        </div>
+        <div id="statusMsg" class="status"></div>
+      </div>
+    </section>
+
+    <!-- PARÂMETROS FINANCEIROS -->
+    <section class="panel" id="headerPanel" style="display:none">
+      <div class="panel-header"><i class="fa-solid fa-money-bill-wave"></i> Parâmetros Financeiros</div>
+      <div class="panel-body">
+        <div class="table-wrap"><table id="headerTable"></table></div>
+      </div>
+    </section>
+
+    <!-- COMPARATIVO POR UNIDADE -->
+    <section class="panel" id="compPanel" style="display:none">
+      <div class="panel-header">
+        <span><i class="fa-solid fa-table"></i> Comparativo por Unidade</span>
+        <select id="filtroTipo" style="font-size:0.83rem;padding:4px 8px;border:1px solid var(--line);border-radius:6px;background:#fff">
+          <option value="">Todos os tipos</option>
+          <option value="GRADUACAO">Graduação</option>
+          <option value="POS_GRADUACAO">Pós-Graduação</option>
+          <option value="ADMINISTRATIVO">Administrativo</option>
+          <option value="GESTAO_DIRETORIA">Gestão/Diretoria</option>
+        </select>
+      </div>
+      <div class="panel-body">
+        <div class="table-wrap"><table id="compTable"></table></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Arthur Ferreira | ASGEAD-CT</p>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="modules/comparativo.js"></script>
+  <script src="../ui-enhancements.js"></script>
+</body>
+</html>

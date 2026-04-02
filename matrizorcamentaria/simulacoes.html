@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulações — Matriz Orçamentária UTFPR-CT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="../ui-enhancements.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>
+      <i class="fa-solid fa-vials"></i>
+      <a href="../index.html">Simulações — Matriz Orçamentária</a>
+    </h1>
+    <p>Crie e gerencie cenários alternativos modificando os parâmetros financeiros e pesos sem alterar a configuração oficial.</p>
+  </header>
+
+  <main>
+    <!-- SELEÇÃO -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-folder-open"></i> Simulações Salvas</div>
+      <div class="panel-body">
+        <div class="config-grid" style="align-items:end">
+          <div class="field">
+            <label for="simSelect">Selecionar simulação</label>
+            <select id="simSelect"><option value="">Nova simulação</option></select>
+          </div>
+          <div class="field">
+            <label for="simNome">Nome da simulação</label>
+            <input id="simNome" type="text" placeholder="Ex: Cenário com maior peso V1" />
+          </div>
+          <div class="field">
+            <label for="simDescricao">Descrição</label>
+            <input id="simDescricao" type="text" placeholder="Observações sobre este cenário" />
+          </div>
+          <div class="field" style="align-self:end">
+            <div class="btn-row" style="margin-top:0">
+              <button id="btnSalvar" class="btn btn-save"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+              <button id="btnExcluir" class="btn btn-delete"><i class="fa-solid fa-trash"></i> Excluir</button>
+              <button id="btnNova" class="btn btn-new"><i class="fa-solid fa-file-circle-plus"></i> Nova</button>
+              <button id="btnCopiarCfg" class="btn btn-secondary"><i class="fa-solid fa-copy"></i> Copiar Config</button>
+            </div>
+          </div>
+        </div>
+        <div id="statusMsg" class="status"></div>
+      </div>
+    </section>
+
+    <!-- RECURSOS -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-money-bill-wave"></i> Recursos Financeiros da Simulação</div>
+      <div class="panel-body">
+        <div class="config-grid">
+          <div class="field">
+            <label for="simRB">Recurso Bruto (R$)</label>
+            <input id="simRB" type="number" min="0" step="0.01" value="0" />
+          </div>
+          <div class="field">
+            <label for="simCC">Contratos Continuados (R$)</label>
+            <input id="simCC" type="number" min="0" step="0.01" value="0" />
+          </div>
+          <div class="field">
+            <label for="simOD">Outras Despesas (R$)</label>
+            <input id="simOD" type="number" min="0" step="0.01" value="0" />
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+          <div class="radio-group">
+            <label><input type="radio" name="simSegMode" value="PERCENTUAL" checked /> % do bruto</label>
+            <label><input type="radio" name="simSegMode" value="FIXO" /> Valor fixo</label>
+          </div>
+          <div class="field" style="min-width:200px">
+            <input id="simSegVal" type="number" min="0" step="0.01" value="0" placeholder="Segurança" />
+            <span class="field-hint" id="simSegHint">% do recurso bruto</span>
+          </div>
+        </div>
+        <div class="kpi-row" style="margin-top:16px">
+          <div class="kpi"><div class="kpi-label">Recurso Bruto</div><div id="kpiRB" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi"><div class="kpi-label">Contratos + Outras Desp.</div><div id="kpiCO" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi"><div class="kpi-label">Segurança</div><div id="kpiSeg" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi" style="border:2px solid var(--accent)"><div class="kpi-label">Recurso Líquido (calculado)</div><div id="kpiRL" class="kpi-value">R$ 0,00</div></div>
+          <div class="kpi" style="border:2px solid var(--ok);background:var(--ok-bg)"><div class="kpi-label">Recurso Líquido (base)</div><div id="kpiVB" class="kpi-value">R$ 0,00</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PESOS -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-scale-balanced"></i> Pesos das Variáveis</div>
+      <div class="panel-body">
+        <div class="weights-inline">
+          <div class="field"><label><i class="fa-solid fa-circle" style="color:var(--v1)"></i> V1 — Discentes (%)</label><input id="simPV1" type="number" min="0" max="100" step="0.01" value="20" /></div>
+          <div class="field"><label><i class="fa-solid fa-circle" style="color:var(--v2)"></i> V2 — Docentes/TAEs (%)</label><input id="simPV2" type="number" min="0" max="100" step="0.01" value="30" /></div>
+          <div class="field"><label><i class="fa-solid fa-circle" style="color:var(--v3)"></i> V3 — Titulação (%)</label><input id="simPV3" type="number" min="0" max="100" step="0.01" value="25" /></div>
+          <div class="field"><label><i class="fa-solid fa-circle" style="color:var(--v4)"></i> V4 — Estrutural (%)</label><input id="simPV4" type="number" min="0" max="100" step="0.01" value="25" /></div>
+        </div>
+        <div id="pesoStatus" class="status ok" style="margin-top:10px">
+          <i class="fa-solid fa-circle-check"></i> Soma: <strong id="pesoSoma">100%</strong>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SUB-PESOS V1 -->
+    <section class="panel">
+      <div class="panel-header" style="border-left:4px solid var(--v1)"><i class="fa-solid fa-user-graduate" style="color:var(--v1)"></i> Sub-pesos V1 — Discentes</div>
+      <div class="panel-body">
+        <div class="weights-2">
+          <div class="field"><label for="sv1Grad">Peso Graduação (%)</label><input id="sv1Grad" type="number" min="0" max="100" step="0.01" value="50" /></div>
+          <div class="field"><label for="sv1Pos">Peso Pós-Graduação (%)</label><input id="sv1Pos" type="number" min="0" max="100" step="0.01" value="50" /></div>
+        </div>
+        <div class="hint"><i class="fa-solid fa-circle-info"></i> Define a proporção entre a contribuição de graduação e pós-graduação no cálculo de V1.</div>
+      </div>
+    </section>
+
+    <!-- SUB-PESOS V2 -->
+    <section class="panel">
+      <div class="panel-header" style="border-left:4px solid var(--v2)"><i class="fa-solid fa-chalkboard-teacher" style="color:var(--v2)"></i> Sub-pesos V2 — Docentes e TAEs</div>
+      <div class="panel-body">
+        <div class="section-divider">Peso entre grupos</div>
+        <div class="weights-2">
+          <div class="field"><label for="sv2Docs">Peso Docentes (%)</label><input id="sv2Docs" type="number" min="0" max="100" step="0.01" value="60" /></div>
+          <div class="field"><label for="sv2Taes">Peso TAEs (%)</label><input id="sv2Taes" type="number" min="0" max="100" step="0.01" value="40" /></div>
+        </div>
+        <div class="section-divider">Pesos por regime de trabalho docente</div>
+        <div class="weights-3">
+          <div class="field"><label for="sv2h20">Docente 20h (fator)</label><input id="sv2h20" type="number" min="0" step="0.01" value="1" /></div>
+          <div class="field"><label for="sv2h40">Docente 40h (fator)</label><input id="sv2h40" type="number" min="0" step="0.01" value="2" /></div>
+          <div class="field"><label for="sv2DE">Docente DE (fator)</label><input id="sv2DE" type="number" min="0" step="0.01" value="3" /></div>
+        </div>
+        <div class="section-divider">Pesos para TAEs e Docentes em Função Administrativa</div>
+        <div class="weights-2">
+          <div class="field"><label for="sv2FP">Redução parcial (fator)</label><input id="sv2FP" type="number" min="0" step="0.01" value="1" /><span class="field-hint">TAEs parcial / Docentes função redução</span></div>
+          <div class="field"><label for="sv2FI">Redução integral (fator)</label><input id="sv2FI" type="number" min="0" step="0.01" value="2" /><span class="field-hint">TAEs integral / Docentes função integral</span></div>
+        </div>
+        <div class="hint"><i class="fa-solid fa-circle-info"></i> Os fatores são multiplicadores relativos. Docente DE com fator 3 tem 3× mais peso que Docente 20h com fator 1.</div>
+      </div>
+    </section>
+
+    <!-- SUB-PESOS V3 -->
+    <section class="panel">
+      <div class="panel-header" style="border-left:4px solid var(--v3)"><i class="fa-solid fa-graduation-cap" style="color:var(--v3)"></i> Sub-pesos V3 — Titulação Docente</div>
+      <div class="panel-body">
+        <div class="weights-inline">
+          <div class="field"><label for="sv3Grad">Graduação (fator)</label><input id="sv3Grad" type="number" min="0" step="0.01" value="1" /></div>
+          <div class="field"><label for="sv3Esp">Especialização (fator)</label><input id="sv3Esp" type="number" min="0" step="0.01" value="2" /></div>
+          <div class="field"><label for="sv3Mest">Mestrado (fator)</label><input id="sv3Mest" type="number" min="0" step="0.01" value="3" /></div>
+          <div class="field"><label for="sv3Dout">Doutorado (fator)</label><input id="sv3Dout" type="number" min="0" step="0.01" value="4" /></div>
+        </div>
+        <div class="hint"><i class="fa-solid fa-circle-info"></i> Maior titulação implica maior fator de ponderação no cálculo de V3.</div>
+      </div>
+    </section>
+
+    <!-- OVERRIDE POR UNIDADE -->
+    <details id="overrideSection" style="margin-bottom:16px">
+      <summary style="cursor:pointer;padding:12px 20px;background:var(--panel-bg);border:1px solid var(--line);border-radius:8px;font-weight:600;font-size:0.9rem;color:#1e3d6b;display:flex;align-items:center;gap:10px;list-style:none;user-select:none">
+        <i class="fa-solid fa-sliders" style="color:#e65100"></i>
+        Sobrescrever tipo de valor por unidade (apenas nesta simulação)
+        <span id="overrideCount" style="margin-left:auto;font-size:0.78rem;font-weight:500;color:var(--muted)">nenhum override</span>
+        <i class="fa-solid fa-chevron-down" id="overrideChevron" style="font-size:0.75rem;color:var(--muted)"></i>
+      </summary>
+      <div style="border:1px solid var(--line);border-top:none;border-radius:0 0 8px 8px;padding:16px;background:#fff">
+        <div class="hint" style="margin-bottom:12px">
+          <i class="fa-solid fa-circle-info"></i>
+          Permite alterar se uma unidade será <strong>Fixa</strong> ou <strong>Calculada</strong> somente para esta simulação.
+          Quando fixo, insira o valor que será destinado diretamente a essa unidade.
+        </div>
+        <div id="overrideBody"><span style="color:var(--muted);font-size:0.85rem">Carregando unidades...</span></div>
+      </div>
+    </details>
+
+    <!-- PREVIEW DE RESULTADO -->
+    <section class="panel" id="previewPanel" style="display:none">
+      <div class="panel-header" style="border-left:4px solid var(--accent)"><i class="fa-solid fa-eye"></i> Pré-visualização do Resultado</div>
+      <div class="panel-body">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Unidade</th>
+                <th class="text-right">Índice Composto</th>
+                <th class="text-right">% do Total</th>
+                <th class="text-right">Valor Simulado (R$)</th>
+              </tr>
+            </thead>
+            <tbody id="previewBody"></tbody>
+            <tfoot>
+              <tr class="row-total">
+                <td>TOTAL</td>
+                <td class="text-right">—</td>
+                <td class="text-right">100%</td>
+                <td id="previewTotal" class="text-right">—</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Arthur Ferreira | ASGEAD-CT</p>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <!-- Modal: Copiar Config -->
+  <div id="copyModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;align-items:center;justify-content:center">
+    <div style="background:#fff;border-radius:14px;padding:0;max-width:500px;width:92%;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.25)">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px 12px;border-bottom:1px solid #e2e8f0">
+        <strong style="font-size:1rem"><i class="fa-solid fa-copy"></i> Copiar parâmetros de...</strong>
+        <button id="btnCopyModalClose" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:#64748b"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="copyList" style="overflow-y:auto;padding:12px 8px"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="modules/simulacoes.js"></script>
+  <script src="../ui-enhancements.js"></script>
+</body>
+</html>

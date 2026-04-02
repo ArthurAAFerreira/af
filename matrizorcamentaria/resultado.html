@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resultado — Matriz Orçamentária UTFPR-CT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="../ui-enhancements.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>
+      <i class="fa-solid fa-chart-pie"></i>
+      <a href="../index.html">Resultado — Matriz Orçamentária</a>
+    </h1>
+    <p>Distribuição calculada do recurso de custeio por unidade com base na configuração ativa.</p>
+  </header>
+
+  <main>
+    <!-- RESUMO FINANCEIRO -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-money-bill-wave"></i> Resumo Financeiro</div>
+      <div class="panel-body">
+        <div class="kpi-row">
+          <div class="kpi"><div class="kpi-label">Recurso Bruto</div><div id="kpiRB" class="kpi-value">—</div></div>
+          <div class="kpi"><div class="kpi-label">Segurança</div><div id="kpiSeg" class="kpi-value">—</div></div>
+          <div class="kpi"><div class="kpi-label">Contratos Continuados</div><div id="kpiCC" class="kpi-value">—</div></div>
+          <div class="kpi"><div class="kpi-label">Outras Despesas</div><div id="kpiOD" class="kpi-value">—</div></div>
+          <div class="kpi" style="border:2px solid var(--accent)"><div class="kpi-label">Recurso Líquido</div><div id="kpiRL" class="kpi-value">—</div></div>
+          <div class="kpi" style="border:2px solid var(--ok);background:var(--ok-bg)"><div class="kpi-label">Base de Distribuição</div><div id="kpiVB" class="kpi-value">—</div></div>
+        </div>
+        <div class="kpi-row" style="margin-top:10px">
+          <div class="kpi"><div class="kpi-label">% Distribuído (sobre bruto)</div><div id="kpiPct" class="kpi-value">—</div></div>
+          <div class="kpi" style="border:1.5px solid #e65100;background:#fff3e0"><div class="kpi-label" style="color:#e65100">Distribuição Fixa</div><div id="kpiFixo" class="kpi-value" style="color:#e65100">—</div></div>
+          <div class="kpi" style="border:1.5px solid #1565c0;background:#e3f0fb"><div class="kpi-label" style="color:#1565c0">Distribuição Calculada</div><div id="kpiCalc" class="kpi-value" style="color:#1565c0">—</div></div>
+          <div class="kpi" style="border:2px solid var(--ok);background:var(--ok-bg)"><div class="kpi-label">Total Distribuído</div><div id="kpiTD" class="kpi-value">—</div></div>
+        </div>
+        <div id="cfgInfo" class="hint" style="margin-top:12px"></div>
+      </div>
+    </section>
+
+    <!-- RESULTADO POR UNIDADE -->
+    <section class="panel">
+      <div class="panel-header">
+        <span><i class="fa-solid fa-table"></i> Distribuição por Unidade</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="filtroTipo" style="font-size:0.83rem;padding:4px 8px;border:1px solid var(--line);border-radius:6px;background:#fff">
+            <option value="">Todos os tipos</option>
+            <option value="GRADUACAO">Graduação</option>
+            <option value="POS_GRADUACAO">Pós-Graduação</option>
+            <option value="ADMINISTRATIVO">Administrativo</option>
+            <option value="GESTAO_DIRETORIA">Gestão/Diretoria</option>
+          </select>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div id="statusMsg" class="status"></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Unidade</th>
+                <th>Tipo</th>
+                <th>Natureza</th>
+                <th class="text-right">Score V1</th>
+                <th class="text-right">Score V2</th>
+                <th class="text-right">Score V3</th>
+                <th class="text-right">Score V4</th>
+                <th class="text-right">Índice Composto</th>
+                <th class="text-right">% do Total</th>
+                <th class="text-right">Valor Estimado (R$)</th>
+              </tr>
+            </thead>
+            <tbody id="resultBody"></tbody>
+            <tfoot>
+              <tr class="row-total">
+                <td colspan="7">TOTAL</td>
+                <td id="totIndice" class="text-right">—</td>
+                <td class="text-right">—</td>
+                <td id="totValor" class="text-right">—</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Arthur Ferreira | ASGEAD-CT</p>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="modules/resultado.js"></script>
+  <script src="../ui-enhancements.js"></script>
+</body>
+</html>

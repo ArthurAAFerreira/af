@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Elaboração da Matriz Orçamentária de Custeio - UTFPR-CT</title>
+  <meta http-equiv="refresh" content="0; url=matrizorcamentaria/" />
+  <script>
+    window.location.replace('matrizorcamentaria/');
+  </script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="ui-enhancements.css" />
+
+  <style>
+    :root {
+      --bg: #f3f7fd;
+      --card: #ffffff;
+      --header: #0b2f61;
+      --header-2: #144a94;
+      --line: #d8e4f5;
+      --text: #223149;
+      --muted: #4f6382;
+      --ok: #0f7a34;
+      --warn: #9a6a00;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--header), var(--header-2));
+      color: #fff;
+      text-align: center;
+      padding: 46px 20px;
+      box-shadow: 0 10px 24px rgba(9, 41, 82, 0.28);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    header h1 a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    header p {
+      margin: 10px auto 0;
+      max-width: 980px;
+      opacity: 0.94;
+    }
+
+    main {
+      width: min(1400px, 96%);
+      margin: 22px auto;
+      display: grid;
+      gap: 14px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(20, 61, 118, 0.08);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 12px 14px;
+      background: linear-gradient(180deg, #f5f9ff 0%, #eaf2ff 100%);
+      border-bottom: 1px solid var(--line);
+      font-weight: 700;
+      color: #123865;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .panel-body {
+      padding: 12px;
+    }
+
+    .note-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .note-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      background: #fbfdff;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .note-card strong {
+      color: #143d71;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .config-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      align-items: end;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #274875;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      border: 1px solid #c8d8ef;
+      border-radius: 8px;
+      padding: 9px 10px;
+      font-size: 0.92rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .weights-inline {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 9px 14px;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-save { background: #0f5bb3; }
+    .btn-update { background: #1a7d36; }
+    .btn-new { background: #596c86; }
+    .btn-delete { background: #a52e2e; }
+    .btn-calc { background: #7c5600; }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .kpi {
+      border: 1px solid var(--line);
+      background: #f8fbff;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .kpi-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .kpi-value {
+      margin-top: 4px;
+      font-size: 1.2rem;
+      color: #153a69;
+      font-weight: 700;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 960px;
+      font-size: 0.86rem;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #e3edf9;
+      padding: 8px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background: #0f3768;
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    td input[type="number"] {
+      width: 120px;
+      border: 1px solid #c8d8ef;
+      border-radius: 6px;
+      padding: 6px;
+    }
+
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+    .row-total td {
+      background: #f0f6ff;
+      font-weight: 700;
+      color: #153d70;
+      border-top: 2px solid #bcd2f0;
+    }
+
+    .hint {
+      color: #587094;
+      font-size: 0.83rem;
+      margin-top: 6px;
+    }
+
+    .status {
+      margin-top: 8px;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .status.ok { color: var(--ok); }
+    .status.warn { color: var(--warn); }
+
+    footer {
+      background: #001f3f;
+      color: #ccc;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.85rem;
+      margin-top: 24px;
+    }
+
+    footer a {
+      color: #66ccff;
+      margin: 0 8px;
+      font-size: 1.1rem;
+      text-decoration: none;
+    }
+
+    @media (max-width: 900px) {
+      .weights-inline { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
+      td input[type="number"] { width: 96px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>
+      <i class="fa-solid fa-calculator"></i>
+      <a href="index.html">Elaboração da Matriz Orçamentária de Custeio - UTFPR-CT</a>
+    </h1>
+    <p>Cadastre simulações, ajuste pesos das variáveis e gere a distribuição do recurso por departamento com base em dados fixos do Supabase.</p>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="panel-header">Regras e Variáveis</div>
+      <div class="panel-body">
+        <div class="note-grid">
+          <div class="note-card"><strong>Variável 1: Discentes</strong>Base ligada a alunos/formandos/carga ou matrículas, conforme recorte por departamento.</div>
+          <div class="note-card"><strong>Variável 2: Docentes e TA</strong>Composição por docentes e técnicos-administrativos (dados SIAPE).</div>
+          <div class="note-card"><strong>Variável 3: Titulação Docente</strong>Peso para graduação, especialização, mestrado e doutorado.</div>
+          <div class="note-card"><strong>Variável 4: Estrutural</strong>Fator estrutural/laboratórios e custos fixos departamentais.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">Simulação</div>
+      <div class="panel-body">
+        <div class="config-grid">
+          <div class="field">
+            <label for="simulacaoSelect">Simulação salva</label>
+            <select id="simulacaoSelect">
+              <option value="">Nova simulação</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="simulacaoNome">Nome da simulação</label>
+            <input id="simulacaoNome" type="text" placeholder="Ex: Cenário Base 2026" />
+          </div>
+          <div class="field">
+            <label for="recursoTotal">Recurso total (R$)</label>
+            <input id="recursoTotal" type="number" min="0" step="0.01" value="0" />
+          </div>
+          <div class="field">
+            <label for="observacoes">Observações</label>
+            <textarea id="observacoes" rows="2" placeholder="Descrição opcional"></textarea>
+          </div>
+        </div>
+
+        <div class="weights-inline" style="margin-top: 10px;">
+          <div class="field">
+            <label for="pesoV1">Peso V1 (%)</label>
+            <input id="pesoV1" type="number" min="0" step="0.01" value="20" />
+          </div>
+          <div class="field">
+            <label for="pesoV2">Peso V2 (%)</label>
+            <input id="pesoV2" type="number" min="0" step="0.01" value="30" />
+          </div>
+          <div class="field">
+            <label for="pesoV3">Peso V3 (%)</label>
+            <input id="pesoV3" type="number" min="0" step="0.01" value="25" />
+          </div>
+          <div class="field">
+            <label for="pesoV4">Peso V4 (%)</label>
+            <input id="pesoV4" type="number" min="0" step="0.01" value="25" />
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button id="btnSalvar" class="btn btn-save"><i class="fa-solid fa-floppy-disk"></i> Salvar nova</button>
+          <button id="btnAtualizar" class="btn btn-update"><i class="fa-solid fa-rotate"></i> Atualizar selecionada</button>
+          <button id="btnExcluir" class="btn btn-delete"><i class="fa-solid fa-trash"></i> Excluir selecionada</button>
+          <button id="btnNova" class="btn btn-new"><i class="fa-solid fa-file-circle-plus"></i> Limpar / Nova</button>
+          <button id="btnRecalcular" class="btn btn-calc"><i class="fa-solid fa-calculator"></i> Recalcular matriz</button>
+        </div>
+
+        <div class="hint">Pesos são percentuais. O cálculo usa: índice = (V1*p1 + V2*p2 + V3*p3 + V4*p4). A distribuição do recurso é proporcional ao índice de cada departamento.</div>
+        <div id="statusMsg" class="status"></div>
+
+        <div class="kpi-row">
+          <div class="kpi">
+            <div class="kpi-label">Soma dos Pesos</div>
+            <div id="kpiPesoTotal" class="kpi-value">100%</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Departamentos</div>
+            <div id="kpiDepartamentos" class="kpi-value">0</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Recurso Distribuído</div>
+            <div id="kpiDistribuido" class="kpi-value">R$ 0,00</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Diferença p/ Recurso Total</div>
+            <div id="kpiDiferenca" class="kpi-value">R$ 0,00</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">Dados Departamentais e Resultado da Matriz</div>
+      <div class="panel-body">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Departamento</th>
+                <th class="text-center">V1</th>
+                <th class="text-center">V2</th>
+                <th class="text-center">V3</th>
+                <th class="text-center">V4</th>
+                <th class="text-right">Índice</th>
+                <th class="text-right">Participação</th>
+                <th class="text-right">Valor da Matriz (R$)</th>
+              </tr>
+            </thead>
+            <tbody id="matrizBody"></tbody>
+            <tfoot>
+              <tr class="row-total">
+                <td>TOTAL</td>
+                <td colspan="4"></td>
+                <td id="totalIndice" class="text-right">0</td>
+                <td id="totalParticipacao" class="text-right">100,00%</td>
+                <td id="totalValor" class="text-right">R$ 0,00</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Arthur Ferreira | ASGEAD-CT</p>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://wycjvjlhabiyhusupivx.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
+
+    const fallbackDepartments = [
+      'DACOC','DADIN','DAEFI','DAELN','DAELT','DAEST','DAFCH','DAFIS','DAGEE','DAINF','DALEM','DALIC','DAMAT','DAMEC','DAQBI','DEAAU','DAEDU',
+      'CPGEI','PPGA','PPGCA','PPGCTA','PPGDP','PPGEB','PPGEC','PPGEF','PPGEL','PPGEM','PPGET','PPGFA','PPGFCET','PPGPGP','PPGQ','PPGSAU','PPGSE','PPGTE','PROFIAP','PROFMAT'
+    ];
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const state = {
+      currentSimulationId: null,
+      departments: [],
+      fixedData: new Map(),
+      currentOverrides: new Map(),
+    };
+
+    function brMoney(value) {
+      return Number(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function brPercent(value) {
+      return Number(value || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
+    }
+
+    function toNumber(v) {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function setStatus(message, ok = true) {
+      const el = document.getElementById('statusMsg');
+      el.textContent = message || '';
+      el.className = 'status ' + (ok ? 'ok' : 'warn');
+    }
+
+    function getWeights() {
+      return {
+        v1: toNumber(document.getElementById('pesoV1').value) / 100,
+        v2: toNumber(document.getElementById('pesoV2').value) / 100,
+        v3: toNumber(document.getElementById('pesoV3').value) / 100,
+        v4: toNumber(document.getElementById('pesoV4').value) / 100,
+      };
+    }
+
+    function getResourceTotal() {
+      return toNumber(document.getElementById('recursoTotal').value);
+    }
+
+    function buildRows() {
+      const body = document.getElementById('matrizBody');
+      body.innerHTML = '';
+
+      state.departments.forEach((depto) => {
+        const fixed = state.fixedData.get(depto) || { v1: 0, v2: 0, v3: 0, v4: 0 };
+        const override = state.currentOverrides.get(depto) || {};
+
+        const v1 = override.v1 ?? fixed.v1;
+        const v2 = override.v2 ?? fixed.v2;
+        const v3 = override.v3 ?? fixed.v3;
+        const v4 = override.v4 ?? fixed.v4;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${depto}</td>
+          <td class="text-center"><input type="number" step="0.0001" data-depto="${depto}" data-var="v1" value="${v1}"></td>
+          <td class="text-center"><input type="number" step="0.0001" data-depto="${depto}" data-var="v2" value="${v2}"></td>
+          <td class="text-center"><input type="number" step="0.0001" data-depto="${depto}" data-var="v3" value="${v3}"></td>
+          <td class="text-center"><input type="number" step="0.0001" data-depto="${depto}" data-var="v4" value="${v4}"></td>
+          <td class="text-right" data-out="indice">0</td>
+          <td class="text-right" data-out="part">0,00%</td>
+          <td class="text-right" data-out="valor">R$ 0,00</td>
+        `;
+        body.appendChild(tr);
+      });
+
+      body.querySelectorAll('input[type="number"]').forEach((input) => {
+        input.addEventListener('input', recalculateMatrix);
+      });
+
+      document.getElementById('kpiDepartamentos').textContent = String(state.departments.length);
+      recalculateMatrix();
+    }
+
+    function collectRows() {
+      const grouped = new Map();
+      document.querySelectorAll('#matrizBody input[type="number"]').forEach((input) => {
+        const depto = input.dataset.depto;
+        const variable = input.dataset.var;
+        if (!grouped.has(depto)) grouped.set(depto, { departamento: depto, v1: 0, v2: 0, v3: 0, v4: 0 });
+        grouped.get(depto)[variable] = toNumber(input.value);
+      });
+      return Array.from(grouped.values());
+    }
+
+    function recalculateMatrix() {
+      const rows = collectRows();
+      const weights = getWeights();
+      const recursoTotal = getResourceTotal();
+
+      const weighted = rows.map((row) => {
+        const indice = row.v1 * weights.v1 + row.v2 * weights.v2 + row.v3 * weights.v3 + row.v4 * weights.v4;
+        return { ...row, indice };
+      });
+
+      const somaIndice = weighted.reduce((acc, item) => acc + item.indice, 0);
+      let somaValor = 0;
+
+      document.querySelectorAll('#matrizBody tr').forEach((tr, idx) => {
+        const item = weighted[idx];
+        const part = somaIndice > 0 ? (item.indice / somaIndice) : 0;
+        const valor = recursoTotal * part;
+        somaValor += valor;
+
+        tr.querySelector('[data-out="indice"]').textContent = item.indice.toLocaleString('pt-BR', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+        tr.querySelector('[data-out="part"]').textContent = brPercent(part * 100);
+        tr.querySelector('[data-out="valor"]').textContent = brMoney(valor);
+      });
+
+      const pesoTotal = (weights.v1 + weights.v2 + weights.v3 + weights.v4) * 100;
+      const diferenca = recursoTotal - somaValor;
+
+      document.getElementById('kpiPesoTotal').textContent = brPercent(pesoTotal);
+      document.getElementById('kpiDistribuido').textContent = brMoney(somaValor);
+      document.getElementById('kpiDiferenca').textContent = brMoney(diferenca);
+
+      document.getElementById('totalIndice').textContent = somaIndice.toLocaleString('pt-BR', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+      document.getElementById('totalValor').textContent = brMoney(somaValor);
+      document.getElementById('totalParticipacao').textContent = '100,00%';
+
+      if (Math.abs(pesoTotal - 100) > 0.001) {
+        setStatus('Atenção: a soma dos pesos está diferente de 100%.', false);
+      } else {
+        setStatus('Matriz recalculada com sucesso.', true);
+      }
+    }
+
+    async function loadDepartments() {
+      const { data, error } = await supabase
+        .schema('utfprct')
+        .from('matriz_orc_departamentos')
+        .select('codigo')
+        .order('codigo', { ascending: true });
+
+      if (error || !data || !data.length) {
+        state.departments = [...fallbackDepartments];
+        return;
+      }
+
+      state.departments = data.map((d) => d.codigo).filter(Boolean);
+    }
+
+    async function loadFixedData() {
+      state.fixedData.clear();
+      const { data, error } = await supabase
+        .schema('utfprct')
+        .from('matriz_orc_dados_fixos')
+        .select('departamento,v1_discentes,v2_docentes_ta,v3_titulacao,v4_estrutural');
+
+      if (!error && data) {
+        data.forEach((row) => {
+          state.fixedData.set(row.departamento, {
+            v1: toNumber(row.v1_discentes),
+            v2: toNumber(row.v2_docentes_ta),
+            v3: toNumber(row.v3_titulacao),
+            v4: toNumber(row.v4_estrutural),
+          });
+        });
+      }
+    }
+
+    async function loadSimulations() {
+      const select = document.getElementById('simulacaoSelect');
+      select.innerHTML = '<option value="">Nova simulação</option>';
+
+      const { data, error } = await supabase
+        .schema('utfprct')
+        .from('matriz_orc_simulacoes')
+        .select('id,nome')
+        .order('created_at', { ascending: false });
+
+      if (error || !data) {
+        setStatus('Não foi possível carregar as simulações salvas.', false);
+        return;
+      }
+
+      data.forEach((item) => {
+        const option = document.createElement('option');
+        option.value = String(item.id);
+        option.textContent = item.nome;
+        select.appendChild(option);
+      });
+    }
+
+    function clearSimulationForm() {
+      state.currentSimulationId = null;
+      state.currentOverrides.clear();
+      document.getElementById('simulacaoSelect').value = '';
+      document.getElementById('simulacaoNome').value = '';
+      document.getElementById('recursoTotal').value = '0';
+      document.getElementById('observacoes').value = '';
+      document.getElementById('pesoV1').value = '20';
+      document.getElementById('pesoV2').value = '30';
+      document.getElementById('pesoV3').value = '25';
+      document.getElementById('pesoV4').value = '25';
+      buildRows();
+    }
+
+    async function loadSimulation(simulationId) {
+      if (!simulationId) {
+        clearSimulationForm();
+        return;
+      }
+
+      const id = Number(simulationId);
+      const { data: header, error: headerError } = await supabase
+        .schema('utfprct')
+        .from('matriz_orc_simulacoes')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (headerError || !header) {
+        setStatus('Erro ao carregar cabeçalho da simulação.', false);
+        return;
+      }
+
+      const { data: detail, error: detailError } = await supabase
+        .schema('utfprct')
+        .from('matriz_orc_simulacao_departamentos')
+        .select('departamento,v1_discentes,v2_docentes_ta,v3_titulacao,v4_estrutural')
+        .eq('simulacao_id', id);
+
+      if (detailError) {
+        setStatus('Erro ao carregar detalhes da simulação.', false);
+        return;
+      }
+
+      state.currentSimulationId = id;
+      state.currentOverrides.clear();
+      (detail || []).forEach((row) => {
+        state.currentOverrides.set(row.departamento, {
+          v1: toNumber(row.v1_discentes),
+          v2: toNumber(row.v2_docentes_ta),
+          v3: toNumber(row.v3_titulacao),
+          v4: toNumber(row.v4_estrutural),
+        });
+      });
+
+      document.getElementById('simulacaoNome').value = header.nome || '';
+      document.getElementById('recursoTotal').value = String(toNumber(header.recurso_total));
+      document.getElementById('observacoes').value = header.observacoes || '';
+      document.getElementById('pesoV1').value = String(toNumber(header.peso_v1));
+      document.getElementById('pesoV2').value = String(toNumber(header.peso_v2));
+      document.getElementById('pesoV3').value = String(toNumber(header.peso_v3));
+      document.getElementById('pesoV4').value = String(toNumber(header.peso_v4));
+
+      buildRows();
+      setStatus('Simulação carregada para edição.', true);
+    }
+
+    async function saveSimulation(isUpdate) {
+      const nome = document.getElementById('simulacaoNome').value.trim();
+      if (!nome) {
+        setStatus('Informe um nome para a simulação.', false);
+        return;
+      }
+
+      const payload = {
+        nome,
+        recurso_total: getResourceTotal(),
+        peso_v1: toNumber(document.getElementById('pesoV1').value),
+        peso_v2: toNumber(document.getElementById('pesoV2').value),
+        peso_v3: toNumber(document.getElementById('pesoV3').value),
+        peso_v4: toNumber(document.getElementById('pesoV4').value),
+        observacoes: document.getElementById('observacoes').value.trim() || null,
+      };
+
+      let simulationId = state.currentSimulationId;
+
+      if (isUpdate) {
+        if (!simulationId) {
+          setStatus('Selecione uma simulação para atualizar.', false);
+          return;
+        }
+
+        const { error } = await supabase
+          .schema('utfprct')
+          .from('matriz_orc_simulacoes')
+          .update(payload)
+          .eq('id', simulationId);
+
+        if (error) {
+          setStatus('Erro ao atualizar simulação: ' + error.message, false);
+          return;
+        }
+      } else {
+        const { data, error } = await supabase
+          .schema('utfprct')
+          .from('matriz_orc_simulacoes')
+          .insert(payload)
+          .select('id')
+          .single();
+
+        if (error || !data) {
+          setStatus('Erro ao salvar simulação: ' + (error ? error.message : 'sem retorno de ID'), false);
+          return;
+        }
+
+        simulationId = data.id;
+        state.currentSimulationId = simulationId;
+      }
+
+      const rows = collectRows().map((row) => ({
+        simulacao_id: simulationId,
+        departamento: row.departamento,
+        v1_discentes: row.v1,
+        v2_docentes_ta: row.v2,
+        v3_titulacao: row.v3,
+        v4_estrutural: row.v4,
+      }));
+
+      const { error: detailError } = await supabase
+        .schema('utfprct')
+        .from('matriz_orc_simulacao_departamentos')
+        .upsert(rows, { onConflict: 'simulacao_id,departamento' });
+
+      if (detailError) {
+        setStatus('Simulação salva, mas houve erro nos dados por departamento: ' + detailError.message, false);
+        return;
+      }
+
+      await loadSimulations();
+      document.getElementById('simulacaoSelect').value = String(simulationId);
+      setStatus(isUpdate ? 'Simulação atualizada com sucesso.' : 'Simulação criada com sucesso.', true);
+    }
+
+    async function deleteSimulation() {
+      if (!state.currentSimulationId) {
+        setStatus('Selecione uma simulação para excluir.', false);
+        return;
+      }
+
+      const ok = window.confirm('Deseja realmente excluir a simulação selecionada?');
+      if (!ok) return;
+
+      const { error } = await supabase
+        .schema('utfprct')
+        .from('matriz_orc_simulacoes')
+        .delete()
+        .eq('id', state.currentSimulationId);
+
+      if (error) {
+        setStatus('Erro ao excluir simulação: ' + error.message, false);
+        return;
+      }
+
+      await loadSimulations();
+      clearSimulationForm();
+      setStatus('Simulação excluída com sucesso.', true);
+    }
+
+    function bindEvents() {
+      document.getElementById('simulacaoSelect').addEventListener('change', (event) => {
+        loadSimulation(event.target.value);
+      });
+
+      ['pesoV1', 'pesoV2', 'pesoV3', 'pesoV4', 'recursoTotal'].forEach((id) => {
+        document.getElementById(id).addEventListener('input', recalculateMatrix);
+      });
+
+      document.getElementById('btnRecalcular').addEventListener('click', recalculateMatrix);
+      document.getElementById('btnSalvar').addEventListener('click', () => saveSimulation(false));
+      document.getElementById('btnAtualizar').addEventListener('click', () => saveSimulation(true));
+      document.getElementById('btnExcluir').addEventListener('click', deleteSimulation);
+      document.getElementById('btnNova').addEventListener('click', () => {
+        clearSimulationForm();
+        setStatus('Formulário limpo para nova simulação.', true);
+      });
+    }
+
+    async function init() {
+      bindEvents();
+      await loadDepartments();
+      await loadFixedData();
+      await loadSimulations();
+      buildRows();
+      setStatus('Página carregada. Informe os parâmetros para iniciar a simulação.', true);
+    }
+
+    init().catch((error) => {
+      console.error(error);
+      setStatus('Erro ao inicializar página: ' + error.message, false);
+    });
+  </script>
+
+  <script src="ui-enhancements.js"></script>
+</body>
+</html>
