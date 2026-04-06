@@ -62,7 +62,7 @@ function renderTiposLista() {
 }
 
 function populateTipoSelects() {
-  ['classTipo','eTipo'].forEach(id => {
+  ['classTipo','eTipo','attrTipo'].forEach(id => {
     const sel = $(id);
     const prev = sel.value;
     sel.innerHTML = '<option value="">Selecionar tipo...</option>';
@@ -89,11 +89,24 @@ async function addTipo() {
 
 /* ─── CLASSES ──────────────────────────────────────────────── */
 async function loadClasses(tipoId) {
-  if (!tipoId) { classesCache = []; populateClasseSelect(); renderClassesLista(); return; }
+  if (!tipoId) { classesCache = []; renderClassesLista(); return; }
   const { data } = await supabase.schema('utfprct').from('matriz_orc_estrutura_classes').select('*').eq('tipo_id', tipoId).order('nome');
   classesCache = data || [];
-  populateClasseSelect();
   renderClassesLista();
+}
+
+async function loadClassesForAttr(tipoId) {
+  const sel = $('attrClasse');
+  sel.innerHTML = '<option value="">Selecionar classe...</option>';
+  atributosCache = [];
+  renderAttrLista();
+  if (!tipoId) return;
+  const { data } = await supabase.schema('utfprct').from('matriz_orc_estrutura_classes').select('id,nome').eq('tipo_id', tipoId).order('nome');
+  (data || []).forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.id; opt.textContent = c.nome;
+    sel.appendChild(opt);
+  });
 }
 
 function renderClassesLista() {
@@ -461,6 +474,7 @@ async function init() {
   $('btnAddTipo').addEventListener('click', addTipo);
   $('classTipo').addEventListener('change', e => loadClasses(e.target.value));
   $('btnAddClasse').addEventListener('click', addClasse);
+  $('attrTipo').addEventListener('change', e => loadClassesForAttr(e.target.value));
   $('attrClasse').addEventListener('change', e => loadAtributos(e.target.value));
   $('btnAddAttr').addEventListener('click', addAtributo);
   $('eTipo').addEventListener('change', e => loadAtributosFormulario(e.target.value));
@@ -481,7 +495,7 @@ function applyAuth() {
     'tipoNome','tipoPeso','classeNome','attrDesc','attrPeso',
     'eNome','eSala','eRespNome','eRespEmail',
   ].forEach(id => { const el = $(id); if (el) el.disabled = !ok; });
-  ['classTipo','attrClasse','eTipo','eUnidade','eSede'].forEach(id => {
+  ['classTipo','attrTipo','attrClasse','eTipo','eUnidade','eSede'].forEach(id => {
     const el = $(id); if (el) el.disabled = !ok;
   });
 }
