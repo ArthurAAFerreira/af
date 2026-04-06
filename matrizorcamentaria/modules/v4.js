@@ -89,11 +89,49 @@ async function addTipo() {
 
 /* ─── CLASSES ──────────────────────────────────────────────── */
 async function loadClasses(tipoId) {
-  if (!tipoId) { classesCache = []; populateClasseSelect(); return; }
+  if (!tipoId) { classesCache = []; populateClasseSelect(); renderClassesLista(); return; }
   const { data } = await supabase.schema('utfprct').from('matriz_orc_estrutura_classes').select('*').eq('tipo_id', tipoId).order('nome');
   classesCache = data || [];
   populateClasseSelect();
+  renderClassesLista();
 }
+
+function renderClassesLista() {
+  const el = $('classesLista');
+  if (!classesCache.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div style="display:flex;flex-direction:column;gap:6px">${classesCache.map(c => `
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--line);border-radius:var(--radius-sm);background:#f8fbff">
+      <input type="text" value="${c.nome.replace(/"/g, '&quot;')}" id="classeNomeEdit_${c.id}"
+        style="flex:1;border:1.5px solid #c0d4f0;border-radius:6px;padding:5px 8px;font-size:0.85rem;font-family:inherit" />
+      <button onclick="updateClasseNome(${c.id})" class="btn btn-update" style="padding:4px 10px;font-size:0.78rem" title="Salvar nome"><i class="fa-solid fa-check"></i></button>
+      <button onclick="deleteClasse(${c.id})" class="btn btn-delete" style="padding:4px 10px;font-size:0.78rem" title="Excluir classe"><i class="fa-solid fa-trash"></i></button>
+    </div>
+  `).join('')}</div>`;
+}
+
+window.updateClasseNome = async function(id) {
+  if (!canEdit('estruturas')) { setStatus('Sem permissão.', 'warn'); return; }
+  const input = $(`classeNomeEdit_${id}`);
+  const nome = input ? input.value.trim() : '';
+  if (!nome) { setStatus('O nome da classe não pode ser vazio.', 'warn'); return; }
+  const { error } = await supabase.schema('utfprct').from('matriz_orc_estrutura_classes').update({ nome }).eq('id', id);
+  if (error) { setStatus('Erro: ' + error.message, 'err'); return; }
+  setStatus(`Classe renomeada para "${nome}".`);
+  const tipoId = toNumber($('classTipo').value);
+  await loadClasses(tipoId);
+};
+
+window.deleteClasse = async function(id) {
+  if (!canEdit('estruturas')) { setStatus('Sem permissão.', 'warn'); return; }
+  const classe = classesCache.find(c => c.id === id);
+  if (!confirm(`Excluir a classe "${classe?.nome}" e todos os seus atributos?`)) return;
+  const { error } = await supabase.schema('utfprct').from('matriz_orc_estrutura_classes').delete().eq('id', id);
+  if (error) { setStatus('Erro: ' + error.message, 'err'); return; }
+  setStatus('Classe excluída.');
+  const tipoId = toNumber($('classTipo').value);
+  await loadClasses(tipoId);
+  if (toNumber($('attrClasse').value) === id) { atributosCache = []; renderAttrLista(); }
+};
 
 function populateClasseSelect() {
   const sel = $('attrClasse');
@@ -126,14 +164,43 @@ async function loadAtributos(classeId) {
 }
 
 function renderAttrLista() {
-  $('attrLista').innerHTML = atributosCache.length
-    ? `<div style="display:flex;flex-wrap:wrap;gap:8px">${atributosCache.map(a =>
-        `<span style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:99px;border:1.5px solid var(--line);background:#f8fbff;font-size:0.82rem">
-          ${a.descricao} <strong style="color:var(--accent)">× ${a.peso}</strong>
-        </span>`
-      ).join('')}</div>`
-    : '<p style="color:var(--muted);font-size:0.85rem">Nenhum atributo nesta classe.</p>';
+  const el = $('attrLista');
+  if (!atributosCache.length) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:0.85rem">Nenhum atributo nesta classe.</p>';
+    return;
+  }
+  el.innerHTML = `<div style="display:flex;flex-direction:column;gap:6px">${atributosCache.map(a => `
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--line);border-radius:var(--radius-sm);background:#f8fbff">
+      <span style="flex:1;font-size:0.85rem;font-weight:600">${a.descricao}</span>
+      <label style="font-size:0.78rem;color:var(--muted);white-space:nowrap">Peso:</label>
+      <input type="number" min="0" step="0.01" value="${a.peso}" id="attrPesoEdit_${a.id}"
+        style="width:72px;border:1.5px solid #c0d4f0;border-radius:6px;padding:5px 7px;font-size:0.85rem;font-family:inherit" />
+      <button onclick="updateAtributoPeso(${a.id})" class="btn btn-update" style="padding:4px 10px;font-size:0.78rem" title="Salvar peso"><i class="fa-solid fa-check"></i></button>
+      <button onclick="deleteAtributo(${a.id})" class="btn btn-delete" style="padding:4px 10px;font-size:0.78rem" title="Excluir atributo"><i class="fa-solid fa-trash"></i></button>
+    </div>
+  `).join('')}</div>`;
 }
+
+window.updateAtributoPeso = async function(id) {
+  if (!canEdit('estruturas')) { setStatus('Sem permissão.', 'warn'); return; }
+  const input = $(`attrPesoEdit_${id}`);
+  const peso = toNumber(input ? input.value : 0);
+  const { error } = await supabase.schema('utfprct').from('matriz_orc_estrutura_atributos').update({ peso }).eq('id', id);
+  if (error) { setStatus('Erro: ' + error.message, 'err'); return; }
+  const attr = atributosCache.find(a => a.id === id);
+  if (attr) attr.peso = peso;
+  setStatus(`Peso de "${attr?.descricao}" atualizado para ${peso}.`);
+};
+
+window.deleteAtributo = async function(id) {
+  if (!canEdit('estruturas')) { setStatus('Sem permissão.', 'warn'); return; }
+  const attr = atributosCache.find(a => a.id === id);
+  if (!confirm(`Excluir o atributo "${attr?.descricao}"?`)) return;
+  const { error } = await supabase.schema('utfprct').from('matriz_orc_estrutura_atributos').delete().eq('id', id);
+  if (error) { setStatus('Erro: ' + error.message, 'err'); return; }
+  setStatus('Atributo excluído.');
+  await loadAtributos(toNumber($('attrClasse').value));
+};
 
 async function addAtributo() {
   if (!canEdit('estruturas')) { setStatus('Sem permissão. Desbloqueie no Início.', 'warn'); return; }
