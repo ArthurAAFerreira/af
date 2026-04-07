@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cronograma de Repasse — Matriz Orçamentária UTFPR-CT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="../ui-enhancements.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .tab-bar { display:flex; gap:4px; margin-bottom:16px; border-bottom:2px solid var(--line); padding-bottom:0; }
+    .tab-btn  { padding:8px 20px; border:none; background:none; font-size:0.88rem; font-weight:600;
+                cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px;
+                color:var(--muted); transition:color .15s, border-color .15s; }
+    .tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+    .bim-disp-input { width:120px; text-align:right; border:1.5px solid var(--line); border-radius:6px;
+                       padding:4px 8px; font-family:inherit; font-size:0.82rem; }
+    .val-input { width:110px; text-align:right; border:1.5px solid var(--line); border-radius:6px;
+                 padding:3px 6px; font-family:inherit; font-size:0.82rem; }
+    .fixado-badge { font-size:0.68rem; background:#fff3e0; color:#e65100; border:1px solid #ffcc80;
+                    border-radius:4px; padding:1px 5px; }
+    .enviado-badge { font-size:0.68rem; background:#e8f5e9; color:#2e7d32; border:1px solid #a5d6a7;
+                     border-radius:4px; padding:1px 5px; }
+    .rem-card { border:1px solid var(--line); border-radius:var(--radius); margin-bottom:16px;
+                background:#fafcff; }
+    .rem-card-header { display:flex; align-items:center; gap:10px; padding:10px 14px;
+                        background:#f0f5ff; border-radius:var(--radius) var(--radius) 0 0;
+                        border-bottom:1px solid var(--line); flex-wrap:wrap; }
+    .rem-card-body { padding:12px 14px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>
+      <i class="fa-solid fa-paper-plane"></i>
+      <a href="../index.html">Cronograma de Repasse — Matriz Orçamentária</a>
+    </h1>
+    <p>Gestão do repasse de recursos às unidades: por bimestre e por remanejamento interno.</p>
+  </header>
+
+  <main>
+    <!-- RESUMO FINANCEIRO -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-circle-info"></i> Referência</div>
+      <div class="panel-body">
+        <div id="cfgInfo" class="hint"></div>
+        <div class="kpi-row" style="margin-top:12px">
+          <div class="kpi"><div class="kpi-label">Recurso Líquido</div><div id="kpiRL" class="kpi-value">—</div></div>
+          <div class="kpi"><div class="kpi-label">Base de Distribuição</div><div id="kpiVB" class="kpi-value">—</div></div>
+          <div class="kpi" style="border:1.5px solid var(--ok)"><div class="kpi-label">Total Já Repassado</div><div id="kpiEnviado" class="kpi-value">—</div></div>
+          <div class="kpi" style="border:1.5px solid var(--warn)"><div class="kpi-label">Total Restante a Repassar</div><div id="kpiRestante" class="kpi-value">—</div></div>
+        </div>
+        <div id="statusMsg" class="status" style="margin-top:10px"></div>
+      </div>
+    </section>
+
+    <!-- ABAS -->
+    <section class="panel">
+      <div class="panel-body">
+        <div class="tab-bar">
+          <button class="tab-btn active" data-tab="bimestral"><i class="fa-solid fa-calendar-alt"></i> Por Bimestre</button>
+          <button class="tab-btn" data-tab="remanejamento"><i class="fa-solid fa-shuffle"></i> Remanejamento Interno</button>
+        </div>
+
+        <!-- ABA 1: POR BIMESTRE -->
+        <div class="tab-panel active" id="tab-bimestral">
+          <div class="hint" style="margin-bottom:14px">
+            <i class="fa-solid fa-circle-info"></i>
+            Defina o <strong>valor disponível para repasse</strong> em cada bimestre. O sistema distribui proporcionalmente
+            conforme o cronograma de gastos de cada unidade. Marque <i class="fa-solid fa-check"></i> para confirmar envio.
+            Fixe um valor para excluí-lo do recálculo proporcional.
+          </div>
+
+          <!-- Linha de valor disponível por bimestre -->
+          <div id="bimDispPanel" style="margin-bottom:18px"></div>
+
+          <!-- Tabela de repasse por unidade -->
+          <div id="bimRepassePanel"></div>
+        </div>
+
+        <!-- ABA 2: REMANEJAMENTO INTERNO -->
+        <div class="tab-panel" id="tab-remanejamento">
+          <div class="hint" style="margin-bottom:14px">
+            <i class="fa-solid fa-circle-info"></i>
+            Cada <strong>remanejamento interno</strong> distribui um valor disponível entre as unidades proporcionalmente
+            ao saldo restante de cada uma. Você pode fixar o valor de uma unidade e recalcular as demais.
+          </div>
+
+          <div style="margin-bottom:14px">
+            <button id="btnNovoRem" class="btn btn-add"><i class="fa-solid fa-plus"></i> Novo Remanejamento</button>
+          </div>
+
+          <div id="kpiRem" class="kpi-row" style="margin-bottom:16px">
+            <div class="kpi"><div class="kpi-label">Nº de Remanejamentos</div><div id="kpiNRem" class="kpi-value">0</div></div>
+            <div class="kpi"><div class="kpi-label">Total Distribuído (rem.)</div><div id="kpiTotalRem" class="kpi-value">—</div></div>
+            <div class="kpi" style="border:1.5px solid var(--warn)"><div class="kpi-label">Saldo p/ Distribuir</div><div id="kpiSaldoRem" class="kpi-value">—</div></div>
+          </div>
+
+          <div id="remanejamentosLista"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Arthur Ferreira | ASGEAD-CT</p>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="modules/repasse.js"></script>
+  <script src="../ui-enhancements.js"></script>
+</body>
+</html>

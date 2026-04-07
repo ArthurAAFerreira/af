@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cronograma de Gastos — Matriz Orçamentária UTFPR-CT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="../ui-enhancements.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>
+      <i class="fa-solid fa-calendar-check"></i>
+      <a href="../index.html">Cronograma de Gastos — Matriz Orçamentária</a>
+    </h1>
+    <p>Planejamento bimestral de desembolso por unidade, limitado ao valor apurado na matriz.</p>
+  </header>
+
+  <main>
+    <!-- RESUMO -->
+    <section class="panel">
+      <div class="panel-header"><i class="fa-solid fa-circle-info"></i> Referência</div>
+      <div class="panel-body">
+        <div id="cfgInfo" class="hint"></div>
+        <div class="kpi-row" style="margin-top:12px">
+          <div class="kpi"><div class="kpi-label">Recurso Líquido (total)</div><div id="kpiRL" class="kpi-value">—</div></div>
+          <div class="kpi" style="border:2px solid var(--ok);background:var(--ok-bg)"><div class="kpi-label">Base de Distribuição</div><div id="kpiVB" class="kpi-value">—</div></div>
+          <div class="kpi"><div class="kpi-label">Total Planejado</div><div id="kpiPlaneado" class="kpi-value">—</div></div>
+          <div class="kpi"><div class="kpi-label">Total Disponível (não planejado)</div><div id="kpiDisp" class="kpi-value">—</div></div>
+        </div>
+        <div id="statusMsg" class="status" style="margin-top:10px"></div>
+      </div>
+    </section>
+
+    <!-- TABELA DE GASTOS -->
+    <section class="panel">
+      <div class="panel-header">
+        <span><i class="fa-solid fa-table"></i> Plano de Gastos por Bimestre</span>
+        <button id="btnSalvar" class="btn btn-save" style="font-size:0.82rem;padding:5px 14px">
+          <i class="fa-solid fa-floppy-disk"></i> Salvar tudo
+        </button>
+      </div>
+      <div class="panel-body">
+        <div class="hint" style="margin-bottom:12px">
+          <i class="fa-solid fa-circle-info"></i>
+          O somatório dos bimestres por unidade não pode ultrapassar o <strong>Valor Estimado</strong> calculado na matriz de resultado.
+          Campos em <span style="color:var(--err);font-weight:600">vermelho</span> indicam excesso.
+        </div>
+        <div class="table-wrap">
+          <table id="tblCronograma">
+            <thead>
+              <tr>
+                <th>Unidade</th>
+                <th class="text-right">Limite (R$)</th>
+                <th class="text-right col-bim">1º Bim<br><small>Jan–Fev</small></th>
+                <th class="text-right col-bim">2º Bim<br><small>Mar–Abr</small></th>
+                <th class="text-right col-bim">3º Bim<br><small>Mai–Jun</small></th>
+                <th class="text-right col-bim">4º Bim<br><small>Jul–Ago</small></th>
+                <th class="text-right col-bim">5º Bim<br><small>Set–Out</small></th>
+                <th class="text-right col-bim">6º Bim<br><small>Nov–Dez</small></th>
+                <th class="text-right">Total Planj.</th>
+                <th class="text-right">Saldo</th>
+              </tr>
+            </thead>
+            <tbody id="cronogramaBody"></tbody>
+            <tfoot id="cronogramaTotais"></tfoot>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Arthur Ferreira | ASGEAD-CT</p>
+    <div>
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="modules/cronograma.js"></script>
+  <script src="../ui-enhancements.js"></script>
+</body>
+</html>

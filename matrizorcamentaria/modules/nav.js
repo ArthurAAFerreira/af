@@ -9,6 +9,8 @@ const PAGE_PERM = {
   'v4.html':           'estruturas',
   'fixo.html':         'configuracao',
   'simulacoes.html':   'simulacoes',
+  'cronograma.html':   'cronograma',
+  'repasse.html':      'cronograma',
 };
 
 export function renderNav(activePage) {
@@ -27,6 +29,8 @@ export function renderNav(activePage) {
     { href: 'simulacoes.html',   icon: 'fa-vials',         label: 'Simulações',   step: '9' },
     { href: 'comparativo.html',  icon: 'fa-code-compare',  label: 'Comparativo',  step: '10' },
     { href: 'comparacoes.html',  icon: 'fa-chart-bar',     label: 'Comparações',  step: '11' },
+    { href: 'cronograma.html',   icon: 'fa-calendar-check', label: 'Cron. Gastos', step: '12' },
+    { href: 'repasse.html',      icon: 'fa-paper-plane',   label: 'Repasse',      step: '13' },
   ];
 
   const nav = document.createElement('nav');
