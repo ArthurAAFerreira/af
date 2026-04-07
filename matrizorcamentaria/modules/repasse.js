@@ -6,7 +6,7 @@ import { getAuth } from './auth.js';
 renderNav('repasse.html');
 
 const $ = id => document.getElementById(id);
-const BIMS = ['Jan–Fev','Mar–Abr','Mai–Jun','Jul–Ago','Set–Out','Nov–Dez'];
+const TRIS = ['Jan–Mar','Abr–Jun','Jul–Set','Out–Dez'];
 
 let cfg     = null;
 let unidades = [];   // { id, sigla, nome, valor_estimado }
@@ -124,20 +124,19 @@ async function salvarBim(bim) {
     .from('matriz_orc_repasse_item')
     .upsert(rows, { onConflict: 'configuracao_id,unidade_id,bimestre' });
   if (e2) { setStatus('Erro ao salvar itens: ' + e2.message, 'err'); return; }
-  setStatus(`Bimestre ${bim} salvo.`);
+  setStatus(`Trimestre ${bim} salvo.`);
   updateGlobalKpis();
 }
 
 function renderBimestral() {
-  // Panel de valor disponível por bimestre
   $('bimDispPanel').innerHTML = `
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">
-      ${[1,2,3,4,5,6].map(b => {
-        const val = toNumber(dispBim[b] ?? 0);
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+      ${[1,2,3,4].map(t => {
+        const val = toNumber(dispBim[t] ?? 0);
         return `<div style="border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px;background:#f8fbff">
-          <div style="font-size:0.78rem;font-weight:700;color:var(--accent);margin-bottom:6px">${b}º Bimestre — ${BIMS[b-1]}</div>
+          <div style="font-size:0.78rem;font-weight:700;color:var(--accent);margin-bottom:6px">${t}º Trimestre — ${TRIS[t-1]}</div>
           <label style="font-size:0.75rem;color:var(--muted)">Valor disponível para repasse</label>
-          <input type="number" id="disp_${b}" class="bim-disp-input" value="${val.toFixed(2)}" min="0" step="100"
+          <input type="number" id="disp_${t}" class="bim-disp-input" value="${val.toFixed(2)}" min="0" step="100"
             ${canEdit() ? '' : 'disabled'} style="display:block;margin-top:4px;width:100%" />
         </div>`;
       }).join('')}
@@ -148,10 +147,10 @@ function renderBimestral() {
 
   updateBimDispSoma();
 
-  [1,2,3,4,5,6].forEach(b => {
-    const inp = $(`disp_${b}`);
+  [1,2,3,4].forEach(t => {
+    const inp = $(`disp_${t}`);
     if (inp) inp.addEventListener('change', () => {
-      dispBim[b] = toNumber(inp.value);
+      dispBim[t] = toNumber(inp.value);
       updateBimDispSoma();
     });
   });
@@ -160,93 +159,88 @@ function renderBimestral() {
 }
 
 function updateBimDispSoma() {
-  const soma = [1,2,3,4,5,6].reduce((s,b) => s + toNumber(dispBim[b] ?? 0), 0);
+  const soma = [1,2,3,4].reduce((s,t) => s + toNumber(dispBim[t] ?? 0), 0);
   const rl   = toNumber(cfg?.recurso_liquido ?? 0);
   const diff = soma - rl;
   const el   = $('bimDispSoma');
-  if (el) el.innerHTML = `Soma dos bimestres: <strong>${brMoney(soma)}</strong>
+  if (el) el.innerHTML = `Soma dos trimestres: <strong>${brMoney(soma)}</strong>
     ${Math.abs(diff) > 0.5 ? `<span style="color:${diff > 0 ? 'var(--err)' : 'var(--warn)'}">
       (${diff > 0 ? '+' : ''}${brMoney(diff)} em relação ao Recurso Líquido)</span>` : ''}`;
 }
 
 function renderBimTable() {
-  // Para cada bimestre, mostrar tabela de distribuição
   const ok = canEdit();
-  $('bimRepassePanel').innerHTML = [1,2,3,4,5,6].map(b => {
-    const disp = toNumber(dispBim[b] ?? 0);
-    const rows = unidades.map(u => {
-      const key = `${u.id}_${b}`;
+
+  const theadR1 = `<tr>
+    <th rowspan="2" style="min-width:90px">Unidade</th>
+    ${[1,2,3,4].map(t => {
+      const disp = toNumber(dispBim[t] ?? 0);
+      return `<th colspan="2" class="text-center" style="background:var(--accent);color:#fff;border-left:3px solid #fff">
+        ${t}º Tri — ${TRIS[t-1]}<br>
+        <small style="font-weight:400;font-size:0.72rem">Disp: ${brMoney(disp)}</small>
+      </th>`;
+    }).join('')}
+  </tr>`;
+
+  const theadR2 = `<tr>
+    ${[1,2,3,4].map(() => `
+      <th class="text-right" style="border-left:3px solid var(--line);white-space:nowrap">Enviado (R$)</th>
+      <th class="text-center">Ações</th>
+    `).join('')}
+  </tr>`;
+
+  const bodyRows = unidades.map(u => {
+    const cells = [1,2,3,4].map(t => {
+      const key = `${u.id}_${t}`;
       const it  = itensBim[key] ?? { valor_calculado: 0, valor_enviado: null, fixado: false, enviado: false };
-      const vc  = toNumber(it.valor_calculado);
-      const ve  = it.valor_enviado != null ? toNumber(it.valor_enviado) : null;
-      return `<tr>
-        <td><strong>${u.sigla}</strong></td>
-        <td class="text-right">${brMoney(toNumber(gastosBim[`${u.id}_${b}`] ?? 0))}</td>
-        <td class="text-right" id="vc_${u.id}_${b}">${brMoney(vc)}</td>
-        <td class="text-right">
-          ${ok ? `<input type="number" class="val-input" id="ve_${u.id}_${b}"
-            value="${ve != null ? ve.toFixed(2) : vc.toFixed(2)}" min="0" step="100"
-            data-uid="${u.id}" data-bim="${b}" />` : brMoney(ve ?? vc)}
+      const ve  = it.valor_enviado != null ? toNumber(it.valor_enviado) : toNumber(it.valor_calculado);
+      const bls = 'border-left:3px solid var(--line)';
+      return `
+        <td class="text-right" style="${bls}">
+          ${ok ? `<input type="number" class="val-input" id="ve_${u.id}_${t}"
+            value="${ve.toFixed(2)}" min="0" step="100"
+            data-uid="${u.id}" data-bim="${t}" />` : brMoney(ve)}
         </td>
         <td class="text-center" style="white-space:nowrap">
-          ${ok ? `
-            <button class="btn-icon" title="${it.fixado ? 'Des-fixar' : 'Fixar valor calculado'}"
-              onclick="toggleFixadoBim(${u.id},${b})" style="font-size:0.8rem;padding:3px 8px;border-radius:6px;border:1px solid ${it.fixado ? '#e65100' : 'var(--line)'};background:${it.fixado ? '#fff3e0' : '#fff'}">
-              <i class="fa-solid fa-${it.fixado ? 'lock' : 'lock-open'}"></i>
-            </button>
-            <button class="btn-icon" title="${it.enviado ? 'Marcar como não enviado' : 'Confirmar envio'}"
-              onclick="toggleEnviadoBim(${u.id},${b})" style="font-size:0.8rem;padding:3px 8px;border-radius:6px;border:1px solid ${it.enviado ? 'var(--ok)' : 'var(--line)'};background:${it.enviado ? 'var(--ok-bg)' : '#fff'}">
-              <i class="fa-solid fa-${it.enviado ? 'check-circle' : 'circle'}"></i>
-            </button>
-          ` : (it.enviado ? '<span class="enviado-badge">Enviado</span>' : '') + (it.fixado ? '<span class="fixado-badge">Fixado</span>' : '')}
-        </td>
-      </tr>`;
+          <button onclick="toggleFixadoBim(${u.id},${t})" title="${it.fixado ? 'Des-fixar' : 'Fixar'}"
+            style="font-size:0.78rem;padding:2px 6px;border-radius:5px;border:1px solid ${it.fixado ? '#e65100' : 'var(--line)'};background:${it.fixado ? '#fff3e0' : '#fff'}">
+            <i class="fa-solid fa-${it.fixado ? 'lock' : 'lock-open'}"></i>
+          </button>
+          <button onclick="toggleEnviadoBim(${u.id},${t})" title="${it.enviado ? 'Desmarcar' : 'Confirmar envio'}"
+            style="font-size:0.78rem;padding:2px 6px;border-radius:5px;border:1px solid ${it.enviado ? 'var(--ok)' : 'var(--line)'};background:${it.enviado ? 'var(--ok-bg)' : '#fff'}">
+            <i class="fa-solid fa-${it.enviado ? 'check-circle' : 'circle'}"></i>
+          </button>
+        </td>`;
     }).join('');
-
-    const totalCalc  = unidades.reduce((s, u) => s + toNumber((itensBim[`${u.id}_${b}`]?.valor_calculado) ?? 0), 0);
-    const totalEnv   = unidades.reduce((s, u) => {
-      const it = itensBim[`${u.id}_${b}`];
-      return s + toNumber(it?.valor_enviado ?? it?.valor_calculado ?? 0);
-    }, 0);
-
-    return `<div style="margin-bottom:18px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px">
-        <div style="font-weight:700;font-size:0.92rem;color:var(--accent)">
-          ${b}º Bimestre — ${BIMS[b-1]}
-          <span style="font-size:0.78rem;font-weight:400;color:var(--muted);margin-left:8px">Disponível: ${brMoney(disp)}</span>
-        </div>
-        ${ok ? `<div style="display:flex;gap:6px">
-          <button class="btn btn-update" style="font-size:0.78rem;padding:4px 12px" onclick="recalcularBim(${b})">
-            <i class="fa-solid fa-rotate"></i> Recalcular
-          </button>
-          <button class="btn btn-save" style="font-size:0.78rem;padding:4px 12px" onclick="salvarBimestre(${b})">
-            <i class="fa-solid fa-floppy-disk"></i> Salvar
-          </button>
-        </div>` : ''}
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr>
-            <th>Unidade</th>
-            <th class="text-right">Planejado</th>
-            <th class="text-right">Calculado (R$)</th>
-            <th class="text-right">Enviado (R$)</th>
-            <th class="text-center">Ações</th>
-          </tr></thead>
-          <tbody>${rows}</tbody>
-          <tfoot><tr class="row-total">
-            <td>TOTAL</td>
-            <td></td>
-            <td class="text-right">${brMoney(totalCalc)}</td>
-            <td class="text-right">${brMoney(totalEnv)}</td>
-            <td></td>
-          </tr></tfoot>
-        </table>
-      </div>
-    </div>`;
+    return `<tr><td><strong>${u.sigla}</strong></td>${cells}</tr>`;
   }).join('');
 
-  // Eventos de input nos campos de valor enviado
+  const tfootRow = `<tr class="row-total"><td>TOTAL</td>${[1,2,3,4].map(t => {
+    const tot = unidades.reduce((s, u) => {
+      const it = itensBim[`${u.id}_${t}`];
+      return s + toNumber(it?.valor_enviado ?? it?.valor_calculado ?? 0);
+    }, 0);
+    return `<td class="text-right" style="border-left:3px solid var(--line)">${brMoney(tot)}</td><td></td>`;
+  }).join('')}</tr>`;
+
+  $('bimRepassePanel').innerHTML = `
+    ${ok ? `<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+      ${[1,2,3,4].map(t => `
+        <button class="btn btn-update" style="font-size:0.78rem;padding:4px 11px" onclick="recalcularBim(${t})">
+          <i class="fa-solid fa-rotate"></i> ${t}ºTri
+        </button>`).join('')}
+      <button class="btn btn-save" style="font-size:0.78rem;padding:4px 14px" onclick="salvarTodosBimestres()">
+        <i class="fa-solid fa-floppy-disk"></i> Salvar Todos
+      </button>
+    </div>` : ''}
+    <div class="table-wrap">
+      <table>
+        <thead>${theadR1}${theadR2}</thead>
+        <tbody>${bodyRows}</tbody>
+        <tfoot>${tfootRow}</tfoot>
+      </table>
+    </div>`;
+
   if (ok) {
     document.querySelectorAll('input[data-uid][data-bim]').forEach(inp => {
       inp.addEventListener('change', () => {
@@ -260,15 +254,15 @@ function renderBimTable() {
   }
 }
 
-window.recalcularBim = function(bim) {
-  dispBim[bim] = toNumber($(`disp_${bim}`)?.value ?? 0);
-  recalcBim(bim);
+window.recalcularBim = function(t) {
+  dispBim[t] = toNumber($(`disp_${t}`)?.value ?? 0);
+  recalcBim(t);
   renderBimTable();
 };
 
-window.salvarBimestre = function(bim) {
-  dispBim[bim] = toNumber($(`disp_${bim}`)?.value ?? 0);
-  salvarBim(bim);
+window.salvarTodosBimestres = async function() {
+  [1,2,3,4].forEach(t => { dispBim[t] = toNumber($(`disp_${t}`)?.value ?? 0); });
+  for (const t of [1,2,3,4]) await salvarBim(t);
 };
 
 window.toggleFixadoBim = function(uid, bim) {
@@ -333,7 +327,7 @@ function recalcRem(remId) {
       ...old,
       unidade_id: u.id,
       valor: v,
-      percentual: totalDist > 0 ? v / disp * 100 : 0,
+      percentual: toNumber(u.valor_estimado) > 0 ? v / toNumber(u.valor_estimado) * 100 : 0,
       fixado: dist[u.id].fixado,
       enviado: old.enviado ?? false,
     };
@@ -564,8 +558,8 @@ function updateGlobalKpis() {
   // Soma do que foi efetivamente enviado (bimestral + remanejamento)
   let totalEnviado = 0;
   unidades.forEach(u => {
-    [1,2,3,4,5,6].forEach(b => {
-      const it = itensBim[`${u.id}_${b}`];
+    [1,2,3,4].forEach(t => {
+      const it = itensBim[`${u.id}_${t}`];
       if (it?.enviado) totalEnviado += toNumber(it.valor_enviado ?? it.valor_calculado);
     });
   });
@@ -665,10 +659,10 @@ async function init() {
     }));
   });
 
-  // Para bimestres sem dados: calcular inicial
-  [1,2,3,4,5,6].forEach(b => {
-    const hasItems = unidades.some(u => itensBim[`${u.id}_${b}`]);
-    if (!hasItems && toNumber(dispBim[b] ?? 0) > 0) recalcBim(b);
+  // Para trimestres sem dados: calcular inicial
+  [1,2,3,4].forEach(t => {
+    const hasItems = unidades.some(u => itensBim[`${u.id}_${t}`]);
+    if (!hasItems && toNumber(dispBim[t] ?? 0) > 0) recalcBim(t);
   });
 
   setupTabs();

@@ -6,7 +6,7 @@ import { getAuth } from './auth.js';
 renderNav('cronograma.html');
 
 const $ = id => document.getElementById(id);
-const BIMS = ['Jan–Fev','Mar–Abr','Mai–Jun','Jul–Ago','Set–Out','Nov–Dez'];
+const TRIS = ['Jan–Mar','Abr–Jun','Jul–Set','Out–Dez'];
 
 let cfg = null;
 let unidades = [];       // { id, sigla, nome, valor_estimado }
@@ -28,7 +28,7 @@ function setStatus(msg, cls = 'ok') {
 function cellKey(uid, bim) { return `${uid}_${bim}`; }
 
 function sumForUnit(uid) {
-  return [1,2,3,4,5,6].reduce((s, b) => s + toNumber(gastos[cellKey(uid, b)] ?? 0), 0);
+  return [1,2,3,4].reduce((s, b) => s + toNumber(gastos[cellKey(uid, b)] ?? 0), 0);
 }
 
 function totalPlanejado() {
@@ -43,7 +43,7 @@ function updateKpis() {
 }
 
 function updateTotaisRow() {
-  const totais = [1,2,3,4,5,6].map(b =>
+  const totais = [1,2,3,4].map(b =>
     unidades.reduce((s, u) => s + toNumber(gastos[cellKey(u.id, b)] ?? 0), 0)
   );
   const grand = totais.reduce((s, v) => s + v, 0);
@@ -74,7 +74,7 @@ function updateRow(uid) {
     saldoCell.style.fontWeight = over ? '700' : '';
   }
 
-  [1,2,3,4,5,6].forEach(b => {
+  [1,2,3,4].forEach(b => {
     const inp = document.getElementById(`inp_${uid}_${b}`);
     if (inp) inp.style.borderColor = over ? 'var(--err)' : '';
   });
@@ -91,7 +91,7 @@ function buildTable() {
   const tbody = $('cronogramaBody');
   tbody.innerHTML = unidades.map(u => {
     const limite = toNumber(u.valor_estimado);
-    const bimCells = [1,2,3,4,5,6].map(b => {
+    const bimCells = [1,2,3,4].map(b => {
       const val = toNumber(gastos[cellKey(u.id, b)] ?? 0);
       if (ok) {
         return `<td class="text-right col-bim">

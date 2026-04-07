@@ -14,7 +14,7 @@
       <i class="fa-solid fa-calendar-check"></i>
       <a href="../index.html">Cronograma de Gastos — Matriz Orçamentária</a>
     </h1>
-    <p>Planejamento bimestral de desembolso por unidade, limitado ao valor apurado na matriz.</p>
+    <p>Planejamento trimestral de desembolso por unidade, limitado ao valor apurado na matriz.</p>
   </header>
 
   <main>
@@ -36,7 +36,7 @@
     <!-- TABELA DE GASTOS -->
     <section class="panel">
       <div class="panel-header">
-        <span><i class="fa-solid fa-table"></i> Plano de Gastos por Bimestre</span>
+        <span><i class="fa-solid fa-table"></i> Plano de Gastos por Trimestre</span>
         <button id="btnSalvar" class="btn btn-save" style="font-size:0.82rem;padding:5px 14px">
           <i class="fa-solid fa-floppy-disk"></i> Salvar tudo
         </button>
@@ -44,7 +44,7 @@
       <div class="panel-body">
         <div class="hint" style="margin-bottom:12px">
           <i class="fa-solid fa-circle-info"></i>
-          O somatório dos bimestres por unidade não pode ultrapassar o <strong>Valor Estimado</strong> calculado na matriz de resultado.
+          O somatório dos trimestres por unidade não pode ultrapassar o <strong>Valor Estimado</strong> calculado na matriz de resultado.
           Campos em <span style="color:var(--err);font-weight:600">vermelho</span> indicam excesso.
         </div>
         <div class="table-wrap">
@@ -53,12 +53,10 @@
               <tr>
                 <th>Unidade</th>
                 <th class="text-right">Limite (R$)</th>
-                <th class="text-right col-bim">1º Bim<br><small>Jan–Fev</small></th>
-                <th class="text-right col-bim">2º Bim<br><small>Mar–Abr</small></th>
-                <th class="text-right col-bim">3º Bim<br><small>Mai–Jun</small></th>
-                <th class="text-right col-bim">4º Bim<br><small>Jul–Ago</small></th>
-                <th class="text-right col-bim">5º Bim<br><small>Set–Out</small></th>
-                <th class="text-right col-bim">6º Bim<br><small>Nov–Dez</small></th>
+                <th class="text-right col-bim">1º Tri<br><small>Jan–Mar</small></th>
+                <th class="text-right col-bim">2º Tri<br><small>Abr–Jun</small></th>
+                <th class="text-right col-bim">3º Tri<br><small>Jul–Set</small></th>
+                <th class="text-right col-bim">4º Tri<br><small>Out–Dez</small></th>
                 <th class="text-right">Total Planj.</th>
                 <th class="text-right">Saldo</th>
               </tr>
