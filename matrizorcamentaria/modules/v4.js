@@ -184,25 +184,29 @@ function renderAttrLista() {
   }
   el.innerHTML = `<div style="display:flex;flex-direction:column;gap:6px">${atributosCache.map(a => `
     <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--line);border-radius:var(--radius-sm);background:#f8fbff">
-      <span style="flex:1;font-size:0.85rem;font-weight:600">${a.descricao}</span>
+      <input type="text" value="${a.descricao.replace(/"/g, '&quot;')}" id="attrDescEdit_${a.id}"
+        style="flex:1;border:1.5px solid #c0d4f0;border-radius:6px;padding:5px 8px;font-size:0.85rem;font-family:inherit;font-weight:600" />
       <label style="font-size:0.78rem;color:var(--muted);white-space:nowrap">Peso:</label>
       <input type="number" min="0" step="0.01" value="${a.peso}" id="attrPesoEdit_${a.id}"
         style="width:72px;border:1.5px solid #c0d4f0;border-radius:6px;padding:5px 7px;font-size:0.85rem;font-family:inherit" />
-      <button onclick="updateAtributoPeso(${a.id})" class="btn btn-update" style="padding:4px 10px;font-size:0.78rem" title="Salvar peso"><i class="fa-solid fa-check"></i></button>
+      <button onclick="updateAtributo(${a.id})" class="btn btn-update" style="padding:4px 10px;font-size:0.78rem" title="Salvar"><i class="fa-solid fa-check"></i></button>
       <button onclick="deleteAtributo(${a.id})" class="btn btn-delete" style="padding:4px 10px;font-size:0.78rem" title="Excluir atributo"><i class="fa-solid fa-trash"></i></button>
     </div>
   `).join('')}</div>`;
 }
 
-window.updateAtributoPeso = async function(id) {
+window.updateAtributo = async function(id) {
   if (!canEdit('estruturas')) { setStatus('Sem permissão.', 'warn'); return; }
-  const input = $(`attrPesoEdit_${id}`);
-  const peso = toNumber(input ? input.value : 0);
-  const { error } = await supabase.schema('utfprct').from('matriz_orc_estrutura_atributos').update({ peso }).eq('id', id);
+  const descInput = $(`attrDescEdit_${id}`);
+  const pesoInput = $(`attrPesoEdit_${id}`);
+  const descricao = descInput ? descInput.value.trim() : '';
+  const peso = toNumber(pesoInput ? pesoInput.value : 0);
+  if (!descricao) { setStatus('A descrição não pode ser vazia.', 'warn'); return; }
+  const { error } = await supabase.schema('utfprct').from('matriz_orc_estrutura_atributos').update({ descricao, peso }).eq('id', id);
   if (error) { setStatus('Erro: ' + error.message, 'err'); return; }
   const attr = atributosCache.find(a => a.id === id);
-  if (attr) attr.peso = peso;
-  setStatus(`Peso de "${attr?.descricao}" atualizado para ${peso}.`);
+  if (attr) { attr.descricao = descricao; attr.peso = peso; }
+  setStatus(`Atributo "${descricao}" atualizado.`);
 };
 
 window.deleteAtributo = async function(id) {
