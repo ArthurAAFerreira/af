@@ -1,11 +1,10 @@
 // ── Motoristas ────────────────────────────────────────────────────────────────
-export type TipoMotorista = 'oficial' | 'habilitado' | 'externo';
-
 export interface Motorista {
   id:          string;
   nome:        string;
   matricula:   string | null;
-  tipo:        TipoMotorista;
+  oficial:     boolean;
+  servidor:    boolean;
   observacoes: string | null;
   ativo:       boolean;
   created_at:  string;
@@ -22,17 +21,14 @@ export interface GrupoMotoristas {
 }
 
 export interface GrupoMotoristasDetalhe extends Omit<GrupoMotoristas, 'itens'> {
-  itens: { motorista: Pick<Motorista, 'id' | 'nome' | 'matricula' | 'tipo'> }[];
+  itens: { motorista: Pick<Motorista, 'id' | 'nome' | 'matricula'> }[];
 }
 
 // ── Veículos ──────────────────────────────────────────────────────────────────
-export type TipoVeiculo = 'passeio' | 'especial' | 'onibus' | 'van' | 'outro';
-
 export interface Veiculo {
   id:         string;
   placa:      string;
   descricao:  string | null;
-  tipo:       TipoVeiculo;
   capacidade: number | null;
   ativo:      boolean;
   created_at: string;
@@ -49,7 +45,7 @@ export interface GrupoVeiculos {
 }
 
 export interface GrupoVeiculosDetalhe extends Omit<GrupoVeiculos, 'itens'> {
-  itens: { veiculo: Pick<Veiculo, 'id' | 'placa' | 'tipo'> }[];
+  itens: { veiculo: Pick<Veiculo, 'id' | 'placa'> }[];
 }
 
 // ── Agenda tipos ──────────────────────────────────────────────────────────────

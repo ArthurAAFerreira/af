@@ -34,13 +34,13 @@ export async function loadAgendaTipos(): Promise<AgendaTipo[]> {
       grupo_motoristas:agenda_grupos_motoristas!grupo_motoristas_id (
         id, nome, is_todos,
         itens:agenda_grupo_motoristas_itens (
-          motorista:agenda_motoristas (id, nome, matricula, tipo)
+          motorista:agenda_motoristas (id, nome, matricula, oficial, servidor)
         )
       ),
       grupo_veiculos:agenda_grupos_veiculos!grupo_veiculos_id (
         id, nome, is_todos,
         itens:agenda_grupo_veiculos_itens (
-          veiculo:agenda_veiculos (id, placa, tipo)
+          veiculo:agenda_veiculos (id, placa)
         )
       )
     `)

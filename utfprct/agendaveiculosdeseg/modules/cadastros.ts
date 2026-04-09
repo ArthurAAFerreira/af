@@ -7,8 +7,6 @@ import {
 } from './db.ts';
 import type { Motorista, GrupoMotoristas, Veiculo, GrupoVeiculos, AgendaTipo } from './types.ts';
 
-const TIPO_MOT_LABEL: Record<string, string> = { oficial: 'Oficial', habilitado: 'Habilitado', externo: 'Externo' };
-const TIPO_VEI_LABEL: Record<string, string> = { passeio: 'Passeio', especial: 'Especial', onibus: 'Ônibus', van: 'Van', outro: 'Outro' };
 const CORES = ['#1565c0','#2e7d32','#c62828','#e65100','#6a1b9a','#00838f','#37474f','#558b2f','#ad1457','#f9a825'];
 
 let _motoristas:  Motorista[]       = [];
@@ -66,14 +64,15 @@ function renderMotoristas(): void {
   const tbody = document.getElementById('tbody-motoristas');
   if (!tbody) return;
   if (!_motoristas.length) {
-    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-id-badge"></i><p>Nenhum motorista cadastrado</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="fa-solid fa-id-badge"></i><p>Nenhum motorista cadastrado</p></div></td></tr>`;
     return;
   }
   tbody.innerHTML = _motoristas.map(m => `
     <tr>
       <td>${m.nome}</td>
       <td>${m.matricula ?? '—'}</td>
-      <td><span class="badge badge-info">${TIPO_MOT_LABEL[m.tipo] ?? m.tipo}</span></td>
+      <td class="text-center">${m.oficial ? '<span class="badge badge-ok">Sim</span>' : '<span class="badge badge-gray">Não</span>'}</td>
+      <td class="text-center">${m.servidor ? '<span class="badge badge-info">Sim</span>' : '<span class="badge badge-gray">Não</span>'}</td>
       <td class="text-center">${m.ativo ? '<span class="badge badge-ok">Ativo</span>' : '<span class="badge badge-gray">Inativo</span>'}</td>
       <td>${m.observacoes ?? '—'}</td>
       <td class="text-center" style="white-space:nowrap">
@@ -87,8 +86,8 @@ async function editMotorista(id: string): Promise<void> {
   const m = _motoristas.find(x => x.id === id);
   if (!m) return;
   _editingId = id;
-  setVal('mot-nome', m.nome); setVal('mot-matricula', m.matricula); setVal('mot-tipo', m.tipo); setVal('mot-obs', m.observacoes);
-  setChecked('mot-ativo', m.ativo);
+  setVal('mot-nome', m.nome); setVal('mot-matricula', m.matricula); setVal('mot-obs', m.observacoes);
+  setChecked('mot-oficial', m.oficial); setChecked('mot-servidor', m.servidor); setChecked('mot-ativo', m.ativo);
   const el = document.getElementById('mot-modal-title'); if (el) el.textContent = 'Editar Motorista';
   openModal('mot-modal');
 }
@@ -97,7 +96,7 @@ function bindMotoristaForm(): void {
   document.getElementById('btn-add-motorista')?.addEventListener('click', () => {
     _editingId = null;
     ['mot-nome','mot-matricula','mot-obs'].forEach(id => setVal(id,''));
-    setVal('mot-tipo','habilitado'); setChecked('mot-ativo', true);
+    setChecked('mot-oficial', false); setChecked('mot-servidor', false); setChecked('mot-ativo', true);
     const el = document.getElementById('mot-modal-title'); if (el) el.textContent = 'Novo Motorista';
     openModal('mot-modal');
   });
@@ -107,7 +106,7 @@ function bindMotoristaForm(): void {
     const nome = val('mot-nome');
     if (!nome) { toast('Nome é obrigatório.', false); return; }
     try {
-      await upsertMotorista({ id: _editingId ?? undefined, nome, matricula: val('mot-matricula') || null, tipo: val('mot-tipo') as Motorista['tipo'], observacoes: val('mot-obs') || null, ativo: checked('mot-ativo') });
+      await upsertMotorista({ id: _editingId ?? undefined, nome, matricula: val('mot-matricula') || null, oficial: checked('mot-oficial'), servidor: checked('mot-servidor'), observacoes: val('mot-obs') || null, ativo: checked('mot-ativo') });
       _motoristas = await loadMotoristas();
       renderMotoristas();
       closeModal('mot-modal');
@@ -165,12 +164,11 @@ function bindGrupoMotForm(): void {
 function renderVeiculos(): void {
   const tbody = document.getElementById('tbody-veiculos');
   if (!tbody) return;
-  if (!_veiculos.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-car"></i><p>Nenhum veículo cadastrado</p></div></td></tr>`; return; }
+  if (!_veiculos.length) { tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-car"></i><p>Nenhum veículo cadastrado</p></div></td></tr>`; return; }
   tbody.innerHTML = _veiculos.map(v => `
     <tr>
       <td><strong>${v.placa}</strong></td>
       <td>${v.descricao ?? '—'}</td>
-      <td><span class="badge badge-info">${TIPO_VEI_LABEL[v.tipo] ?? v.tipo}</span></td>
       <td class="text-center">${v.capacidade ?? '—'}</td>
       <td class="text-center">${v.ativo ? '<span class="badge badge-ok">Ativo</span>' : '<span class="badge badge-gray">Inativo</span>'}</td>
       <td class="text-center" style="white-space:nowrap">
@@ -183,7 +181,7 @@ function renderVeiculos(): void {
 function bindVeiculoForm(): void {
   document.getElementById('btn-add-veiculo')?.addEventListener('click', () => {
     _editingId = null; ['vei-placa','vei-desc','vei-cap'].forEach(id => setVal(id,''));
-    setVal('vei-tipo','passeio'); setChecked('vei-ativo', true);
+    setChecked('vei-ativo', true);
     const el = document.getElementById('vei-modal-title'); if (el) el.textContent = 'Novo Veículo';
     openModal('vei-modal');
   });
@@ -193,7 +191,7 @@ function bindVeiculoForm(): void {
     const placa = val('vei-placa').toUpperCase();
     if (!placa) { toast('Placa é obrigatória.', false); return; }
     try {
-      await upsertVeiculo({ id: _editingId ?? undefined, placa, descricao: val('vei-desc') || null, tipo: val('vei-tipo') as Veiculo['tipo'], capacidade: Number(val('vei-cap')) || null, ativo: checked('vei-ativo') });
+      await upsertVeiculo({ id: _editingId ?? undefined, placa, descricao: val('vei-desc') || null, capacidade: Number(val('vei-cap')) || null, ativo: checked('vei-ativo') });
       _veiculos = await loadVeiculos();
       renderVeiculos();
       closeModal('vei-modal');
@@ -343,7 +341,7 @@ function bindTableActions(): void {
     else if (action === 'edit-vei' && id) {
       const v = _veiculos.find(x => x.id === id);
       if (!v) return;
-      _editingId = id; setVal('vei-placa', v.placa); setVal('vei-desc', v.descricao); setVal('vei-tipo', v.tipo); setVal('vei-cap', String(v.capacidade ?? '')); setChecked('vei-ativo', v.ativo);
+      _editingId = id; setVal('vei-placa', v.placa); setVal('vei-desc', v.descricao); setVal('vei-cap', String(v.capacidade ?? '')); setChecked('vei-ativo', v.ativo);
       const el = document.getElementById('vei-modal-title'); if (el) el.textContent = 'Editar Veículo';
       openModal('vei-modal');
     }
