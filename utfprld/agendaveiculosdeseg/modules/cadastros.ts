@@ -4,6 +4,7 @@ import {
   loadVeiculos, upsertVeiculo, deleteVeiculo,
   loadGruposVeiculos, upsertGrupoVeiculos, deleteGrupoVeiculos, loadGrupoVeiculosItens,
   loadAgendaTiposAll, upsertAgendaTipo, deleteAgendaTipo,
+  CADASTROS_PASSWORDS,
 } from './db.ts';
 import type { Motorista, GrupoMotoristas, Veiculo, GrupoVeiculos, AgendaTipo } from './types.ts';
 
@@ -379,8 +380,53 @@ function bindTableActions(): void {
   });
 }
 
+// ── Page guard ────────────────────────────────────────────────────────────────
+function requireAuth(): Promise<void> {
+  return new Promise(resolve => {
+    if (sessionStorage.getItem('cadastros_auth') === '1') { resolve(); return; }
+
+    const bd = document.createElement('div');
+    bd.style.cssText = 'position:fixed;inset:0;background:rgba(5,15,35,.75);display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px;';
+    bd.innerHTML = `
+      <div style="background:#fff;border-radius:14px;width:min(400px,96vw);box-shadow:0 28px 60px rgba(4,15,40,.48);">
+        <div style="background:linear-gradient(135deg,#0b2f61,#144a94);color:#fff;padding:14px 18px;display:flex;align-items:center;gap:10px;border-radius:14px 14px 0 0;">
+          <i class="fa-solid fa-lock"></i>
+          <h3 style="margin:0;font-size:1rem;font-weight:700;">Acesso Restrito — Cadastros</h3>
+        </div>
+        <div style="padding:20px;">
+          <p style="font-size:.88rem;color:#546e8a;margin:0 0 12px;">Digite a senha para acessar a área de Cadastros.</p>
+          <input id="pgPw" type="password" placeholder="Senha" autocomplete="current-password"
+            style="width:100%;padding:9px 11px;border:1px solid #c5d4ed;border-radius:7px;font-size:.9rem;box-sizing:border-box;" />
+          <div id="pgMsg" style="font-size:.82rem;color:#c62828;min-height:18px;margin-top:6px;"></div>
+        </div>
+        <div style="padding:12px 18px;border-top:1px solid #dce6f8;display:flex;gap:8px;justify-content:space-between;">
+          <button id="pgBack" style="padding:7px 14px;border:1px solid #dce6f8;border-radius:7px;font-size:.85rem;font-weight:600;cursor:pointer;background:#e8eef7;color:#1a2a3a;">← Voltar</button>
+          <button id="pgOk"   style="padding:7px 18px;border:none;border-radius:7px;font-size:.85rem;font-weight:600;cursor:pointer;background:#0b2f61;color:#fff;"><i class="fa-solid fa-unlock"></i> Entrar</button>
+        </div>
+      </div>`;
+    document.body.appendChild(bd);
+
+    const pwEl  = document.getElementById('pgPw')  as HTMLInputElement;
+    const msgEl = document.getElementById('pgMsg')!;
+    setTimeout(() => pwEl.focus(), 60);
+
+    const tryAuth = () => {
+      if (CADASTROS_PASSWORDS.includes(pwEl.value.trim())) {
+        sessionStorage.setItem('cadastros_auth', '1');
+        bd.remove();
+        resolve();
+      } else { msgEl.textContent = 'Senha incorreta.'; pwEl.select(); }
+    };
+
+    document.getElementById('pgOk')!.addEventListener('click', tryAuth);
+    pwEl.addEventListener('keydown', e => { if (e.key === 'Enter') tryAuth(); });
+    document.getElementById('pgBack')!.addEventListener('click', () => { window.location.href = 'index.html'; });
+  });
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 export async function initCadastros(): Promise<void> {
+  await requireAuth();
   try {
     [_motoristas, _grupos_mot, _veiculos, _grupos_vei, _tipos] = await Promise.all([
       loadMotoristas(), loadGruposMotoristas(), loadVeiculos(), loadGruposVeiculos(), loadAgendaTiposAll(),

@@ -8,6 +8,7 @@ import type {
 const SUPABASE_URL      = 'https://wycjvjlhabiyhusupivx.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y2p2amxoYWJpeWh1c3VwaXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4Mjc2MzksImV4cCI6MjA3NDQwMzYzOX0.pFu4bfrsvZpr7D4bh3LhoDZuRetsUZO6p2MavMtfyv0';
 export const SCHEMA = 'utfprld';
+export const CADASTROS_PASSWORDS = ['desegld', 'federer'];
 
 export const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   db: { schema: SCHEMA },

@@ -67,8 +67,11 @@ export function renderNav(activePage: string): void {
   const open  = (href: string) => { _dest = href; modal.style.display = 'flex'; pw().value = ''; if (msg()) msg()!.textContent = ''; setTimeout(() => pw().focus(), 50); };
   const close = () => { modal.style.display = 'none'; };
   const tryOk = () => {
-    if (PASSWORDS.includes(pw().value.trim())) { close(); window.location.href = _dest; }
-    else if (msg()) msg()!.textContent = 'Senha incorreta.';
+    if (PASSWORDS.includes(pw().value.trim())) {
+      sessionStorage.setItem('cadastros_auth', '1');
+      close();
+      window.location.href = _dest;
+    } else if (msg()) msg()!.textContent = 'Senha incorreta.';
   };
 
   nav.querySelectorAll<HTMLAnchorElement>('a[data-locked]').forEach(a =>
