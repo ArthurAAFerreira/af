@@ -5,18 +5,21 @@
 
 -- 1. agenda_motoristas: remover tipo, adicionar oficial e servidor
 ALTER TABLE utfprld.agenda_motoristas
-  DROP COLUMN IF EXISTS tipo,
+  DROP COLUMN IF EXISTS tipo CASCADE,
   ADD COLUMN IF NOT EXISTS oficial  BOOLEAN NOT NULL DEFAULT false,
   ADD COLUMN IF NOT EXISTS servidor BOOLEAN NOT NULL DEFAULT false;
 
 -- 2. agenda_veiculos: remover tipo
 ALTER TABLE utfprld.agenda_veiculos
-  DROP COLUMN IF EXISTS tipo;
+  DROP COLUMN IF EXISTS tipo CASCADE;
 
 -- 3. Permissões para as novas colunas já são cobertas pelas grants existentes
 
 -- 4. View principal do calendário: mapear solicitacoes_veiculos → Evento
-CREATE OR REPLACE VIEW utfprld.vw_agenda_eventos AS
+-- DROP primeiro pois CREATE OR REPLACE não permite alterar colunas existentes
+DROP VIEW IF EXISTS utfprld.vw_agenda_eventos CASCADE;
+
+CREATE VIEW utfprld.vw_agenda_eventos AS
 SELECT
   id::text                                                            AS id,
   numero_solicitacao,

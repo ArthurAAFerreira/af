@@ -5,17 +5,19 @@
 
 -- 1. agenda_motoristas: remover tipo, adicionar oficial e servidor
 ALTER TABLE desegct.agenda_motoristas
-  DROP COLUMN IF EXISTS tipo,
+  DROP COLUMN IF EXISTS tipo CASCADE,
   ADD COLUMN IF NOT EXISTS oficial  BOOLEAN NOT NULL DEFAULT false,
   ADD COLUMN IF NOT EXISTS servidor BOOLEAN NOT NULL DEFAULT false;
 
 -- 2. agenda_veiculos: remover tipo
 ALTER TABLE desegct.agenda_veiculos
-  DROP COLUMN IF EXISTS tipo;
+  DROP COLUMN IF EXISTS tipo CASCADE;
 
 -- 3. View principal do calendário: adapte o FROM para a tabela de solicitações do CT
 --    Substitua desegct.solicitacoes_veiculos pelo nome correto se for diferente
-CREATE OR REPLACE VIEW desegct.vw_agenda_eventos AS
+DROP VIEW IF EXISTS desegct.vw_agenda_eventos CASCADE;
+
+CREATE VIEW desegct.vw_agenda_eventos AS
 SELECT
   id::text                                                            AS id,
   numero_solicitacao,
