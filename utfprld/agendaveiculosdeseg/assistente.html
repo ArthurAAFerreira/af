@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Assistente · Agenda DESEG · UTFPR-LD</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<header>
+  <h1><i class="fa-solid fa-robot"></i> Assistente de Verificação · UTFPR-LD</h1>
+  <p>Dúvidas sobre datas, distâncias e regras de uso dos veículos</p>
+</header>
+
+<div class="container">
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-circle-info"></i> Sobre o Assistente</div>
+    <p class="status-note">
+      Use o assistente abaixo para verificar disponibilidade de datas, consultar distâncias, obter orientações sobre
+      horários e regras de uso de veículos conforme as normas da UTFPR. O assistente é alimentado por IA e está
+      conectado ao fluxo n8n do campus.
+    </p>
+    <iframe
+      id="agendaAiFrame"
+      class="embed-frame"
+      src="https://n8n.arthuraaferreira.com.br/form/604f441c-4ec3-4945-a4ca-2680fbb04e9f"
+      title="Assistente de verificação de datas"
+      style="min-height:560px"
+    ></iframe>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-content">
+    <span>&copy; 2026 Arthur Ferreira</span>
+    <div class="footer-links">
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i> arthurferreira@utfpr.edu.br</a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i> ArthurAAFerreira</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="./pages/assistente.ts"></script>
+</body>
+</html>

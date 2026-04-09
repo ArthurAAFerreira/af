@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Cadastros · Agenda DESEG · UTFPR-LD</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<header>
+  <h1><i class="fa-solid fa-database"></i> Cadastros Base · UTFPR-LD</h1>
+  <p>Motoristas, veículos, grupos e tipos de agenda</p>
+</header>
+
+<div class="container">
+
+  <div class="sub-tabs">
+    <button class="sub-tab active" data-tab="motoristas"><i class="fa-solid fa-id-badge"></i> Motoristas</button>
+    <button class="sub-tab" data-tab="grupos-mot"><i class="fa-solid fa-users"></i> Grupos Motoristas</button>
+    <button class="sub-tab" data-tab="veiculos"><i class="fa-solid fa-car-side"></i> Veículos</button>
+    <button class="sub-tab" data-tab="grupos-vei"><i class="fa-solid fa-layer-group"></i> Grupos Veículos</button>
+    <button class="sub-tab" data-tab="tipos"><i class="fa-solid fa-calendar-plus"></i> Agendas</button>
+  </div>
+
+  <!-- ── MOTORISTAS ─────────────────────────────────────────────── -->
+  <div id="panel-motoristas" class="tab-panel">
+    <div class="card">
+      <div class="toolbar">
+        <div class="card-title" style="margin:0"><i class="fa-solid fa-id-badge"></i> Motoristas Cadastrados</div>
+        <div class="toolbar-spacer"></div>
+        <button id="btn-add-motorista" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Novo Motorista</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nome</th><th>Matrícula</th><th>Tipo</th><th class="text-center">Status</th><th>Observações</th><th class="text-center">Ações</th></tr></thead>
+          <tbody id="tbody-motoristas"><tr><td colspan="6"><div class="skeleton" style="height:36px"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── GRUPOS DE MOTORISTAS ──────────────────────────────────── -->
+  <div id="panel-grupos-mot" class="tab-panel" style="display:none">
+    <div class="card">
+      <div class="toolbar">
+        <div class="card-title" style="margin:0"><i class="fa-solid fa-users"></i> Grupos de Motoristas</div>
+        <div class="toolbar-spacer"></div>
+        <button id="btn-add-grupo-mot" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Novo Grupo</button>
+      </div>
+      <p class="status-note">O grupo <strong>Todos</strong> é padrão do sistema e inclui automaticamente todos os motoristas.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nome</th><th>Descrição</th><th class="text-center">Motoristas</th><th class="text-center">Ações</th></tr></thead>
+          <tbody id="tbody-grupos-mot"><tr><td colspan="4"><div class="skeleton" style="height:36px"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── VEÍCULOS ──────────────────────────────────────────────── -->
+  <div id="panel-veiculos" class="tab-panel" style="display:none">
+    <div class="card">
+      <div class="toolbar">
+        <div class="card-title" style="margin:0"><i class="fa-solid fa-car-side"></i> Veículos Cadastrados</div>
+        <div class="toolbar-spacer"></div>
+        <button id="btn-add-veiculo" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Novo Veículo</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Placa</th><th>Descrição</th><th>Tipo</th><th class="text-center">Capacidade</th><th class="text-center">Status</th><th class="text-center">Ações</th></tr></thead>
+          <tbody id="tbody-veiculos"><tr><td colspan="6"><div class="skeleton" style="height:36px"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── GRUPOS DE VEÍCULOS ────────────────────────────────────── -->
+  <div id="panel-grupos-vei" class="tab-panel" style="display:none">
+    <div class="card">
+      <div class="toolbar">
+        <div class="card-title" style="margin:0"><i class="fa-solid fa-layer-group"></i> Grupos de Veículos</div>
+        <div class="toolbar-spacer"></div>
+        <button id="btn-add-grupo-vei" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Novo Grupo</button>
+      </div>
+      <p class="status-note">O grupo <strong>Todos</strong> é padrão do sistema e inclui automaticamente todos os veículos.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nome</th><th>Descrição</th><th class="text-center">Veículos</th><th class="text-center">Ações</th></tr></thead>
+          <tbody id="tbody-grupos-vei"><tr><td colspan="4"><div class="skeleton" style="height:36px"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── AGENDAS (TIPOS) ───────────────────────────────────────── -->
+  <div id="panel-tipos" class="tab-panel" style="display:none">
+    <div class="card">
+      <div class="toolbar">
+        <div class="card-title" style="margin:0"><i class="fa-solid fa-calendar-plus"></i> Agendas Configuradas</div>
+        <div class="toolbar-spacer"></div>
+        <button id="btn-add-tipo" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Nova Agenda</button>
+      </div>
+      <p class="status-note">Cada agenda define quais motoristas e veículos fazem parte dela. O filtro do calendário usa essas agendas.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nome</th><th>Descrição</th><th>Grupo Motoristas</th><th>Grupo Veículos</th><th class="text-center">Status</th><th class="text-center">Ações</th></tr></thead>
+          <tbody id="tbody-tipos"><tr><td colspan="6"><div class="skeleton" style="height:36px"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAIS ════ -->
+
+<!-- Modal: Motorista -->
+<div id="mot-modal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="mot-modal-title" class="modal-title">Motorista</h3>
+      <button id="mot-modal-close" class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Nome *</label>
+          <input id="mot-nome" class="form-control" type="text" placeholder="Nome completo"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Matrícula / CPF</label>
+          <input id="mot-matricula" class="form-control" type="text"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo</label>
+          <select id="mot-tipo" class="form-control">
+            <option value="habilitado">Habilitado</option>
+            <option value="oficial">Oficial</option>
+            <option value="externo">Externo</option>
+          </select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Observações</label>
+          <input id="mot-obs" class="form-control" type="text"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input id="mot-ativo" type="checkbox" checked/> Motorista ativo
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="mot-cancel" class="btn btn-secondary">Cancelar</button>
+      <button id="mot-save" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Grupo Motoristas -->
+<div id="gmot-modal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="gmot-modal-title" class="modal-title">Grupo de Motoristas</h3>
+      <button id="gmot-modal-close" class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Nome do grupo *</label>
+        <input id="gmot-nome" class="form-control" type="text"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descrição</label>
+        <input id="gmot-desc" class="form-control" type="text"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Motoristas do grupo</label>
+        <div id="gmot-check" class="check-list"><p class="check-list-empty">Carregando...</p></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="gmot-cancel" class="btn btn-secondary">Cancelar</button>
+      <button id="gmot-save" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Veículo -->
+<div id="vei-modal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="vei-modal-title" class="modal-title">Veículo</h3>
+      <button id="vei-modal-close" class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Placa *</label>
+          <input id="vei-placa" class="form-control" type="text" style="text-transform:uppercase"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo</label>
+          <select id="vei-tipo" class="form-control">
+            <option value="passeio">Passeio</option>
+            <option value="especial">Especial</option>
+            <option value="van">Van</option>
+            <option value="onibus">Ônibus</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Descrição</label>
+          <input id="vei-desc" class="form-control" type="text"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Capacidade (passageiros)</label>
+          <input id="vei-cap" class="form-control" type="number" min="1" max="60"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:22px">
+            <input id="vei-ativo" type="checkbox" checked/> Veículo ativo
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="vei-cancel" class="btn btn-secondary">Cancelar</button>
+      <button id="vei-save" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Grupo Veículos -->
+<div id="gvei-modal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="gvei-modal-title" class="modal-title">Grupo de Veículos</h3>
+      <button id="gvei-modal-close" class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Nome do grupo *</label>
+        <input id="gvei-nome" class="form-control" type="text"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descrição</label>
+        <input id="gvei-desc" class="form-control" type="text"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Veículos do grupo</label>
+        <div id="gvei-check" class="check-list"><p class="check-list-empty">Carregando...</p></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="gvei-cancel" class="btn btn-secondary">Cancelar</button>
+      <button id="gvei-save" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Agenda -->
+<div id="tipo-modal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="tipo-modal-title" class="modal-title">Agenda</h3>
+      <button id="tipo-modal-close" class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Nome da agenda *</label>
+        <input id="tipo-nome" class="form-control" type="text"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descrição</label>
+        <input id="tipo-desc" class="form-control" type="text"/>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Grupo de Motoristas</label>
+          <select id="tipo-grupo-mot" class="form-control"><option value="">— selecione —</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Grupo de Veículos</label>
+          <select id="tipo-grupo-vei" class="form-control"><option value="">— selecione —</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cor de identificação</label>
+        <div id="tipo-swatches" class="color-swatches"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input id="tipo-ativo" type="checkbox" checked/> Agenda ativa
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="tipo-cancel" class="btn btn-secondary">Cancelar</button>
+      <button id="tipo-save" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastArea"></div>
+
+<footer>
+  <div class="footer-content">
+    <span>&copy; 2026 Arthur Ferreira</span>
+    <div class="footer-links">
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i> arthurferreira@utfpr.edu.br</a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i> ArthurAAFerreira</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="./pages/cadastros.ts"></script>
+</body>
+</html>

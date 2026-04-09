@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Relatórios · Agenda DESEG · UTFPR-LD</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<header>
+  <h1><i class="fa-solid fa-chart-bar"></i> Relatórios · UTFPR-LD</h1>
+  <p>Relatórios de veículos, motoristas e solicitações aguardando liberação</p>
+</header>
+
+<div class="container">
+
+  <div class="sub-tabs">
+    <button class="sub-tab active" data-tab="veiculos">
+      <i class="fa-solid fa-car-side"></i> Por Veículo
+    </button>
+    <button class="sub-tab" data-tab="motoristas">
+      <i class="fa-solid fa-id-badge"></i> Por Motorista
+    </button>
+    <button class="sub-tab" data-tab="aguardando">
+      <i class="fa-solid fa-hourglass-half"></i> Aguardando Liberação
+    </button>
+  </div>
+
+  <!-- Relatório por Veículo -->
+  <div id="panel-veiculos" class="tab-panel">
+    <div class="card" style="padding:0;overflow:hidden">
+      <iframe id="reportVeiculosFrame" class="embed-frame" title="Relatório por Veículo" style="min-height:500px"></iframe>
+    </div>
+  </div>
+
+  <!-- Relatório por Motorista (protegido por senha) -->
+  <div id="panel-motoristas" class="tab-panel" style="display:none">
+    <div id="driverReportLock" class="locked-box card">
+      <p style="display:flex;align-items:center;gap:8px;font-weight:700;color:#15386c;margin:0">
+        <i class="fa-solid fa-lock"></i> Relatório protegido por senha
+      </p>
+      <p class="status-note">Digite a senha para liberar o relatório por motorista.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+        <input id="driverReportPassword" class="form-control" style="max-width:240px" type="password" placeholder="Senha do relatório"/>
+        <button id="unlockDriverReportBtn" class="btn btn-primary" type="button">
+          <i class="fa-solid fa-unlock"></i> Desbloquear
+        </button>
+      </div>
+      <p id="driverReportLockMsg" class="status-note" style="color:#c62828;margin:0"></p>
+    </div>
+    <div id="motoristasFrame" style="display:none">
+      <div class="card" style="padding:0;overflow:hidden">
+        <iframe id="reportMotoristasFrame" class="embed-frame" title="Relatório por Motorista" style="min-height:500px"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Aguardando Liberação -->
+  <div id="panel-aguardando" class="tab-panel" style="display:none">
+    <div class="card" style="padding:0;overflow:hidden">
+      <iframe id="reportAguardandoFrame" class="embed-frame" title="Solicitações aguardando liberação" style="min-height:500px"></iframe>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-content">
+    <span>&copy; 2026 Arthur Ferreira</span>
+    <div class="footer-links">
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i> arthurferreira@utfpr.edu.br</a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i> ArthurAAFerreira</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="./pages/relatorios.ts"></script>
+</body>
+</html>
