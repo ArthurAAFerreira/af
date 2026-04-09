@@ -1,20 +1,95 @@
 -- ============================================================
--- Agenda de Veículos DESEG · UTFPR-CT — Migração v2
+-- Agenda de Veículos DESEG · UTFPR-CT — Setup v2 completo
 -- Execute no SQL Editor do Supabase — schema: desegct
+-- (as tabelas agenda_* ainda não existiam neste schema)
 -- ============================================================
 
--- 1. agenda_motoristas: remover tipo, adicionar oficial e servidor
-ALTER TABLE desegct.agenda_motoristas
-  DROP COLUMN IF EXISTS tipo CASCADE,
-  ADD COLUMN IF NOT EXISTS oficial  BOOLEAN NOT NULL DEFAULT false,
-  ADD COLUMN IF NOT EXISTS servidor BOOLEAN NOT NULL DEFAULT false;
+-- 1. Motoristas (sem coluna tipo; usa oficial + servidor)
+CREATE TABLE IF NOT EXISTS desegct.agenda_motoristas (
+  id          UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
+  nome        TEXT        NOT NULL,
+  matricula   TEXT,
+  oficial     BOOLEAN     NOT NULL DEFAULT false,
+  servidor    BOOLEAN     NOT NULL DEFAULT false,
+  observacoes TEXT,
+  ativo       BOOLEAN     NOT NULL DEFAULT true,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 
--- 2. agenda_veiculos: remover tipo
-ALTER TABLE desegct.agenda_veiculos
-  DROP COLUMN IF EXISTS tipo CASCADE;
+-- 2. Grupos de motoristas
+CREATE TABLE IF NOT EXISTS desegct.agenda_grupos_motoristas (
+  id          UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
+  nome        TEXT        NOT NULL,
+  descricao   TEXT,
+  is_todos    BOOLEAN     NOT NULL DEFAULT false,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 
--- 3. View principal do calendário: adapte o FROM para a tabela de solicitações do CT
---    Substitua desegct.solicitacoes_veiculos pelo nome correto se for diferente
+-- 3. Relação grupo ↔ motorista
+CREATE TABLE IF NOT EXISTS desegct.agenda_grupo_motoristas_itens (
+  grupo_id     UUID NOT NULL REFERENCES desegct.agenda_grupos_motoristas(id) ON DELETE CASCADE,
+  motorista_id UUID NOT NULL REFERENCES desegct.agenda_motoristas(id)        ON DELETE CASCADE,
+  PRIMARY KEY (grupo_id, motorista_id)
+);
+
+-- 4. Veículos (sem coluna tipo; use grupos para classificar)
+CREATE TABLE IF NOT EXISTS desegct.agenda_veiculos (
+  id          UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
+  placa       TEXT        NOT NULL UNIQUE,
+  descricao   TEXT,
+  capacidade  INTEGER,
+  ativo       BOOLEAN     NOT NULL DEFAULT true,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- 5. Grupos de veículos
+CREATE TABLE IF NOT EXISTS desegct.agenda_grupos_veiculos (
+  id          UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
+  nome        TEXT        NOT NULL,
+  descricao   TEXT,
+  is_todos    BOOLEAN     NOT NULL DEFAULT false,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- 6. Relação grupo ↔ veículo
+CREATE TABLE IF NOT EXISTS desegct.agenda_grupo_veiculos_itens (
+  grupo_id   UUID NOT NULL REFERENCES desegct.agenda_grupos_veiculos(id) ON DELETE CASCADE,
+  veiculo_id UUID NOT NULL REFERENCES desegct.agenda_veiculos(id)        ON DELETE CASCADE,
+  PRIMARY KEY (grupo_id, veiculo_id)
+);
+
+-- 7. Tipos / Agendas
+CREATE TABLE IF NOT EXISTS desegct.agenda_tipos (
+  id                  UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
+  nome                TEXT        NOT NULL,
+  descricao           TEXT,
+  grupo_motoristas_id UUID        REFERENCES desegct.agenda_grupos_motoristas(id) ON DELETE SET NULL,
+  grupo_veiculos_id   UUID        REFERENCES desegct.agenda_grupos_veiculos(id)   ON DELETE SET NULL,
+  cor                 TEXT        NOT NULL DEFAULT '#2f5fc4',
+  ativo               BOOLEAN     NOT NULL DEFAULT true,
+  created_at          TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- 8. Permissões
+GRANT SELECT, INSERT, UPDATE, DELETE ON desegct.agenda_motoristas            TO anon, authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON desegct.agenda_grupos_motoristas      TO anon, authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON desegct.agenda_grupo_motoristas_itens TO anon, authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON desegct.agenda_veiculos               TO anon, authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON desegct.agenda_grupos_veiculos        TO anon, authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON desegct.agenda_grupo_veiculos_itens   TO anon, authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON desegct.agenda_tipos                  TO anon, authenticated;
+
+-- 9. Seed: grupos padrão "Todos"
+INSERT INTO desegct.agenda_grupos_motoristas (nome, descricao, is_todos)
+SELECT 'Todos', 'Grupo padrão — inclui todos os motoristas', true
+WHERE NOT EXISTS (SELECT 1 FROM desegct.agenda_grupos_motoristas WHERE is_todos = true);
+
+INSERT INTO desegct.agenda_grupos_veiculos (nome, descricao, is_todos)
+SELECT 'Todos', 'Grupo padrão — inclui todos os veículos', true
+WHERE NOT EXISTS (SELECT 1 FROM desegct.agenda_grupos_veiculos WHERE is_todos = true);
+
+-- 10. View do calendário: mapear solicitacoes_veiculos → Evento
+--     DROP primeiro pois já existe uma versão antiga com colunas diferentes
 DROP VIEW IF EXISTS desegct.vw_agenda_eventos CASCADE;
 
 CREATE VIEW desegct.vw_agenda_eventos AS
