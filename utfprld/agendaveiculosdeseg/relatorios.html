@@ -3,49 +3,50 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Relat├│rios ┬À Agenda DESEG ┬À UTFPR-LD</title>
+  <title>Relatórios · Agenda DESEG · UTFPR-LD</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <script type="module" crossorigin src="./assets/relatorios-iPtEvgIm.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/nav-DieEWAr5.js">
-  <link rel="stylesheet" crossorigin href="./assets/nav-BZFhFHG5.css">
+  <link rel="modulepreload" crossorigin href="./assets/nav-DieEWAr5-BnXgOU6O.js">
+  <script type="module" crossorigin src="./assets/relatorios-CHVlTUu9.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-DeDynHbL.js">
+  <link rel="stylesheet" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5.css">
 </head>
 <body>
 
 <header>
-  <h1><i class="fa-solid fa-chart-bar"></i> Relat├│rios ┬À UTFPR-LD</h1>
-  <p>Relat├│rios de ve├¡culos, motoristas e solicita├º├Áes aguardando libera├º├úo</p>
+  <h1><i class="fa-solid fa-chart-bar"></i> Relatórios · UTFPR-LD</h1>
+  <p>Relatórios de veículos, motoristas e solicita├ºões aguardando liberação</p>
 </header>
 
 <div class="container">
 
   <div class="sub-tabs">
     <button class="sub-tab active" data-tab="veiculos">
-      <i class="fa-solid fa-car-side"></i> Por Ve├¡culo
+      <i class="fa-solid fa-car-side"></i> Por Veículo
     </button>
     <button class="sub-tab" data-tab="motoristas">
       <i class="fa-solid fa-id-badge"></i> Por Motorista
     </button>
     <button class="sub-tab" data-tab="aguardando">
-      <i class="fa-solid fa-hourglass-half"></i> Aguardando Libera├º├úo
+      <i class="fa-solid fa-hourglass-half"></i> Aguardando Liberação
     </button>
   </div>
 
-  <!-- Relat├│rio por Ve├¡culo -->
+  <!-- Relatório por Veículo -->
   <div id="panel-veiculos" class="tab-panel">
     <div class="card" style="padding:0;overflow:hidden">
-      <iframe id="reportVeiculosFrame" class="embed-frame" title="Relat├│rio por Ve├¡culo" style="min-height:500px"></iframe>
+      <iframe id="reportVeiculosFrame" class="embed-frame" title="Relatório por Veículo" style="min-height:500px"></iframe>
     </div>
   </div>
 
-  <!-- Relat├│rio por Motorista (protegido por senha) -->
+  <!-- Relatório por Motorista (protegido por senha) -->
   <div id="panel-motoristas" class="tab-panel" style="display:none">
     <div id="driverReportLock" class="locked-box card">
       <p style="display:flex;align-items:center;gap:8px;font-weight:700;color:#15386c;margin:0">
-        <i class="fa-solid fa-lock"></i> Relat├│rio protegido por senha
+        <i class="fa-solid fa-lock"></i> Relatório protegido por senha
       </p>
-      <p class="status-note">Digite a senha para liberar o relat├│rio por motorista.</p>
+      <p class="status-note">Digite a senha para liberar o relatório por motorista.</p>
       <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
-        <input id="driverReportPassword" class="form-control" style="max-width:240px" type="password" placeholder="Senha do relat├│rio"/>
+        <input id="driverReportPassword" class="form-control" style="max-width:240px" type="password" placeholder="Senha do relatório"/>
         <button id="unlockDriverReportBtn" class="btn btn-primary" type="button">
           <i class="fa-solid fa-unlock"></i> Desbloquear
         </button>
@@ -54,15 +55,15 @@
     </div>
     <div id="motoristasFrame" style="display:none">
       <div class="card" style="padding:0;overflow:hidden">
-        <iframe id="reportMotoristasFrame" class="embed-frame" title="Relat├│rio por Motorista" style="min-height:500px"></iframe>
+        <iframe id="reportMotoristasFrame" class="embed-frame" title="Relatório por Motorista" style="min-height:500px"></iframe>
       </div>
     </div>
   </div>
 
-  <!-- Aguardando Libera├º├úo -->
+  <!-- Aguardando Liberação -->
   <div id="panel-aguardando" class="tab-panel" style="display:none">
     <div class="card" style="padding:0;overflow:hidden">
-      <iframe id="reportAguardandoFrame" class="embed-frame" title="Solicita├º├Áes aguardando libera├º├úo" style="min-height:500px"></iframe>
+      <iframe id="reportAguardandoFrame" class="embed-frame" title="Solicita├ºões aguardando liberação" style="min-height:500px"></iframe>
     </div>
   </div>
 </div>

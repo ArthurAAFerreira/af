@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type {
-  Motorista, GrupoMotoristas, Veiculo, GrupoVeiculos, AgendaTipo, Evento,
+  Motorista, GrupoMotoristas, Veiculo, GrupoVeiculos, AgendaTipo, Evento, AgendaSituacao,
   MotoristaPayload, VeiculoPayload, GrupoMotoristasPayload, GrupoVeiculosPayload,
   AgendaTipoPayload,
 } from './types.ts';
@@ -67,6 +67,24 @@ export async function upsertAgendaTipo(payload: AgendaTipoPayload): Promise<Agen
 
 export async function deleteAgendaTipo(id: string): Promise<void> {
   const { error } = await sb.from('agenda_tipos').delete().eq('id', id);
+  if (error) throw error;
+}
+
+// ── Situações ────────────────────────────────────────────────────────────────
+export async function loadAgendaSituacoes(): Promise<AgendaSituacao[]> {
+  const { data, error } = await sb.from('agenda_situacoes').select('*').order('ordem');
+  if (error) throw error;
+  return (data ?? []) as AgendaSituacao[];
+}
+
+export async function upsertAgendaSituacao(payload: Omit<AgendaSituacao, 'ordem'> & { ordem?: number }): Promise<void> {
+  const { error } = await sb.from('agenda_situacoes').update({
+    nome_display: payload.nome_display,
+    cor_fundo:    payload.cor_fundo,
+    cor_borda:    payload.cor_borda,
+    cor_texto:    payload.cor_texto,
+    icone:        payload.icone,
+  }).eq('chave', payload.chave);
   if (error) throw error;
 }
 

@@ -5,10 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Cadastros · Agenda DESEG · UTFPR-LD</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <script type="module" crossorigin src="./assets/cadastros-oITnNtlu.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/nav-DieEWAr5.js">
-  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c.js">
-  <link rel="stylesheet" crossorigin href="./assets/nav-BZFhFHG5.css">
+  <link rel="modulepreload" crossorigin href="./assets/nav-DieEWAr5-BnXgOU6O.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-B1iPc5Qn.js">
+  <script type="module" crossorigin src="./assets/cadastros-B4Sh0hFy.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-DeDynHbL.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-DJF07D2h.js">
+  <link rel="stylesheet" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5.css">
 </head>
 <body>
 
@@ -25,6 +27,7 @@
     <button class="sub-tab" data-tab="veiculos"><i class="fa-solid fa-car-side"></i> Veículos</button>
     <button class="sub-tab" data-tab="grupos-vei"><i class="fa-solid fa-layer-group"></i> Grupos Veículos</button>
     <button class="sub-tab" data-tab="tipos"><i class="fa-solid fa-calendar-plus"></i> Agendas</button>
+    <button class="sub-tab" data-tab="situacoes"><i class="fa-solid fa-palette"></i> Situações</button>
   </div>
 
   <!-- ── MOTORISTAS ─────────────────────────────────────────────── -->
@@ -110,6 +113,21 @@
         <table>
           <thead><tr><th>Nome</th><th>Descrição</th><th>Grupo Motoristas</th><th>Grupo Veículos</th><th class="text-center">Status</th><th class="text-center">Ações</th></tr></thead>
           <tbody id="tbody-tipos"><tr><td colspan="6"><div class="skeleton" style="height:36px"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- ── SITUAÇÕES ──────────────────────────────────────────────── -->
+  <div id="panel-situacoes" class="tab-panel" style="display:none">
+    <div class="card">
+      <div class="toolbar">
+        <div class="card-title" style="margin:0"><i class="fa-solid fa-palette"></i> Situações do Calendário</div>
+      </div>
+      <p class="status-note">Personalize o nome, cor e ícone de cada situação exibida no calendário. A chave identifica a situação no sistema e não pode ser alterada.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nome</th><th>Chave</th><th class="text-center">Ícone</th><th class="text-center">Cor de Fundo</th><th class="text-center">Ações</th></tr></thead>
+          <tbody id="tbody-situacoes"><tr><td colspan="5"><div class="skeleton" style="height:36px"></div></td></tr></tbody>
         </table>
       </div>
     </div>
@@ -294,6 +312,56 @@
     <div class="modal-footer">
       <button id="tipo-cancel" class="btn btn-secondary">Cancelar</button>
       <button id="tipo-save" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Situação -->
+<div id="sit-modal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Editar Situação</h3>
+      <button id="sit-modal-close" class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Chave (sistema — não editável)</label>
+        <code id="sit-chave" style="display:block;padding:7px 10px;background:#f1f4f9;border-radius:6px;font-size:.9rem"></code>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nome de exibição *</label>
+        <input id="sit-nome" class="form-control" type="text" placeholder="Ex: Liberada (DISAU)"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ícone Font Awesome (classe)</label>
+        <input id="sit-icone" class="form-control" type="text" placeholder="fa-circle-check"/>
+        <p class="status-note" style="margin-top:4px">Exemplos: fa-circle-check, fa-clock, fa-flag-checkered, fa-circle-half-stroke, fa-circle-xmark, fa-circle</p>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Cor de fundo</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="sit-cor-fundo" class="form-control" type="color" style="width:48px;height:36px;padding:2px"/>
+            <input id="sit-cor-fundo-hex" class="form-control" type="text" placeholder="#12853b" style="flex:1" oninput="document.getElementById('sit-cor-fundo').value=this.value"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cor da borda</label>
+          <input id="sit-cor-borda" class="form-control" type="color" style="width:48px;height:36px;padding:2px"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cor do texto</label>
+          <input id="sit-cor-texto" class="form-control" type="color" style="width:48px;height:36px;padding:2px" value="#ffffff"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Prévia</label>
+          <span id="sit-preview" style="display:inline-block;width:36px;height:36px;border-radius:8px;border:1px solid #ccc"></span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="sit-cancel" class="btn btn-secondary">Cancelar</button>
+      <button id="sit-save" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
     </div>
   </div>
 </div>

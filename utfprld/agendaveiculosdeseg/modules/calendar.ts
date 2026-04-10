@@ -2,30 +2,32 @@ import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin  from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import ptBrLocale     from '@fullcalendar/core/locales/pt-br';
-import { loadEventos, loadAgendaTipos } from './db.ts';
-import type { Evento, AgendaTipo } from './types.ts';
+import { loadEventos, loadAgendaTipos, loadAgendaSituacoes } from './db.ts';
+import type { Evento, AgendaTipo, AgendaSituacao } from './types.ts';
 
 const DRIVER_REPORT_PASSWORDS = ['federer', 'dirpladsandy', '150148deseg'];
 
-type VisualStatus = 'liberada' | 'realizada' | 'finalizada' | 'autorizada' | 'aguardando' | 'outros';
+const DAY_NAMES = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
-const PALETTES: Record<VisualStatus, { backgroundColor: string; borderColor: string; textColor: string }> = {
-  liberada:   { backgroundColor: '#12853b', borderColor: '#0b6028', textColor: '#fff' },
-  realizada:  { backgroundColor: '#59647a', borderColor: '#414a5d', textColor: '#fff' },
-  finalizada: { backgroundColor: '#7e3aa9', borderColor: '#5d2a7f', textColor: '#fff' },
-  autorizada: { backgroundColor: '#d08b00', borderColor: '#945f00', textColor: '#fff' },
-  aguardando: { backgroundColor: '#2f5fc4', borderColor: '#234b9a', textColor: '#fff' },
-  outros:     { backgroundColor: '#246f85', borderColor: '#1b5161', textColor: '#fff' },
-};
+const FALLBACK_SITUACOES: AgendaSituacao[] = [
+  { chave: 'liberada',   nome_display: 'Liberada (DISAU)',           cor_fundo: '#12853b', cor_borda: '#0b6028', cor_texto: '#fff', icone: 'fa-circle-check',       ordem: 1 },
+  { chave: 'realizada',  nome_display: 'Realizada (sem finalizar)',  cor_fundo: '#59647a', cor_borda: '#414a5d', cor_texto: '#fff', icone: 'fa-circle-xmark',       ordem: 2 },
+  { chave: 'finalizada', nome_display: 'Finalizada',                 cor_fundo: '#7e3aa9', cor_borda: '#5d2a7f', cor_texto: '#fff', icone: 'fa-flag-checkered',     ordem: 3 },
+  { chave: 'autorizada', nome_display: 'Autorizada pelo aprovador',  cor_fundo: '#d08b00', cor_borda: '#945f00', cor_texto: '#fff', icone: 'fa-circle-half-stroke', ordem: 4 },
+  { chave: 'aguardando', nome_display: 'Aguardando aprovador',       cor_fundo: '#2f5fc4', cor_borda: '#234b9a', cor_texto: '#fff', icone: 'fa-clock',              ordem: 5 },
+  { chave: 'outros',     nome_display: 'Outros',                     cor_fundo: '#246f85', cor_borda: '#1b5161', cor_texto: '#fff', icone: 'fa-circle',             ordem: 6 },
+];
 
 const state: {
-  allEvents:    Evento[];
-  agendaTipos:  AgendaTipo[];
+  allEvents:     Evento[];
+  agendaTipos:   AgendaTipo[];
+  situacoes:     AgendaSituacao[];
   currentTipoId: string;
-  calendar:     Calendar | null;
+  calendar:      Calendar | null;
 } = {
   allEvents:     [],
   agendaTipos:   [],
+  situacoes:     FALLBACK_SITUACOES,
   currentTipoId: 'todas',
   calendar:      null,
 };
@@ -50,7 +52,7 @@ function isPassedEnd(evt: Evento): boolean {
   return new Date(String(evt.fim_previsto)).getTime() < Date.now();
 }
 
-function visualStatus(evt: Evento): VisualStatus {
+function visualStatus(evt: Evento): string {
   const s = norm(evt.situacao_normalizada ?? evt.situacao);
   if (s.includes('liberad') && s.includes('disau'))
     return isPassedEnd(evt) ? 'realizada' : 'liberada';
@@ -58,6 +60,12 @@ function visualStatus(evt: Evento): VisualStatus {
   if (s.includes('autorizada') && s.includes('aprovador')) return 'autorizada';
   if (s.includes('aguard') && s.includes('aprovador'))  return 'aguardando';
   return 'outros';
+}
+
+function getSituacao(chave: string): AgendaSituacao {
+  return state.situacoes.find(s => s.chave === chave) ??
+         FALLBACK_SITUACOES.find(s => s.chave === chave) ??
+         FALLBACK_SITUACOES[FALLBACK_SITUACOES.length - 1];
 }
 
 // ── Filtro por agenda tipo ────────────────────────────────────────────────────
@@ -89,6 +97,17 @@ function getFiltered(): Evento[] {
   return state.allEvents.filter(e => matchesTipo(e, tipo));
 }
 
+// ── Legenda dinâmica ─────────────────────────────────────────────────────────
+function renderLegend(): void {
+  const el = document.getElementById('legendRoot');
+  if (!el) return;
+  const sits = state.situacoes.length ? state.situacoes : FALLBACK_SITUACOES;
+  el.innerHTML = sits
+    .filter(s => s.chave !== 'outros')
+    .map(s => `<span><i class="legend-dot" style="background:${s.cor_fundo}"></i> ${s.nome_display}</span>`)
+    .join('');
+}
+
 // ── KPIs ──────────────────────────────────────────────────────────────────────
 function updateKpis(): void {
   const evts = getFiltered();
@@ -117,15 +136,18 @@ function fixTitle(): void {
 // ── Eventos para o FullCalendar ───────────────────────────────────────────────
 function buildFCEvents() {
   return getFiltered().map(item => {
-    const vs = visualStatus(item);
+    const vs  = visualStatus(item);
+    const sit = getSituacao(vs);
     return {
       ...item,
       title: (String(item.veiculo_principal ?? item.veiculos ?? 'Sem veículo')) +
-             (item.solicitante_nome ? ' — ' + item.solicitante_nome : ''),
+             (item.motorista_nome ? ' — ' + item.motorista_nome : ''),
       start: item.inicio_previsto,
       end:   item.fim_previsto,
       extendedProps: { ...item, visualStatus: vs },
-      ...PALETTES[vs],
+      backgroundColor: sit.cor_fundo,
+      borderColor:     sit.cor_borda,
+      textColor:       sit.cor_texto,
     };
   });
 }
@@ -195,7 +217,10 @@ function openModal(extProps: Record<string, unknown>): void {
 // ── Init ──────────────────────────────────────────────────────────────────────
 export async function initCalendar(): Promise<void> {
   try {
-    [state.allEvents, state.agendaTipos] = await Promise.all([loadEventos(), loadAgendaTipos()]);
+    [state.allEvents, state.agendaTipos, state.situacoes] = await Promise.all(
+      [loadEventos(), loadAgendaTipos(), loadAgendaSituacoes()]
+    );
+    if (!state.situacoes.length) state.situacoes = FALLBACK_SITUACOES;
   } catch (e) {
     const root = document.getElementById('calendarRoot');
     if (root) root.innerHTML = `<p style="color:red;padding:16px">Erro ao carregar eventos: ${(e as Error).message}</p>`;
@@ -203,6 +228,7 @@ export async function initCalendar(): Promise<void> {
   }
 
   buildAgendaSelect();
+  renderLegend();
 
   const root = document.getElementById('calendarRoot');
   if (!root) return;
@@ -215,10 +241,13 @@ export async function initCalendar(): Promise<void> {
     headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
     buttonText:    { today: 'Hoje', month: 'Mês', week: 'Semana' },
     events: buildFCEvents(),
+    dayHeaderContent: (arg) => ({ html: DAY_NAMES[arg.date.getDay()] }),
     eventClassNames: () => ['fc-event-modern'],
-    eventContent: arg => ({
-      html: `<div class="fc-event-inner"><i class="fa-solid fa-car-side"></i>${arg.event.title}</div>`,
-    }),
+    eventContent: arg => {
+      const vs   = arg.event.extendedProps.visualStatus as string;
+      const icon = getSituacao(vs).icone;
+      return { html: `<div class="fc-event-inner"><i class="fa-solid ${icon}"></i>${arg.event.title}</div>` };
+    },
     eventClick: ({ event }) => openModal(event.extendedProps),
     datesSet:   fixTitle,
   });
@@ -228,8 +257,12 @@ export async function initCalendar(): Promise<void> {
 
   document.getElementById('refreshCalendarBtn')?.addEventListener('click', async () => {
     try {
-      [state.allEvents, state.agendaTipos] = await Promise.all([loadEventos(), loadAgendaTipos()]);
+      [state.allEvents, state.agendaTipos, state.situacoes] = await Promise.all(
+        [loadEventos(), loadAgendaTipos(), loadAgendaSituacoes()]
+      );
+      if (!state.situacoes.length) state.situacoes = FALLBACK_SITUACOES;
       buildAgendaSelect();
+      renderLegend();
       refreshCalendar();
     } catch (e) { alert('Erro ao atualizar: ' + (e as Error).message); }
   });

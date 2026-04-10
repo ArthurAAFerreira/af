@@ -79,6 +79,17 @@ export interface Evento {
   [key: string]: unknown;
 }
 
+// ── Situações do calendário ───────────────────────────────────────────────────
+export interface AgendaSituacao {
+  chave:        string;
+  nome_display: string;
+  cor_fundo:    string;
+  cor_borda:    string;
+  cor_texto:    string;
+  icone:        string;
+  ordem:        number;
+}
+
 // ── Payloads de upsert ────────────────────────────────────────────────────────
 export type MotoristaPayload = Omit<Motorista, 'created_at' | 'id'> & { id?: string };
 export type VeiculoPayload   = Omit<Veiculo,   'created_at' | 'id'> & { id?: string };

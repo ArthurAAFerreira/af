@@ -4,9 +4,10 @@ import {
   loadVeiculos, upsertVeiculo, deleteVeiculo,
   loadGruposVeiculos, upsertGrupoVeiculos, deleteGrupoVeiculos, loadGrupoVeiculosItens,
   loadAgendaTiposAll, upsertAgendaTipo, deleteAgendaTipo,
+  loadAgendaSituacoes, upsertAgendaSituacao,
   CADASTROS_PASSWORDS,
 } from './db.ts';
-import type { Motorista, GrupoMotoristas, Veiculo, GrupoVeiculos, AgendaTipo } from './types.ts';
+import type { Motorista, GrupoMotoristas, Veiculo, GrupoVeiculos, AgendaTipo, AgendaSituacao } from './types.ts';
 
 const CORES = ['#1565c0','#2e7d32','#c62828','#e65100','#6a1b9a','#00838f','#37474f','#558b2f','#ad1457','#f9a825'];
 
@@ -15,6 +16,7 @@ let _grupos_mot:  GrupoMotoristas[] = [];
 let _veiculos:    Veiculo[]         = [];
 let _grupos_vei:  GrupoVeiculos[]   = [];
 let _tipos:       AgendaTipo[]      = [];
+let _situacoes:   AgendaSituacao[]  = [];
 let _editingId:   string | null     = null;
 let _selectedCor: string            = CORES[0];
 
@@ -314,6 +316,46 @@ function bindTipoForm(): void {
   });
 }
 
+// ── Situações do calendário ──────────────────────────────────────────────────
+function renderSituacoes(): void {
+  const tbody = document.getElementById('tbody-situacoes');
+  if (!tbody) return;
+  tbody.innerHTML = _situacoes.map(s => `
+    <tr>
+      <td><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${s.cor_fundo};border:2px solid ${s.cor_borda};vertical-align:middle;margin-right:6px"></span>${s.nome_display}</td>
+      <td><code style="font-size:.82rem">${s.chave}</code></td>
+      <td class="text-center"><i class="fa-solid ${s.icone}" style="color:${s.cor_fundo};font-size:1.1rem"></i></td>
+      <td class="text-center"><span style="background:${s.cor_fundo};color:${s.cor_texto};padding:2px 8px;border-radius:4px;font-size:.78rem;border:1px solid ${s.cor_borda}">${s.cor_fundo}</span></td>
+      <td class="text-center">
+        <button class="btn-icon" data-action="edit-sit" data-chave="${s.chave}" title="Editar"><i class="fa-solid fa-pen"></i></button>
+      </td>
+    </tr>`).join('');
+}
+
+function bindSituacaoForm(): void {
+  document.getElementById('sit-modal-close')?.addEventListener('click',  () => closeModal('sit-modal'));
+  document.getElementById('sit-cancel')?.addEventListener('click',        () => closeModal('sit-modal'));
+  const updatePreview = () => {
+    const prev = document.getElementById('sit-preview') as HTMLElement | null;
+    if (prev) prev.style.background = val('sit-cor-fundo');
+  };
+  document.getElementById('sit-cor-fundo')?.addEventListener('input', updatePreview);
+  document.getElementById('sit-save')?.addEventListener('click', async () => {
+    const chaveEl = document.getElementById('sit-chave') as HTMLElement | null;
+    const chave   = chaveEl?.dataset.chave ?? '';
+    if (!chave) return;
+    const nome = val('sit-nome');
+    if (!nome) { toast('Nome é obrigatório.', false); return; }
+    try {
+      await upsertAgendaSituacao({ chave, nome_display: nome, cor_fundo: val('sit-cor-fundo'), cor_borda: val('sit-cor-borda'), cor_texto: val('sit-cor-texto'), icone: val('sit-icone') });
+      _situacoes = await loadAgendaSituacoes();
+      renderSituacoes();
+      closeModal('sit-modal');
+      toast('Situação salva.');
+    } catch(e) { toast((e as Error).message, false); }
+  });
+}
+
 // ── Event delegation para ações de tabela ─────────────────────────────────────
 function bindTableActions(): void {
   document.addEventListener('click', async (e) => {
@@ -377,6 +419,21 @@ function bindTableActions(): void {
       if (!confirm(`Excluir agenda "${nome}"?`)) return;
       try { await deleteAgendaTipo(id); _tipos = await loadAgendaTiposAll(); renderTipos(); toast('Agenda excluída.'); } catch(er) { toast((er as Error).message, false); }
     }
+    else if (action === 'edit-sit') {
+      const chave = btn.dataset.chave ?? '';
+      const s = _situacoes.find(x => x.chave === chave);
+      if (!s) return;
+      const chaveEl = document.getElementById('sit-chave') as HTMLElement | null;
+      if (chaveEl) { chaveEl.textContent = s.chave; chaveEl.dataset.chave = s.chave; }
+      setVal('sit-nome', s.nome_display);
+      setVal('sit-icone', s.icone);
+      setVal('sit-cor-fundo', s.cor_fundo);
+      setVal('sit-cor-borda', s.cor_borda);
+      setVal('sit-cor-texto', s.cor_texto);
+      const prev = document.getElementById('sit-preview') as HTMLElement | null;
+      if (prev) prev.style.background = s.cor_fundo;
+      openModal('sit-modal');
+    }
   });
 }
 
@@ -428,8 +485,8 @@ function requireAuth(): Promise<void> {
 export async function initCadastros(): Promise<void> {
   await requireAuth();
   try {
-    [_motoristas, _grupos_mot, _veiculos, _grupos_vei, _tipos] = await Promise.all([
-      loadMotoristas(), loadGruposMotoristas(), loadVeiculos(), loadGruposVeiculos(), loadAgendaTiposAll(),
+    [_motoristas, _grupos_mot, _veiculos, _grupos_vei, _tipos, _situacoes] = await Promise.all([
+      loadMotoristas(), loadGruposMotoristas(), loadVeiculos(), loadGruposVeiculos(), loadAgendaTiposAll(), loadAgendaSituacoes(),
     ]);
   } catch(e) { toast('Erro ao carregar dados: ' + (e as Error).message, false); }
 
@@ -438,8 +495,8 @@ export async function initCadastros(): Promise<void> {
   });
   setActiveTab('motoristas');
 
-  renderMotoristas(); renderGruposMot(); renderVeiculos(); renderGruposVei(); renderTipos();
-  bindMotoristaForm(); bindGrupoMotForm(); bindVeiculoForm(); bindGrupoVeiForm(); bindTipoForm();
+  renderMotoristas(); renderGruposMot(); renderVeiculos(); renderGruposVei(); renderTipos(); renderSituacoes();
+  bindMotoristaForm(); bindGrupoMotForm(); bindVeiculoForm(); bindGrupoVeiForm(); bindTipoForm(); bindSituacaoForm();
   bindTableActions();
 
   document.querySelectorAll('.modal-backdrop').forEach(bd => {
