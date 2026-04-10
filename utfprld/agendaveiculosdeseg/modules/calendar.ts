@@ -217,9 +217,8 @@ function openModal(extProps: Record<string, unknown>): void {
 // ── Init ──────────────────────────────────────────────────────────────────────
 export async function initCalendar(): Promise<void> {
   try {
-    [state.allEvents, state.agendaTipos, state.situacoes] = await Promise.all(
-      [loadEventos(), loadAgendaTipos(), loadAgendaSituacoes()]
-    );
+    [state.allEvents, state.agendaTipos] = await Promise.all([loadEventos(), loadAgendaTipos()]);
+    state.situacoes = await loadAgendaSituacoes().catch(() => []);
     if (!state.situacoes.length) state.situacoes = FALLBACK_SITUACOES;
   } catch (e) {
     const root = document.getElementById('calendarRoot');
@@ -257,9 +256,8 @@ export async function initCalendar(): Promise<void> {
 
   document.getElementById('refreshCalendarBtn')?.addEventListener('click', async () => {
     try {
-      [state.allEvents, state.agendaTipos, state.situacoes] = await Promise.all(
-        [loadEventos(), loadAgendaTipos(), loadAgendaSituacoes()]
-      );
+      [state.allEvents, state.agendaTipos] = await Promise.all([loadEventos(), loadAgendaTipos()]);
+      state.situacoes = await loadAgendaSituacoes().catch(() => []);
       if (!state.situacoes.length) state.situacoes = FALLBACK_SITUACOES;
       buildAgendaSelect();
       renderLegend();

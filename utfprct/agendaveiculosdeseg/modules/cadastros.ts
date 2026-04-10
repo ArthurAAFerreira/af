@@ -320,6 +320,10 @@ function bindTipoForm(): void {
 function renderSituacoes(): void {
   const tbody = document.getElementById('tbody-situacoes');
   if (!tbody) return;
+  if (!_situacoes.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;padding:16px">Nenhuma situação encontrada. Execute o SQL <code>supabase_agenda_situacoes.sql</code> no painel do Supabase.</td></tr>';
+    return;
+  }
   tbody.innerHTML = _situacoes.map(s => `
     <tr>
       <td><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${s.cor_fundo};border:2px solid ${s.cor_borda};vertical-align:middle;margin-right:6px"></span>${s.nome_display}</td>
@@ -485,9 +489,10 @@ function requireAuth(): Promise<void> {
 export async function initCadastros(): Promise<void> {
   await requireAuth();
   try {
-    [_motoristas, _grupos_mot, _veiculos, _grupos_vei, _tipos, _situacoes] = await Promise.all([
-      loadMotoristas(), loadGruposMotoristas(), loadVeiculos(), loadGruposVeiculos(), loadAgendaTiposAll(), loadAgendaSituacoes(),
+    [_motoristas, _grupos_mot, _veiculos, _grupos_vei, _tipos] = await Promise.all([
+      loadMotoristas(), loadGruposMotoristas(), loadVeiculos(), loadGruposVeiculos(), loadAgendaTiposAll(),
     ]);
+    _situacoes = await loadAgendaSituacoes().catch(() => []);
   } catch(e) { toast('Erro ao carregar dados: ' + (e as Error).message, false); }
 
   document.querySelectorAll<HTMLElement>('.sub-tab').forEach(el => {
