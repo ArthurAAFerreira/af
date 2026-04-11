@@ -6,6 +6,7 @@ import { loadEventos, loadAgendaTipos, loadAgendaSituacoes, loadMotoristas } fro
 import type { Evento, AgendaTipo, AgendaSituacao, Motorista } from './types.ts';
 
 const DRIVER_REPORT_PASSWORDS = ['federer', 'dirpladsandy', '150148deseg'];
+const STORAGE_KEY_SEEN = 'agenda_cancelados_seen_ct';
 
 const DAY_NAMES = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -172,6 +173,76 @@ function renderLegend(): void {
   ).join('');
 }
 
+// ── Painel de cancelamentos ─────────────────────────────────────────────────
+function getCancelledEvents(): Evento[] {
+  return state.allEvents.filter(e => isCancelled(e));
+}
+
+function getSeenIds(): Set<string> {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_SEEN);
+    return new Set(raw ? JSON.parse(raw) as string[] : []);
+  } catch { return new Set(); }
+}
+
+function saveSeenIds(ids: Set<string>): void {
+  try { localStorage.setItem(STORAGE_KEY_SEEN, JSON.stringify([...ids])); } catch { /* ignore */ }
+}
+
+function renderCancelledPanel(): void {
+  const cancelled = getCancelledEvents();
+  const seenIds   = getSeenIds();
+  const fmt = (v: unknown) => {
+    if (!v) return '—';
+    const d = new Date(String(v));
+    return isNaN(d.getTime()) ? String(v) : d.toLocaleString('pt-BR');
+  };
+  const newOnes = cancelled.filter(e => {
+    const id = String(e.numero_solicitacao ?? '');
+    return id && !seenIds.has(id);
+  });
+  const newBadge   = document.getElementById('canceladasNewBadge');
+  const countBadge = document.getElementById('canceladasCountBadge');
+  if (newBadge) {
+    newBadge.style.display = newOnes.length ? '' : 'none';
+    newBadge.textContent   = `${newOnes.length} novo${newOnes.length !== 1 ? 's' : ''}`;
+  }
+  if (countBadge) countBadge.textContent = String(cancelled.length);
+  const tableDiv = document.getElementById('canceladasTable');
+  if (!tableDiv) return;
+  if (!cancelled.length) {
+    tableDiv.innerHTML = '<p style="color:#888;font-size:.85rem;padding:8px 0">Nenhum cancelamento encontrado.</p>';
+    return;
+  }
+  tableDiv.innerHTML = `
+    <table style="width:100%;border-collapse:collapse;font-size:.8rem">
+      <thead>
+        <tr style="background:#f1f3f5">
+          <th style="padding:6px 8px;text-align:left">Protocolo</th>
+          <th style="padding:6px 8px;text-align:left">Solicitante</th>
+          <th style="padding:6px 8px;text-align:left">Veículo</th>
+          <th style="padding:6px 8px;text-align:left">Início</th>
+          <th style="padding:6px 8px;text-align:left">Situação</th>
+          <th style="padding:6px 8px;text-align:center">Novo</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${cancelled.map(e => {
+          const id    = String(e.numero_solicitacao ?? '');
+          const isNew = Boolean(id && !seenIds.has(id));
+          return `<tr style="${isNew ? 'background:#fff5f5' : ''}">
+            <td style="padding:5px 8px;border-bottom:1px solid #f0f0f0">${e.numero_solicitacao ?? '—'}</td>
+            <td style="padding:5px 8px;border-bottom:1px solid #f0f0f0">${e.solicitante_nome ?? '—'}</td>
+            <td style="padding:5px 8px;border-bottom:1px solid #f0f0f0">${String(e.veiculo_principal ?? e.veiculos ?? '—')}</td>
+            <td style="padding:5px 8px;border-bottom:1px solid #f0f0f0">${fmt(e.inicio_previsto)}</td>
+            <td style="padding:5px 8px;border-bottom:1px solid #f0f0f0">${e.situacao ?? '—'}</td>
+            <td style="padding:5px 8px;border-bottom:1px solid #f0f0f0;text-align:center">${isNew ? '<i class="fa-solid fa-circle-exclamation" style="color:#c0392b" title="Novo cancelamento"></i>' : ''}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+}
+
 // ── KPIs ──────────────────────────────────────────────────────────────────────
 function updateKpis(): void {
   const evts = getFiltered();
@@ -320,6 +391,25 @@ export async function initCalendar(): Promise<void> {
   fixTitle();
   updateKpis();
   setTimeout(updateAvailabilityIcons, 100);
+  renderCancelledPanel();
+
+  document.getElementById('canceladasToggle')?.addEventListener('click', () => {
+    const body    = document.getElementById('canceladasBody');
+    const chevron = document.getElementById('canceladasChevron');
+    if (!body) return;
+    const open = body.style.display === 'none' || body.style.display === '';
+    body.style.display = open ? 'block' : 'none';
+    if (chevron) chevron.innerHTML = open
+      ? '<i class="fa-solid fa-chevron-up"></i>'
+      : '<i class="fa-solid fa-chevron-down"></i>';
+  });
+
+  document.getElementById('canceladasMarkSeenBtn')?.addEventListener('click', () => {
+    const cancelled = getCancelledEvents();
+    const ids = new Set(cancelled.map(e => String(e.numero_solicitacao ?? '')).filter(Boolean));
+    saveSeenIds(ids);
+    renderCancelledPanel();
+  });
 
   document.getElementById('refreshCalendarBtn')?.addEventListener('click', async () => {
     try {
@@ -331,6 +421,7 @@ export async function initCalendar(): Promise<void> {
       renderLegend();
       refreshCalendar();
       setTimeout(updateAvailabilityIcons, 100);
+      renderCancelledPanel();
     } catch (e) { alert('Erro ao atualizar: ' + (e as Error).message); }
   });
 

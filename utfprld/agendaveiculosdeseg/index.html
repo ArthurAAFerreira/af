@@ -35,18 +35,20 @@
     #legendRoot .legend-dot { flex-shrink:0; width:12px; height:12px; border-radius:50%; margin-top:2px; }
     #legendRoot .legend-desc { color:#6b7a99; font-size:.78rem; }
   </style>
-  <link rel="modulepreload" crossorigin href="./assets/nav-DieEWAr5-BnXgOU6O-BnXgOU6O-BnXgOU6O-BnXgOU6O.js">
-  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-B1iPc5Qn-B1iPc5Qn-B1iPc5Qn-B1iPc5Qn.js">
-  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-DeDynHbL-Bn4d6rQy-Bn4d6rQy-Bn4d6rQy.js">
-  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-DJF07D2h-BcqeFSna-BcqeFSna-BcqeFSna.js">
-  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-DiD8FM4Q-DsiZ2qhz-DsiZ2qhz.js">
-  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-DJF07D2h-N7nRh2XM-Cd1cGR8P-Cd1cGR8P.js">
-  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-BZFhFHG5-BdNZa7W6-DJSYRbua.js">
-  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-DJF07D2h-N7nRh2XM-BejkeL2y-rKw6TYvD.js">
-  <script type="module" crossorigin src="./assets/index-CVI4vEfe.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-BZFhFHG5-BZFhFHG5-DwqsxmOE.js">
-  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-DJF07D2h-N7nRh2XM-BejkeL2y-N7nRh2XM.js">
-  <link rel="stylesheet" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-BZFhFHG5-BZFhFHG5-BZFhFHG5.css">
+  <link rel="modulepreload" crossorigin href="./assets/nav-DieEWAr5-BnXgOU6O-BnXgOU6O-BnXgOU6O-BnXgOU6O-BnXgOU6O.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-B1iPc5Qn-B1iPc5Qn-B1iPc5Qn-B1iPc5Qn-B1iPc5Qn.js">
+  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-DeDynHbL-Bn4d6rQy-Bn4d6rQy-Bn4d6rQy-Bn4d6rQy.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-DJF07D2h-BcqeFSna-BcqeFSna-BcqeFSna-BcqeFSna.js">
+  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-DiD8FM4Q-DsiZ2qhz-DsiZ2qhz-DsiZ2qhz.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-DJF07D2h-N7nRh2XM-BejkeL2y-N7nRh2XM-Cd1cGR8P.js">
+  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-BZFhFHG5-BdNZa7W6-DJSYRbua-DJSYRbua.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-DJF07D2h-N7nRh2XM-BejkeL2y-rKw6TYvD-rKw6TYvD.js">
+  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-BZFhFHG5-BZFhFHG5-DwqsxmOE-Cx3t8Q-h.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-DJF07D2h-N7nRh2XM-BejkeL2y-N7nRh2XM-Cd1cGR8P.js">
+  <script type="module" crossorigin src="./assets/index-vlkPuqzd.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-BZFhFHG5-BZFhFHG5-BZFhFHG5-WUk4Rhe-.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-DJF07D2h-N7nRh2XM-BejkeL2y-N7nRh2XM-BejkeL2y.js">
+  <link rel="stylesheet" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-BZFhFHG5-BZFhFHG5-BZFhFHG5-BZFhFHG5.css">
 </head>
 <body>
 
@@ -89,6 +91,28 @@
   <p class="status-note">Canceladas e devolvidas não aparecem no calendário.</p>
 
   <div id="calendarRoot"></div>
+
+  <!-- Painel de cancelamentos -->
+  <div id="canceladasPanel" style="margin-top:20px">
+    <div style="background:#fff;border:1px solid #dde3ef;border-radius:10px;overflow:hidden">
+      <div id="canceladasToggle" style="background:#f8f9fa;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none">
+        <span style="font-weight:700;font-size:.92rem;color:#3a3a3a">
+          <i class="fa-solid fa-ban" style="color:#c0392b"></i> Cancelamentos
+          <span id="canceladasNewBadge" style="display:none;background:#c0392b;color:#fff;border-radius:10px;padding:1px 8px;font-size:.75rem;margin-left:8px"></span>
+          <span id="canceladasCountBadge" style="background:#6c757d;color:#fff;border-radius:10px;padding:1px 8px;font-size:.75rem;margin-left:4px">0</span>
+        </span>
+        <span id="canceladasChevron" style="color:#666;font-size:.85rem"><i class="fa-solid fa-chevron-down"></i></span>
+      </div>
+      <div id="canceladasBody" style="display:none">
+        <div style="padding:10px 16px 6px 16px;display:flex;justify-content:flex-end">
+          <button id="canceladasMarkSeenBtn" class="btn btn-secondary" style="font-size:.8rem;padding:4px 12px">
+            <i class="fa-solid fa-eye"></i> Marcar todos como vistos
+          </button>
+        </div>
+        <div id="canceladasTable" style="overflow-x:auto;padding:0 16px 12px"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Modal de detalhe -->
