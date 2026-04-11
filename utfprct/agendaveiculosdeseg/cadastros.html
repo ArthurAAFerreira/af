@@ -5,16 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Cadastros · Agenda DESEG · UTFPR-CT</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <link rel="modulepreload" crossorigin href="./assets/nav-CIgOX8s9-9N2CHrN--9N2CHrN--9N2CHrN-.js">
-  <link rel="modulepreload" crossorigin href="./assets/db-BHiEkowS-BeAu3Qmp-BeAu3Qmp-BeAu3Qmp.js">
-  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-B57EVa3W-Bp0HVwcG-Bp0HVwcG.js">
-  <link rel="modulepreload" crossorigin href="./assets/db-BHiEkowS-DI-9UqzF-CbqCJZxa-CbqCJZxa.js">
-  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-DeXSeAT2-DD_DVQvP.js">
-  <link rel="modulepreload" crossorigin href="./assets/db-BHiEkowS-DI-9UqzF-CmbLoHd5-COs5wUo5.js">
-  <script type="module" crossorigin src="./assets/cadastros-B8nPmPMQ.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-BZFhFHG5-CQY5rhKd.js">
-  <link rel="modulepreload" crossorigin href="./assets/db-BHiEkowS-DI-9UqzF-CmbLoHd5-Ps4ovXA0.js">
-  <link rel="stylesheet" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-BZFhFHG5-BZFhFHG5.css">
+  <link rel="modulepreload" crossorigin href="./assets/nav-CIgOX8s9-9N2CHrN--9N2CHrN--9N2CHrN--9N2CHrN-.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-BHiEkowS-BeAu3Qmp-BeAu3Qmp-BeAu3Qmp-BeAu3Qmp.js">
+  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-B57EVa3W-Bp0HVwcG-Bp0HVwcG-Bp0HVwcG.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-BHiEkowS-DI-9UqzF-CbqCJZxa-CbqCJZxa-CbqCJZxa.js">
+  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-DeXSeAT2-DD_DVQvP-DD_DVQvP.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-BHiEkowS-DI-9UqzF-CmbLoHd5-COs5wUo5-COs5wUo5.js">
+  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-BZFhFHG5-CQY5rhKd-Bg3IRqsz.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-BHiEkowS-DI-9UqzF-CmbLoHd5-Ps4ovXA0-Dq0FOkQx.js">
+  <script type="module" crossorigin src="./assets/cadastros-D0_YUe3B.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-BZFhFHG5-BZFhFHG5-C1aJkbnN.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-BHiEkowS-DI-9UqzF-CmbLoHd5-Ps4ovXA0-CmbLoHd5.js">
+  <link rel="stylesheet" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-BZFhFHG5-BZFhFHG5-BZFhFHG5.css">
 </head>
 <body>
 
@@ -128,6 +130,9 @@
         <div class="card-title" style="margin:0"><i class="fa-solid fa-palette"></i> Situações do Calendário</div>
       </div>
       <p class="status-note">Personalize o rótulo e as cores de cada situação. A descrição é fixa e explica quais saídas se enquadram nessa situação.</p>
+      <div id="sit-fallback-banner" style="display:none;background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:10px 14px;font-size:.83rem;color:#7a5c00;margin-bottom:10px">
+        <i class="fa-solid fa-triangle-exclamation"></i> Tabela <code>agenda_situacoes</code> não encontrada no banco — exibindo valores padrão. Execute <code>supabase_agenda_situacoes.sql</code> no Supabase para habilitar a edição.
+      </div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Rótulo</th><th class="text-center">Cor</th><th>Descrição</th><th class="text-center">Ações</th></tr></thead>

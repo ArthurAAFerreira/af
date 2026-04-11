@@ -11,6 +11,17 @@ import type { Motorista, GrupoMotoristas, Veiculo, GrupoVeiculos, AgendaTipo, Ag
 
 const CORES = ['#1565c0','#2e7d32','#c62828','#e65100','#6a1b9a','#00838f','#37474f','#558b2f','#ad1457','#f9a825'];
 
+const FALLBACK_SITUACOES: AgendaSituacao[] = [
+  { chave: 'finalizada',               nome_display: 'Finalizada',                   descricao: 'Saídas com situação "Solicitação atendida e documentos preenchidos"',                 cor_fundo: '#7e3aa9', cor_borda: '#5d2a7f', cor_texto: '#fff', icone: 'fa-flag-checkered',     ordem: 1 },
+  { chave: 'aguardando_finalizacao',   nome_display: 'Aguardando Finalização',        descricao: 'Saídas com situação "Liberada pelo Disau" cuja saída já passou do dia e hora atual',  cor_fundo: '#59647a', cor_borda: '#414a5d', cor_texto: '#fff', icone: 'fa-circle-xmark',       ordem: 2 },
+  { chave: 'liberada',                 nome_display: 'Liberada',                     descricao: 'Saídas com situação "Liberada pelo Disau"',                                           cor_fundo: '#12853b', cor_borda: '#0b6028', cor_texto: '#fff', icone: 'fa-circle-check',       ordem: 3 },
+  { chave: 'aguardando_aprovador',     nome_display: 'Aguardando Aprovador',          descricao: 'Saídas com situação "Aguardando autorização do aprovador"',                          cor_fundo: '#2f5fc4', cor_borda: '#234b9a', cor_texto: '#fff', icone: 'fa-clock',              ordem: 4 },
+  { chave: 'aguardando_liberacao_deseg', nome_display: 'Aguardando Liberação DESEG',  descricao: 'Saídas com situação "Autorizada pelo aprovador"',                                    cor_fundo: '#d08b00', cor_borda: '#945f00', cor_texto: '#fff', icone: 'fa-circle-half-stroke', ordem: 5 },
+  { chave: 'em_andamento',             nome_display: 'Solicitação em andamento',      descricao: 'Saídas com situação "Solicitação em andamento"',                                     cor_fundo: '#246f85', cor_borda: '#1b5161', cor_texto: '#fff', icone: 'fa-circle',             ordem: 6 },
+];
+
+let _situacoesIsFallback = false;
+
 let _motoristas:  Motorista[]       = [];
 let _grupos_mot:  GrupoMotoristas[] = [];
 let _veiculos:    Veiculo[]         = [];
@@ -320,8 +331,10 @@ function bindTipoForm(): void {
 function renderSituacoes(): void {
   const tbody = document.getElementById('tbody-situacoes');
   if (!tbody) return;
+  const banner = document.getElementById('sit-fallback-banner');
+  if (banner) banner.style.display = _situacoesIsFallback ? '' : 'none';
   if (!_situacoes.length) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;padding:16px">Nenhuma situação encontrada. Execute o SQL <code>supabase_agenda_situacoes.sql</code> no painel do Supabase.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#888;padding:16px">Nenhuma situação encontrada.</td></tr>';
     return;
   }
   tbody.innerHTML = _situacoes.map(s => `
@@ -495,6 +508,8 @@ export async function initCadastros(): Promise<void> {
       loadMotoristas(), loadGruposMotoristas(), loadVeiculos(), loadGruposVeiculos(), loadAgendaTiposAll(),
     ]);
     _situacoes = await loadAgendaSituacoes().catch(() => []);
+    _situacoesIsFallback = !_situacoes.length;
+    if (_situacoesIsFallback) _situacoes = [...FALLBACK_SITUACOES];
   } catch(e) { toast('Erro ao carregar dados: ' + (e as Error).message, false); }
 
   document.querySelectorAll<HTMLElement>('.sub-tab').forEach(el => {
