@@ -1,0 +1,130 @@
+import pathlib
+
+LD_HEAD = """\
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Relatórios · Agenda DESEG · UTFPR-LD</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script type="module" src="./pages/relatorios.ts"></script>
+</head>
+<body>
+
+<header>
+  <h1><i class="fa-solid fa-chart-bar"></i> Relatórios · UTFPR-LD</h1>
+  <p>Relatórios de veículos, motoristas e solicitações aguardando liberação</p>
+</header>
+"""
+
+CT_HEAD = """\
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Relatórios · Agenda DESEG · UTFPR-CT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script type="module" src="./pages/relatorios.ts"></script>
+</head>
+<body>
+
+<header>
+  <h1><i class="fa-solid fa-chart-bar"></i> Relatórios · UTFPR-CT</h1>
+  <p>Relatórios de veículos, motoristas e solicitações aguardando liberação</p>
+</header>
+"""
+
+BODY = """\
+<div class="container">
+
+  <div class="sub-tabs">
+    <button class="sub-tab active" data-tab="veiculos">
+      <i class="fa-solid fa-car-side"></i> Por Veículo
+    </button>
+    <button class="sub-tab" data-tab="motoristas">
+      <i class="fa-solid fa-id-badge"></i> Por Motorista
+    </button>
+    <button class="sub-tab" data-tab="aguardando">
+      <i class="fa-solid fa-hourglass-half"></i> Aguardando Liberação
+    </button>
+  </div>
+
+  <div id="relatorios-loading" class="card" style="text-align:center;padding:24px">
+    <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+  </div>
+
+  <!-- Relatório por Veículo -->
+  <div id="panel-veiculos" class="tab-panel">
+    <div class="kpi-row" id="kpi-veiculos" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px"></div>
+    <div class="card">
+      <h3 style="margin-bottom:12px"><i class="fa-solid fa-chart-column"></i> Top 10 Veículos por Uso</h3>
+      <canvas id="chart-veiculos" style="max-height:280px"></canvas>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <h3 style="margin-bottom:12px"><i class="fa-solid fa-table"></i> Detalhamento por Veículo</h3>
+      <div id="table-veiculos"></div>
+    </div>
+  </div>
+
+  <!-- Relatório por Motorista (protegido por senha) -->
+  <div id="panel-motoristas" class="tab-panel" style="display:none">
+    <div id="driverReportLock" class="locked-box card">
+      <p style="display:flex;align-items:center;gap:8px;font-weight:700;color:#15386c;margin:0">
+        <i class="fa-solid fa-lock"></i> Relatório protegido por senha
+      </p>
+      <p class="status-note">Digite a senha para liberar o relatório por motorista.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+        <input id="driverReportPassword" class="form-control" style="max-width:240px" type="password" placeholder="Senha do relatório"/>
+        <button id="unlockDriverReportBtn" class="btn btn-primary" type="button">
+          <i class="fa-solid fa-unlock"></i> Desbloquear
+        </button>
+      </div>
+      <p id="driverReportLockMsg" class="status-note" style="color:#c62828;margin:0"></p>
+    </div>
+    <div id="motoristasContent" style="display:none">
+      <div class="kpi-row" id="kpi-motoristas" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px"></div>
+      <div class="card">
+        <h3 style="margin-bottom:12px"><i class="fa-solid fa-chart-bar"></i> Top 10 Motoristas por Saídas</h3>
+        <canvas id="chart-motoristas" style="max-height:320px"></canvas>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <h3 style="margin-bottom:12px"><i class="fa-solid fa-table"></i> Detalhamento por Motorista</h3>
+        <div id="table-motoristas"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Aguardando Liberação -->
+  <div id="panel-aguardando" class="tab-panel" style="display:none">
+    <div class="kpi-row" id="kpi-aguardando" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px"></div>
+    <div class="card">
+      <h3 style="margin-bottom:12px"><i class="fa-solid fa-hourglass-half"></i> Solicitações Pendentes</h3>
+      <div id="table-aguardando"></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-content">
+    <span>&copy; 2026 Arthur Ferreira</span>
+    <div class="footer-links">
+      <a href="mailto:arthurferreira@utfpr.edu.br"><i class="fa-solid fa-envelope"></i> arthurferreira@utfpr.edu.br</a>
+      <a href="https://instagram.com/arthuraaferreira" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i> ArthurAAFerreira</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
+"""
+
+for prefix, head in [
+    (r'utfprld\agendaveiculosdeseg', LD_HEAD),
+    (r'utfprct\agendaveiculosdeseg', CT_HEAD),
+]:
+    p = pathlib.Path(prefix) / 'relatorios.html'
+    p.write_text(head + BODY, encoding='utf-8')
+    print(f'Wrote {p}')

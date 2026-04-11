@@ -4,18 +4,17 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Relatórios · Agenda DESEG · UTFPR-LD</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <script type="module" crossorigin src="./assets/relatorios-CTC2AZOT.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script type="module" crossorigin src="./assets/relatorios-C_Yq-eQ3.js"></script>
   <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-B5Qt9EMX.js">
-  <link rel="stylesheet" crossorigin href="./assets/db-BZFhFHG5-BZFhFHG5.css">
+  <link rel="stylesheet" crossorigin href="./assets/db-BZFhFHG5-BZFhFHG5-BZFhFHG5.css">
 </head>
 <body>
 
 <header>
   <h1><i class="fa-solid fa-chart-bar"></i> Relatórios · UTFPR-LD</h1>
-  <p>Relatórios de veículos, motoristas e solicita├ºões aguardando liberação</p>
+  <p>Relatórios de veículos, motoristas e solicitações aguardando liberação</p>
 </header>
-
 <div class="container">
 
   <div class="sub-tabs">
@@ -30,10 +29,24 @@
     </button>
   </div>
 
+  <div id="relatorios-loading" class="card" style="text-align:center;padding:24px">
+    <i class="fa-solid fa-spinner fa-spin"></i> Carregando dados...
+  </div>
+
   <!-- Relatório por Veículo -->
   <div id="panel-veiculos" class="tab-panel">
-    <div class="card" style="padding:0;overflow:hidden">
-      <iframe id="reportVeiculosFrame" class="embed-frame" title="Relatório por Veículo" style="min-height:500px"></iframe>
+    <div class="kpi-row" id="kpi-veiculos" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px"></div>
+    <div class="card">
+      <h3 style="margin-bottom:12px"><i class="fa-solid fa-chart-column"></i> Top 10 Veículos por Uso</h3>
+      <canvas id="chart-veiculos" style="max-height:280px"></canvas>
+    </div>
+    <div class="card" style="margin-top:12px;max-width:420px">
+      <h3 style="margin-bottom:12px"><i class="fa-solid fa-chart-pie"></i> Saídas por Situação</h3>
+      <canvas id="chart-veiculos-status" style="max-height:260px"></canvas>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <h3 style="margin-bottom:12px"><i class="fa-solid fa-table"></i> Detalhamento por Veículo</h3>
+      <div id="table-veiculos"></div>
     </div>
   </div>
 
@@ -52,19 +65,28 @@
       </div>
       <p id="driverReportLockMsg" class="status-note" style="color:#c62828;margin:0"></p>
     </div>
-    <div id="motoristasFrame" style="display:none">
-      <div class="card" style="padding:0;overflow:hidden">
-        <iframe id="reportMotoristasFrame" class="embed-frame" title="Relatório por Motorista" style="min-height:500px"></iframe>
+    <div id="motoristasContent" style="display:none">
+      <div class="kpi-row" id="kpi-motoristas" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px"></div>
+      <div class="card">
+        <h3 style="margin-bottom:12px"><i class="fa-solid fa-chart-bar"></i> Top 10 Motoristas por Saídas</h3>
+        <canvas id="chart-motoristas" style="max-height:320px"></canvas>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <h3 style="margin-bottom:12px"><i class="fa-solid fa-table"></i> Detalhamento por Motorista</h3>
+        <div id="table-motoristas"></div>
       </div>
     </div>
   </div>
 
   <!-- Aguardando Liberação -->
   <div id="panel-aguardando" class="tab-panel" style="display:none">
-    <div class="card" style="padding:0;overflow:hidden">
-      <iframe id="reportAguardandoFrame" class="embed-frame" title="Solicita├ºões aguardando liberação" style="min-height:500px"></iframe>
+    <div class="kpi-row" id="kpi-aguardando" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px"></div>
+    <div class="card">
+      <h3 style="margin-bottom:12px"><i class="fa-solid fa-hourglass-half"></i> Solicitações Pendentes</h3>
+      <div id="table-aguardando"></div>
     </div>
   </div>
+
 </div>
 
 <footer>
@@ -76,6 +98,6 @@
     </div>
   </div>
 </footer>
-
+
 </body>
 </html>
