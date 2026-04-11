@@ -327,9 +327,8 @@ function renderSituacoes(): void {
   tbody.innerHTML = _situacoes.map(s => `
     <tr>
       <td><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${s.cor_fundo};border:2px solid ${s.cor_borda};vertical-align:middle;margin-right:6px"></span>${s.nome_display}</td>
-      <td><code style="font-size:.82rem">${s.chave}</code></td>
-      <td class="text-center"><i class="fa-solid ${s.icone}" style="color:${s.cor_fundo};font-size:1.1rem"></i></td>
-      <td class="text-center"><span style="background:${s.cor_fundo};color:${s.cor_texto};padding:2px 8px;border-radius:4px;font-size:.78rem;border:1px solid ${s.cor_borda}">${s.cor_fundo}</span></td>
+      <td><span style="background:${s.cor_fundo};color:${s.cor_texto};padding:2px 8px;border-radius:4px;font-size:.78rem;border:1px solid ${s.cor_borda}">${s.cor_fundo}</span></td>
+      <td style="font-size:.8rem;color:#555">${s.descricao ?? ''}</td>
       <td class="text-center">
         <button class="btn-icon" data-action="edit-sit" data-chave="${s.chave}" title="Editar"><i class="fa-solid fa-pen"></i></button>
       </td>
@@ -351,7 +350,7 @@ function bindSituacaoForm(): void {
     const nome = val('sit-nome');
     if (!nome) { toast('Nome é obrigatório.', false); return; }
     try {
-      await upsertAgendaSituacao({ chave, nome_display: nome, cor_fundo: val('sit-cor-fundo'), cor_borda: val('sit-cor-borda'), cor_texto: val('sit-cor-texto'), icone: val('sit-icone') });
+      await upsertAgendaSituacao({ chave, nome_display: nome, cor_fundo: val('sit-cor-fundo'), cor_borda: val('sit-cor-borda'), cor_texto: val('sit-cor-texto') });
       _situacoes = await loadAgendaSituacoes();
       renderSituacoes();
       closeModal('sit-modal');
@@ -429,11 +428,14 @@ function bindTableActions(): void {
       if (!s) return;
       const chaveEl = document.getElementById('sit-chave') as HTMLElement | null;
       if (chaveEl) { chaveEl.textContent = s.chave; chaveEl.dataset.chave = s.chave; }
+      const descEl = document.getElementById('sit-descricao') as HTMLElement | null;
+      if (descEl) descEl.textContent = s.descricao ?? '';
       setVal('sit-nome', s.nome_display);
-      setVal('sit-icone', s.icone);
       setVal('sit-cor-fundo', s.cor_fundo);
       setVal('sit-cor-borda', s.cor_borda);
       setVal('sit-cor-texto', s.cor_texto);
+      const hexEl = document.getElementById('sit-cor-fundo-hex') as HTMLInputElement | null;
+      if (hexEl) hexEl.value = s.cor_fundo;
       const prev = document.getElementById('sit-preview') as HTMLElement | null;
       if (prev) prev.style.background = s.cor_fundo;
       openModal('sit-modal');

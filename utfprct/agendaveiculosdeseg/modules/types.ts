@@ -76,6 +76,7 @@ export interface Evento {
   situacao?:               string;
   situacao_normalizada?:   string;
   quantidade_passageiros?: number;
+  motorista_oficial?:      boolean;
   [key: string]: unknown;
 }
 
@@ -83,6 +84,7 @@ export interface Evento {
 export interface AgendaSituacao {
   chave:        string;
   nome_display: string;
+  descricao:    string;
   cor_fundo:    string;
   cor_borda:    string;
   cor_texto:    string;

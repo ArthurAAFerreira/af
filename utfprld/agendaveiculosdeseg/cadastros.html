@@ -5,14 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Cadastros · Agenda DESEG · UTFPR-LD</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <link rel="modulepreload" crossorigin href="./assets/nav-DieEWAr5-BnXgOU6O-BnXgOU6O.js">
-  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-B1iPc5Qn-B1iPc5Qn.js">
-  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-DeDynHbL-Bn4d6rQy.js">
-  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-DJF07D2h-BcqeFSna.js">
-  <script type="module" crossorigin src="./assets/cadastros-Bpdqjh4Z.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-DiD8FM4Q.js">
-  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-DJF07D2h-N7nRh2XM.js">
-  <link rel="stylesheet" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-BZFhFHG5.css">
+  <link rel="modulepreload" crossorigin href="./assets/nav-DieEWAr5-BnXgOU6O-BnXgOU6O-BnXgOU6O.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-B1iPc5Qn-B1iPc5Qn-B1iPc5Qn.js">
+  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-DeDynHbL-Bn4d6rQy-Bn4d6rQy.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-DJF07D2h-BcqeFSna-BcqeFSna.js">
+  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-DiD8FM4Q-DsiZ2qhz.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-DJF07D2h-N7nRh2XM-Cd1cGR8P.js">
+  <script type="module" crossorigin src="./assets/cadastros-YpV_5ptY.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-BZFhFHG5-BdNZa7W6.js">
+  <link rel="modulepreload" crossorigin href="./assets/db-CPLj-_2c-DJF07D2h-N7nRh2XM-BejkeL2y.js">
+  <link rel="stylesheet" crossorigin href="./assets/nav-BZFhFHG5-BZFhFHG5-BZFhFHG5-BZFhFHG5.css">
 </head>
 <body>
 
@@ -125,11 +127,11 @@
       <div class="toolbar">
         <div class="card-title" style="margin:0"><i class="fa-solid fa-palette"></i> Situações do Calendário</div>
       </div>
-      <p class="status-note">Personalize o nome, cor e ícone de cada situação exibida no calendário. A chave identifica a situação no sistema e não pode ser alterada.</p>
+      <p class="status-note">Personalize o rótulo e as cores de cada situação. A descrição é fixa e explica quais saídas se enquadram nessa situação.</p>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Nome</th><th>Chave</th><th class="text-center">Ícone</th><th class="text-center">Cor de Fundo</th><th class="text-center">Ações</th></tr></thead>
-          <tbody id="tbody-situacoes"><tr><td colspan="5"><div class="skeleton" style="height:36px"></div></td></tr></tbody>
+          <thead><tr><th>Rótulo</th><th class="text-center">Cor</th><th>Descrição</th><th class="text-center">Ações</th></tr></thead>
+          <tbody id="tbody-situacoes"><tr><td colspan="4"><div class="skeleton" style="height:36px"></div></td></tr></tbody>
         </table>
       </div>
     </div>
@@ -327,24 +329,20 @@
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <label class="form-label">Chave (sistema — não editável)</label>
-        <code id="sit-chave" style="display:block;padding:7px 10px;background:#f1f4f9;border-radius:6px;font-size:.9rem"></code>
+        <label class="form-label">Descrição (não editável)</label>
+        <p id="sit-descricao" style="padding:8px 10px;background:#f1f4f9;border-radius:6px;font-size:.85rem;color:#444;margin:0"></p>
+        <code id="sit-chave" style="display:none"></code>
       </div>
       <div class="form-group">
-        <label class="form-label">Nome de exibição *</label>
-        <input id="sit-nome" class="form-control" type="text" placeholder="Ex: Liberada (DISAU)"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Ícone Font Awesome (classe)</label>
-        <input id="sit-icone" class="form-control" type="text" placeholder="fa-circle-check"/>
-        <p class="status-note" style="margin-top:4px">Exemplos: fa-circle-check, fa-clock, fa-flag-checkered, fa-circle-half-stroke, fa-circle-xmark, fa-circle</p>
+        <label class="form-label">Rótulo *</label>
+        <input id="sit-nome" class="form-control" type="text" placeholder="Ex: Liberada"/>
       </div>
       <div class="form-grid">
         <div class="form-group">
           <label class="form-label">Cor de fundo</label>
           <div style="display:flex;gap:8px;align-items:center">
             <input id="sit-cor-fundo" class="form-control" type="color" style="width:48px;height:36px;padding:2px"/>
-            <input id="sit-cor-fundo-hex" class="form-control" type="text" placeholder="#12853b" style="flex:1" oninput="document.getElementById('sit-cor-fundo').value=this.value"/>
+            <input id="sit-cor-fundo-hex" class="form-control" type="text" placeholder="#12853b" style="flex:1" oninput="document.getElementById('sit-cor-fundo').value=this.value;document.getElementById('sit-cor-fundo').dispatchEvent(new Event('input'))"/>
           </div>
         </div>
         <div class="form-group">

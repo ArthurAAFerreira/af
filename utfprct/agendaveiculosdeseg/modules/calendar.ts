@@ -2,32 +2,34 @@ import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin  from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import ptBrLocale     from '@fullcalendar/core/locales/pt-br';
-import { loadEventos, loadAgendaTipos, loadAgendaSituacoes } from './db.ts';
-import type { Evento, AgendaTipo, AgendaSituacao } from './types.ts';
+import { loadEventos, loadAgendaTipos, loadAgendaSituacoes, loadMotoristas } from './db.ts';
+import type { Evento, AgendaTipo, AgendaSituacao, Motorista } from './types.ts';
 
 const DRIVER_REPORT_PASSWORDS = ['federer', 'dirpladsandy', '150148deseg'];
 
 const DAY_NAMES = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
 const FALLBACK_SITUACOES: AgendaSituacao[] = [
-  { chave: 'liberada',   nome_display: 'Liberada (DISAU)',           cor_fundo: '#12853b', cor_borda: '#0b6028', cor_texto: '#fff', icone: 'fa-circle-check',       ordem: 1 },
-  { chave: 'realizada',  nome_display: 'Realizada (sem finalizar)',  cor_fundo: '#59647a', cor_borda: '#414a5d', cor_texto: '#fff', icone: 'fa-circle-xmark',       ordem: 2 },
-  { chave: 'finalizada', nome_display: 'Finalizada',                 cor_fundo: '#7e3aa9', cor_borda: '#5d2a7f', cor_texto: '#fff', icone: 'fa-flag-checkered',     ordem: 3 },
-  { chave: 'autorizada', nome_display: 'Autorizada pelo aprovador',  cor_fundo: '#d08b00', cor_borda: '#945f00', cor_texto: '#fff', icone: 'fa-circle-half-stroke', ordem: 4 },
-  { chave: 'aguardando', nome_display: 'Aguardando aprovador',       cor_fundo: '#2f5fc4', cor_borda: '#234b9a', cor_texto: '#fff', icone: 'fa-clock',              ordem: 5 },
-  { chave: 'outros',     nome_display: 'Outros',                     cor_fundo: '#246f85', cor_borda: '#1b5161', cor_texto: '#fff', icone: 'fa-circle',             ordem: 6 },
+  { chave: 'finalizada',               nome_display: 'Finalizada',                  descricao: 'Saídas com situação "Solicitação atendida e documentos preenchidos"',                cor_fundo: '#7e3aa9', cor_borda: '#5d2a7f', cor_texto: '#fff', icone: 'fa-flag-checkered',     ordem: 1 },
+  { chave: 'aguardando_finalizacao',   nome_display: 'Aguardando Finalização',       descricao: 'Saídas com situação "Liberada pelo Disau" cuja saída já passou do dia e hora atual', cor_fundo: '#59647a', cor_borda: '#414a5d', cor_texto: '#fff', icone: 'fa-circle-xmark',       ordem: 2 },
+  { chave: 'liberada',                 nome_display: 'Liberada',                    descricao: 'Saídas com situação "Liberada pelo Disau"',                                          cor_fundo: '#12853b', cor_borda: '#0b6028', cor_texto: '#fff', icone: 'fa-circle-check',       ordem: 3 },
+  { chave: 'aguardando_aprovador',     nome_display: 'Aguardando Aprovador',         descricao: 'Saídas com situação "Aguardando autorização do aprovador"',                         cor_fundo: '#2f5fc4', cor_borda: '#234b9a', cor_texto: '#fff', icone: 'fa-clock',              ordem: 4 },
+  { chave: 'aguardando_liberacao_deseg', nome_display: 'Aguardando Liberação DESEG', descricao: 'Saídas com situação "Autorizada pelo aprovador"',                                   cor_fundo: '#d08b00', cor_borda: '#945f00', cor_texto: '#fff', icone: 'fa-circle-half-stroke', ordem: 5 },
+  { chave: 'em_andamento',             nome_display: 'Solicitação em andamento',     descricao: 'Saídas com situação "Solicitação em andamento"',                                    cor_fundo: '#246f85', cor_borda: '#1b5161', cor_texto: '#fff', icone: 'fa-circle',             ordem: 6 },
 ];
 
 const state: {
   allEvents:     Evento[];
   agendaTipos:   AgendaTipo[];
   situacoes:     AgendaSituacao[];
+  motoristas:    Motorista[];
   currentTipoId: string;
   calendar:      Calendar | null;
 } = {
   allEvents:     [],
   agendaTipos:   [],
   situacoes:     FALLBACK_SITUACOES,
+  motoristas:    [],
   currentTipoId: 'todas',
   calendar:      null,
 };
@@ -52,14 +54,20 @@ function isPassedEnd(evt: Evento): boolean {
   return new Date(String(evt.fim_previsto)).getTime() < Date.now();
 }
 
+function isCancelled(evt: Evento): boolean {
+  const s = norm(evt.situacao_normalizada ?? evt.situacao);
+  return s.includes('cancelad');
+}
+
 function visualStatus(evt: Evento): string {
   const s = norm(evt.situacao_normalizada ?? evt.situacao);
   if (s.includes('liberad') && s.includes('disau'))
-    return isPassedEnd(evt) ? 'realizada' : 'liberada';
+    return isPassedEnd(evt) ? 'aguardando_finalizacao' : 'liberada';
   if (s.includes('solicitacao') && s.includes('atendida')) return 'finalizada';
-  if (s.includes('autorizada') && s.includes('aprovador')) return 'autorizada';
-  if (s.includes('aguard') && s.includes('aprovador'))  return 'aguardando';
-  return 'outros';
+  if (s.includes('autorizada') && s.includes('aprovador')) return 'aguardando_liberacao_deseg';
+  if (s.includes('aguard') && s.includes('aprovador'))     return 'aguardando_aprovador';
+  if (s.includes('andamento'))                              return 'em_andamento';
+  return 'em_andamento';
 }
 
 function getSituacao(chave: string): AgendaSituacao {
@@ -97,15 +105,71 @@ function getFiltered(): Evento[] {
   return state.allEvents.filter(e => matchesTipo(e, tipo));
 }
 
+// ── Disponibilidade de motoristas por dia ────────────────────────────────────
+function buildAvailabilityMap(events: Evento[]): Map<string, boolean> {
+  const oficiais = state.motoristas.filter(m => m.oficial && m.ativo);
+  if (!oficiais.length) return new Map();
+
+  const hoursPerDriver = new Map<string, Map<string, number>>();
+  for (const m of oficiais) hoursPerDriver.set(norm(m.nome), new Map());
+
+  for (const evt of events) {
+    if (isCancelled(evt)) continue;
+    if (!evt.inicio_previsto || !evt.fim_previsto) continue;
+    const start = new Date(String(evt.inicio_previsto));
+    const end   = new Date(String(evt.fim_previsto));
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) continue;
+    const hours = (end.getTime() - start.getTime()) / 3_600_000;
+    if (hours <= 0) continue;
+
+    const dayKey = start.toISOString().slice(0, 10);
+    const mNorm  = norm(evt.motorista_nome);
+    for (const [oNorm, dayMap] of hoursPerDriver) {
+      if (mNorm.includes(oNorm) || oNorm.includes(mNorm)) {
+        dayMap.set(dayKey, (dayMap.get(dayKey) ?? 0) + hours);
+      }
+    }
+  }
+
+  const busyDays = new Map<string, boolean>();
+  const allDays  = new Set<string>();
+  for (const dayMap of hoursPerDriver.values()) for (const d of dayMap.keys()) allDays.add(d);
+
+  for (const day of allDays) {
+    const allBusy = [...hoursPerDriver.values()].every(dm => (dm.get(day) ?? 0) >= 6);
+    if (allBusy) busyDays.set(day, true);
+  }
+  return busyDays;
+}
+
+let _availabilityMap: Map<string, boolean> = new Map();
+
+function updateAvailabilityIcons(): void {
+  const root = document.getElementById('calendarRoot');
+  if (!root) return;
+  root.querySelectorAll('.fc-availability-icon').forEach(el => el.remove());
+  root.querySelectorAll<HTMLElement>('[data-date]').forEach(el => {
+    const dayKey = el.getAttribute('data-date');
+    if (dayKey && _availabilityMap.get(dayKey)) {
+      const span = document.createElement('span');
+      span.className = 'fc-availability-icon';
+      span.title = 'Nenhum motorista oficial disponível neste dia';
+      span.style.cssText = 'position:absolute;top:2px;right:24px;font-size:.85rem;cursor:default;z-index:2;pointer-events:none';
+      span.innerHTML = '<i class="fa-solid fa-person-circle-xmark" style="color:#c0392b"></i>';
+      el.style.position = 'relative';
+      el.appendChild(span);
+    }
+  });
+}
+
 // ── Legenda dinâmica ─────────────────────────────────────────────────────────
 function renderLegend(): void {
   const el = document.getElementById('legendRoot');
   if (!el) return;
   const sits = state.situacoes.length ? state.situacoes : FALLBACK_SITUACOES;
-  el.innerHTML = sits
-    .filter(s => s.chave !== 'outros')
-    .map(s => `<span><i class="legend-dot" style="background:${s.cor_fundo}"></i> ${s.nome_display}</span>`)
-    .join('');
+  el.innerHTML = sits.map(s =>
+    `<span title="${s.descricao}"><i class="legend-dot" style="background:${s.cor_fundo}"></i> <strong>${s.nome_display}</strong><span class="legend-desc"> — ${s.descricao}</span></span>`
+  ).join('');
 }
 
 // ── KPIs ──────────────────────────────────────────────────────────────────────
@@ -114,8 +178,8 @@ function updateKpis(): void {
   const vs   = evts.map(e => visualStatus(e));
   const set  = (id: string, v: number) => { const el = document.getElementById(id); if (el) el.textContent = String(v); };
   set('kpiTotal',    evts.length);
-  set('kpiLiberadas', vs.filter(s => s === 'liberada').length);
-  set('kpiPendentes', vs.filter(s => s === 'aguardando' || s === 'autorizada').length);
+  set('kpiLiberadas', vs.filter(s => s === 'liberada' || s === 'aguardando_finalizacao').length);
+  set('kpiPendentes', vs.filter(s => s === 'aguardando_aprovador' || s === 'aguardando_liberacao_deseg').length);
 }
 
 // ── Título do calendário ──────────────────────────────────────────────────────
@@ -135,7 +199,7 @@ function fixTitle(): void {
 
 // ── Eventos para o FullCalendar ───────────────────────────────────────────────
 function buildFCEvents() {
-  return getFiltered().map(item => {
+  return getFiltered().filter(item => !isCancelled(item)).map(item => {
     const vs  = visualStatus(item);
     const sit = getSituacao(vs);
     return {
@@ -217,9 +281,10 @@ function openModal(extProps: Record<string, unknown>): void {
 // ── Init ──────────────────────────────────────────────────────────────────────
 export async function initCalendar(): Promise<void> {
   try {
-    [state.allEvents, state.agendaTipos] = await Promise.all([loadEventos(), loadAgendaTipos()]);
+    [state.allEvents, state.agendaTipos, state.motoristas] = await Promise.all([loadEventos(), loadAgendaTipos(), loadMotoristas()]);
     state.situacoes = await loadAgendaSituacoes().catch(() => []);
     if (!state.situacoes.length) state.situacoes = FALLBACK_SITUACOES;
+    _availabilityMap = buildAvailabilityMap(state.allEvents);
   } catch (e) {
     const root = document.getElementById('calendarRoot');
     if (root) root.innerHTML = `<p style="color:red;padding:16px">Erro ao carregar eventos: ${(e as Error).message}</p>`;
@@ -240,7 +305,8 @@ export async function initCalendar(): Promise<void> {
     headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
     buttonText:    { today: 'Hoje', month: 'Mês', week: 'Semana' },
     events: buildFCEvents(),
-    dayHeaderContent: (arg) => ({ html: DAY_NAMES[arg.date.getDay()] }),
+    dayHeaderContent: (arg) => ({ html: `<strong>${DAY_NAMES[arg.date.getDay()]}</strong>` }),
+    dayCellContent:   (arg) => ({ html: `<strong class="fc-daygrid-day-number-bold">${arg.date.getDate()}</strong>` }),
     eventClassNames: () => ['fc-event-modern'],
     eventContent: arg => {
       const vs   = arg.event.extendedProps.visualStatus as string;
@@ -248,20 +314,23 @@ export async function initCalendar(): Promise<void> {
       return { html: `<div class="fc-event-inner"><i class="fa-solid ${icon}"></i>${arg.event.title}</div>` };
     },
     eventClick: ({ event }) => openModal(event.extendedProps),
-    datesSet:   fixTitle,
+    datesSet: () => { fixTitle(); setTimeout(updateAvailabilityIcons, 50); },
   });
   state.calendar.render();
   fixTitle();
   updateKpis();
+  setTimeout(updateAvailabilityIcons, 100);
 
   document.getElementById('refreshCalendarBtn')?.addEventListener('click', async () => {
     try {
-      [state.allEvents, state.agendaTipos] = await Promise.all([loadEventos(), loadAgendaTipos()]);
+      [state.allEvents, state.agendaTipos, state.motoristas] = await Promise.all([loadEventos(), loadAgendaTipos(), loadMotoristas()]);
       state.situacoes = await loadAgendaSituacoes().catch(() => []);
       if (!state.situacoes.length) state.situacoes = FALLBACK_SITUACOES;
+      _availabilityMap = buildAvailabilityMap(state.allEvents);
       buildAgendaSelect();
       renderLegend();
       refreshCalendar();
+      setTimeout(updateAvailabilityIcons, 100);
     } catch (e) { alert('Erro ao atualizar: ' + (e as Error).message); }
   });
 

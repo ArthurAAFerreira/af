@@ -77,13 +77,12 @@ export async function loadAgendaSituacoes(): Promise<AgendaSituacao[]> {
   return (data ?? []) as AgendaSituacao[];
 }
 
-export async function upsertAgendaSituacao(payload: Omit<AgendaSituacao, 'ordem'> & { ordem?: number }): Promise<void> {
+export async function upsertAgendaSituacao(payload: Pick<AgendaSituacao, 'chave' | 'nome_display' | 'cor_fundo' | 'cor_borda' | 'cor_texto'>): Promise<void> {
   const { error } = await sb.from('agenda_situacoes').update({
     nome_display: payload.nome_display,
     cor_fundo:    payload.cor_fundo,
     cor_borda:    payload.cor_borda,
     cor_texto:    payload.cor_texto,
-    icone:        payload.icone,
   }).eq('chave', payload.chave);
   if (error) throw error;
 }
