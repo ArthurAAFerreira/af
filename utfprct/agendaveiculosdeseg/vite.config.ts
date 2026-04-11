@@ -8,10 +8,8 @@ export default defineConfig({
     emptyOutDir: false,
     rollupOptions: {
       input: {
-        index:      resolve(__dirname, 'index.html'),
-        assistente: resolve(__dirname, 'assistente.html'),
-        relatorios: resolve(__dirname, 'relatorios.html'),
-        cadastros:  resolve(__dirname, 'cadastros.html'),
+        index:    resolve(__dirname, 'index.html'),
+        cadastros: resolve(__dirname, 'cadastros.html'),
       },
     },
   },
