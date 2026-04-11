@@ -66,6 +66,7 @@ function visualStatus(evt: Evento): string {
   const s = norm(evt.situacao_normalizada ?? evt.situacao);
   // situacao_normalizada already IS the chave value
   if ((KNOWN_CHAVES as readonly string[]).includes(s)) {
+    if (s === 'aguardando_finalizacao') return 'liberada';
     return s;
   }
   // situacao contains descriptive Portuguese text
