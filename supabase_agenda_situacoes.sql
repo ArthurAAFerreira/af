@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS utfprld.agenda_situacoes (
   ordem        SMALLINT    NOT NULL DEFAULT 0
 );
 ALTER TABLE utfprld.agenda_situacoes ADD COLUMN IF NOT EXISTS descricao TEXT NOT NULL DEFAULT '';
+ALTER TABLE utfprld.agenda_situacoes DISABLE ROW LEVEL SECURITY;
 
 INSERT INTO utfprld.agenda_situacoes (chave, nome_display, descricao, cor_fundo, cor_borda, cor_texto, icone, ordem) VALUES
   ('finalizada',              'Finalizada',                    'Saídas com situação "Solicitação atendida e documentos preenchidos"',                         '#7e3aa9', '#5d2a7f', '#ffffff', 'fa-flag-checkered',     1),
@@ -39,6 +40,7 @@ CREATE TABLE IF NOT EXISTS desegct.agenda_situacoes (
   ordem        SMALLINT    NOT NULL DEFAULT 0
 );
 ALTER TABLE desegct.agenda_situacoes ADD COLUMN IF NOT EXISTS descricao TEXT NOT NULL DEFAULT '';
+ALTER TABLE desegct.agenda_situacoes DISABLE ROW LEVEL SECURITY;
 
 INSERT INTO desegct.agenda_situacoes (chave, nome_display, descricao, cor_fundo, cor_borda, cor_texto, icone, ordem) VALUES
   ('finalizada',              'Finalizada',                    'Saídas com situação "Solicitação atendida e documentos preenchidos"',                         '#7e3aa9', '#5d2a7f', '#ffffff', 'fa-flag-checkered',     1),
