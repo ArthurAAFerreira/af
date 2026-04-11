@@ -60,8 +60,16 @@ function isCancelled(evt: Evento): boolean {
   return s.includes('cancelad');
 }
 
+const KNOWN_CHAVES = ['finalizada', 'aguardando_finalizacao', 'liberada', 'aguardando_aprovador', 'aguardando_liberacao_deseg', 'em_andamento'] as const;
+
 function visualStatus(evt: Evento): string {
   const s = norm(evt.situacao_normalizada ?? evt.situacao);
+  // situacao_normalizada already IS the chave value
+  if ((KNOWN_CHAVES as readonly string[]).includes(s)) {
+    if (s === 'liberada' && isPassedEnd(evt)) return 'aguardando_finalizacao';
+    return s;
+  }
+  // situacao contains descriptive Portuguese text
   if (s.includes('liberad') && s.includes('disau'))
     return isPassedEnd(evt) ? 'aguardando_finalizacao' : 'liberada';
   if (s.includes('solicitacao') && s.includes('atendida')) return 'finalizada';
