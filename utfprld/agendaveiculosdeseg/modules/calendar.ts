@@ -66,12 +66,11 @@ function visualStatus(evt: Evento): string {
   const s = norm(evt.situacao_normalizada ?? evt.situacao);
   // situacao_normalizada already IS the chave value
   if ((KNOWN_CHAVES as readonly string[]).includes(s)) {
-    if (s === 'liberada' && isPassedEnd(evt)) return 'aguardando_finalizacao';
     return s;
   }
   // situacao contains descriptive Portuguese text
   if (s.includes('liberad') && s.includes('disau'))
-    return isPassedEnd(evt) ? 'aguardando_finalizacao' : 'liberada';
+    return 'liberada';
   if (s.includes('solicitacao') && s.includes('atendida')) return 'finalizada';
   if (s.includes('autorizada') && s.includes('aprovador')) return 'aguardando_liberacao_deseg';
   if (s.includes('aguard') && s.includes('aprovador'))     return 'aguardando_aprovador';
