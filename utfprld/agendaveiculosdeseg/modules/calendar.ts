@@ -259,6 +259,9 @@ function renderCancelledPanel(): void {
 }
 
 // ── KPIs ──────────────────────────────────────────────────────────────────────
+let _kpiLiberadas: Evento[] = [];
+let _kpiPendentes: Evento[] = [];
+
 function updateKpis(): void {
   const all = getFiltered();
   const cancelled = all.filter(e => isCancelled(e));
@@ -270,6 +273,12 @@ function updateKpis(): void {
   set('kpiLiberadas',  vs.filter(s => s === 'liberada').length);
   set('kpiPendentes',  vs.filter(s => s === 'aguardando_aprovador' || s === 'aguardando_liberacao_deseg' || s === 'em_andamento').length);
   set('kpiCanceladas', cancelled.length);
+
+  _kpiLiberadas = evts.filter(e => visualStatus(e) === 'liberada');
+  _kpiPendentes = evts.filter(e => {
+    const s = visualStatus(e);
+    return s === 'aguardando_aprovador' || s === 'aguardando_liberacao_deseg' || s === 'em_andamento';
+  });
 }
 
 // ── Título do calendário ──────────────────────────────────────────────────────
@@ -455,6 +464,41 @@ export async function initCalendar(): Promise<void> {
   const backdrop = document.getElementById('eventModalBackdrop');
   document.getElementById('eventModalCloseBtn')?.addEventListener('click', () => backdrop?.classList.remove('open'));
   backdrop?.addEventListener('click', e => { if (e.target === backdrop) backdrop.classList.remove('open'); });
+
+  function showEventsModal(heading: string, list: Evento[]): void {
+    const titleEl = document.getElementById('eventModalTitle');
+    const bodyEl  = document.getElementById('eventModalBody');
+    if (titleEl) titleEl.textContent = `${heading} (${list.length})`;
+    if (bodyEl) {
+      if (!list.length) {
+        bodyEl.innerHTML = '<p class="status-note">Nenhuma solicitação encontrada.</p>';
+      } else {
+        const fmt = (v: unknown) => {
+          if (!v) return '—';
+          const d = new Date(String(v));
+          return isNaN(d.getTime()) ? String(v) : d.toLocaleString('pt-BR');
+        };
+        bodyEl.innerHTML = list.map(e => {
+          const vs  = visualStatus(e);
+          const sit = getSituacao(vs);
+          const badge = `<span style="background:${sit.cor_fundo};color:${sit.cor_texto};padding:2px 8px;border-radius:10px;font-size:.75rem">${sit.nome_display}</span>`;
+          return `<div class="event-info-item">
+            <strong>#</strong>${e.numero_solicitacao ?? '—'}<br>
+            <strong>Veículo</strong>${e.veiculo_principal ?? e.veiculos ?? '—'}<br>
+            <strong>Solicitante</strong>${e.solicitante_nome ?? '—'}<br>
+            <strong>Motorista</strong>${e.motorista_nome ?? '—'}<br>
+            <strong>Início</strong>${fmt(e.inicio_previsto)}<br>
+            <strong>Fim</strong>${fmt(e.fim_previsto)}<br>
+            <strong>Situação</strong>${badge}
+          </div>`;
+        }).join('');
+      }
+    }
+    backdrop?.classList.add('open');
+  }
+
+  document.getElementById('kpiLiberadasCard')?.addEventListener('click', () => showEventsModal('Liberadas', _kpiLiberadas));
+  document.getElementById('kpiPendentesCard')?.addEventListener('click', () => showEventsModal('Pendentes/Autorizadas', _kpiPendentes));
 
   document.getElementById('unlockDriverReportBtn')?.addEventListener('click', () => {
     const pw  = (document.getElementById('driverReportPassword') as HTMLInputElement)?.value ?? '';
