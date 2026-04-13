@@ -380,12 +380,15 @@ export async function initCalendar(): Promise<void> {
     plugins:    [dayGridPlugin, timeGridPlugin],
     locale:     ptBrLocale,
     initialView: 'dayGridMonth',
+    firstDay:    0,
+    hiddenDays:  [6],
+    fixedWeekCount: false,
     height:     'auto',
     headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
     buttonText:    { today: 'Hoje', month: 'Mês', week: 'Semana' },
     events: buildFCEvents(),
     dayHeaderContent: (arg) => ({ html: `<strong>${DAY_NAMES[arg.date.getDay()]}</strong>` }),
-    dayCellContent:   (arg) => ({ html: `<strong class="fc-daygrid-day-number-bold">${arg.date.getDate()}</strong>` }),
+    dayCellContent:   (arg) => ({ html: `<div style="text-align:center;width:100%"><strong class="fc-daygrid-day-number-bold">${arg.date.getDate()}</strong></div>` }),
     eventClassNames: () => ['fc-event-modern'],
     eventContent: arg => {
       const vs   = arg.event.extendedProps.visualStatus as string;
