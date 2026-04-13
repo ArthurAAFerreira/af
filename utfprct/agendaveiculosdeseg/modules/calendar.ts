@@ -64,19 +64,26 @@ const KNOWN_CHAVES = ['finalizada', 'aguardando_finalizacao', 'liberada', 'aguar
 
 function visualStatus(evt: Evento): string {
   const s = norm(evt.situacao_normalizada ?? evt.situacao);
+  let resolved = '';
   // situacao_normalizada already IS the chave value
   if ((KNOWN_CHAVES as readonly string[]).includes(s)) {
-    if (s === 'aguardando_finalizacao') return 'liberada';
-    return s;
+    resolved = s;
+  } else if (s.includes('liberad') && s.includes('disau')) {
+    resolved = 'liberada';
+  } else if (s.includes('solicitacao') && s.includes('atendida')) {
+    resolved = 'finalizada';
+  } else if (s.includes('autorizada') && s.includes('aprovador')) {
+    resolved = 'aguardando_liberacao_deseg';
+  } else if (s.includes('aguard') && s.includes('aprovador')) {
+    resolved = 'aguardando_aprovador';
+  } else if (s.includes('andamento')) {
+    resolved = 'em_andamento';
+  } else {
+    resolved = 'em_andamento';
   }
-  // situacao contains descriptive Portuguese text
-  if (s.includes('liberad') && s.includes('disau'))
-    return 'liberada';
-  if (s.includes('solicitacao') && s.includes('atendida')) return 'finalizada';
-  if (s.includes('autorizada') && s.includes('aprovador')) return 'aguardando_liberacao_deseg';
-  if (s.includes('aguard') && s.includes('aprovador'))     return 'aguardando_aprovador';
-  if (s.includes('andamento'))                              return 'em_andamento';
-  return 'em_andamento';
+  // liberada + past end date → aguardando_finalizacao
+  if (resolved === 'liberada' && isPassedEnd(evt)) return 'aguardando_finalizacao';
+  return resolved;
 }
 
 function getSituacao(chave: string): AgendaSituacao {
