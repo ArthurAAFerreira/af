@@ -163,8 +163,8 @@ function updateAvailabilityIcons(): void {
       const span = document.createElement('span');
       span.className = 'fc-availability-icon';
       span.title = 'Nenhum motorista oficial disponível neste dia';
-      span.style.cssText = 'position:absolute;top:2px;right:24px;font-size:.85rem;cursor:default;z-index:2;pointer-events:none';
-      span.innerHTML = '<i class="fa-solid fa-person-circle-xmark" style="color:#c0392b"></i>';
+      span.style.cssText = 'position:absolute;top:3px;right:22px;font-size:1.1rem;cursor:default;z-index:2;pointer-events:none';
+      span.innerHTML = '<i class="fa-solid fa-user-slash" style="color:#c0392b"></i>';
       el.style.position = 'relative';
       el.appendChild(span);
     }
@@ -177,7 +177,7 @@ function renderLegend(): void {
   if (!el) return;
   const sits = state.situacoes.length ? state.situacoes : FALLBACK_SITUACOES;
   el.innerHTML = sits.map(s =>
-    `<span title="${s.descricao}"><i class="legend-dot" style="background:${s.cor_fundo}"></i> <strong>${s.nome_display}</strong><span class="legend-desc"> — ${s.descricao}</span></span>`
+    `<span title="${s.descricao}"><i class="legend-dot" style="background:${s.cor_fundo}"></i> <strong>${s.nome_display}</strong></span>`
   ).join('');
 }
 

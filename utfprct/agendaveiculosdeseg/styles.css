@@ -116,7 +116,7 @@ header p { margin: 10px auto 0; max-width: 860px; opacity: 0.88; font-size: 0.96
 
 /* ── Main container ── */
 .container {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 20px 16px;
   flex: 1;
