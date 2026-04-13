@@ -265,25 +265,29 @@ let _kpiPendentes:  Evento[] = [];
 let _kpiCanceladas: Evento[] = [];
 
 function updateKpis(): void {
-  const all  = getFiltered();
-  const notC = all.filter(e => !isCancelled(e));
-  _kpiCanceladas = all.filter(e => isCancelled(e));
+  const all = getFiltered();
+  const cancelled = all.filter(e => isCancelled(e));
+  const evts = all.filter(e => !isCancelled(e));
+  const set = (id: string, v: number) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = String(v);
+  };
 
-  _kpiRealizadas = notC.filter(e => {
+  _kpiCanceladas = cancelled;
+  _kpiRealizadas = evts.filter(e => {
     const vs = visualStatus(e);
     return vs === 'finalizada' || vs === 'aguardando_finalizacao';
   });
-  _kpiLiberadas = notC.filter(e => visualStatus(e) === 'liberada');
-  _kpiPendentes = notC.filter(e => {
+  _kpiLiberadas = evts.filter(e => visualStatus(e) === 'liberada');
+  _kpiPendentes = evts.filter(e => {
     const vs = visualStatus(e);
     return vs === 'aguardando_aprovador' || vs === 'aguardando_liberacao_deseg' || vs === 'em_andamento';
   });
 
-  const set = (id: string, v: number) => { const el = document.getElementById(id); if (el) el.textContent = String(v); };
-  set('kpiTotal',      notC.length);
+  set('kpiTotal', evts.length);
   set('kpiRealizadas', _kpiRealizadas.length);
-  set('kpiLiberadas',  _kpiLiberadas.length);
-  set('kpiPendentes',  _kpiPendentes.length);
+  set('kpiLiberadas', _kpiLiberadas.length);
+  set('kpiPendentes', _kpiPendentes.length);
   set('kpiCanceladas', _kpiCanceladas.length);
 }
 
@@ -506,10 +510,10 @@ export async function initCalendar(): Promise<void> {
   }
 
   // KPI click handlers
-  document.getElementById('kpiRealizadasCard')?.addEventListener('click', () => showEventsModal('Realizadas', _kpiRealizadas));
-  document.getElementById('kpiLiberadasCard')?.addEventListener('click', () => showEventsModal('Liberadas', _kpiLiberadas));
-  document.getElementById('kpiPendentesCard')?.addEventListener('click', () => showEventsModal('Pendentes/Autorizadas', _kpiPendentes));
-  document.getElementById('kpiCanceladasCard')?.addEventListener('click', () => showEventsModal('Canceladas', _kpiCanceladas));
+  document.getElementById('kpiRealizadas')?.addEventListener('click', () => showEventsModal('Realizadas', _kpiRealizadas));
+  document.getElementById('kpiLiberadas')?.addEventListener('click', () => showEventsModal('Liberadas', _kpiLiberadas));
+  document.getElementById('kpiPendentes')?.addEventListener('click', () => showEventsModal('Pendentes/Autorizadas', _kpiPendentes));
+  document.getElementById('kpiCanceladas')?.addEventListener('click', () => showEventsModal('Canceladas', _kpiCanceladas));
 
   document.getElementById('unlockDriverReportBtn')?.addEventListener('click', () => {
     const pw  = (document.getElementById('driverReportPassword') as HTMLInputElement)?.value ?? '';

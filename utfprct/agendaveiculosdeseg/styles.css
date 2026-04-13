@@ -169,6 +169,7 @@ header p { margin: 10px auto 0; max-width: 860px; opacity: 0.88; font-size: 0.96
 .kpi-card.ok  { border-color: #a5d6a7; background: var(--ok-lt); }
 .kpi-card.warn{ border-color: #ffcc80; background: var(--warn-lt); }
 .kpi-card.info{ border-color: #90caf9; background: #e3f2fd; }
+.kpi-card.danger{ border-color: #ef9a9a; background: var(--danger-lt); }
 .kpi-label { font-size: 0.78rem; color: var(--muted); display: flex; align-items: center; gap: 5px; }
 .kpi-value { margin-top: 6px; font-size: 1.5rem; font-weight: 800; color: #0d2a52; }
 .kpi-sub   { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }

@@ -34,11 +34,11 @@
     #legendRoot { display:flex; flex-direction:row; flex-wrap:wrap; gap:6px 20px; margin-bottom:10px; align-items:center; }
     #legendRoot span { display:inline-flex; align-items:center; gap:6px; font-size:.82rem; }
     #legendRoot .legend-dot { flex-shrink:0; width:12px; height:12px; border-radius:50%; }
-  </style>
+  </style>
 
-  <script type="module" crossorigin src="./assets/index-aepHESsI.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/db-CO0SaSU0.js">
-  <link rel="stylesheet" crossorigin href="./assets/db-Jj3_XipR.css">
+  <script type="module" crossorigin src="./assets/index-DiEmYniK.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/db-DcCi9kZf.js">
+  <link rel="stylesheet" crossorigin href="./assets/db-BGQQqeQn.css">
 </head>
 <body>
 
@@ -66,6 +66,10 @@
       <div class="kpi-label"><i class="fa-solid fa-calendar-check"></i> Reservas no filtro</div>
       <div id="kpiTotal" class="kpi-value">â€”</div>
     </div>
+    <div class="kpi-card info">
+      <div class="kpi-label"><i class="fa-solid fa-flag-checkered"></i> Realizadas</div>
+      <div id="kpiRealizadas" class="kpi-value">â€”</div>
+    </div>
     <div class="kpi-card ok">
       <div class="kpi-label"><i class="fa-solid fa-circle-check"></i> Liberadas</div>
       <div id="kpiLiberadas" class="kpi-value">â€”</div>
@@ -74,21 +78,9 @@
       <div class="kpi-label"><i class="fa-solid fa-hourglass-half"></i> Pendentes/Autorizadas</div>
       <div id="kpiPendentes" class="kpi-value">â€”</div>
     </div>
-    <div class="kpi-card" id="kpiRealizadasCard" style="cursor:pointer">
-      <div class="kpi-label"><i class="fa-solid fa-flag-checkered" style="color:#7e3aa9"></i> Realizadas</div>
-      <div id="kpiRealizadas" class="kpi-value" style="color:#7e3aa9">-</div>
-    </div>
-    <div class="kpi-card ok" id="kpiLiberadasCard" style="cursor:pointer">
-      <div class="kpi-label"><i class="fa-solid fa-circle-check"></i> Liberadas</div>
-      <div id="kpiLiberadas" class="kpi-value">-</div>
-    </div>
-    <div class="kpi-card warn" id="kpiPendentesCard" style="cursor:pointer">
-      <div class="kpi-label"><i class="fa-solid fa-hourglass-half"></i> Pendentes/Autorizadas</div>
-      <div id="kpiPendentes" class="kpi-value">-</div>
-    </div>
-    <div class="kpi-card" id="kpiCanceladasCard" style="cursor:pointer">
-      <div class="kpi-label"><i class="fa-solid fa-ban" style="color:#c62828"></i> Canceladas</div>
-      <div id="kpiCanceladas" class="kpi-value" style="color:#c62828">-</div>
+    <div class="kpi-card danger">
+      <div class="kpi-label"><i class="fa-solid fa-ban"></i> Canceladas</div>
+      <div id="kpiCanceladas" class="kpi-value">â€”</div>
     </div>
   </div>
 

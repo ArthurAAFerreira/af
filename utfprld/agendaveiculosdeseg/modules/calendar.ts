@@ -259,32 +259,17 @@ function renderCancelledPanel(): void {
 }
 
 // ── KPIs ──────────────────────────────────────────────────────────────────────
-let _kpiRealizadas: Evento[] = [];
-let _kpiLiberadas:  Evento[] = [];
-let _kpiPendentes:  Evento[] = [];
-let _kpiCanceladas: Evento[] = [];
-
 function updateKpis(): void {
-  const all  = getFiltered();
-  const notC = all.filter(e => !isCancelled(e));
-  _kpiCanceladas = all.filter(e => isCancelled(e));
-
-  _kpiRealizadas = notC.filter(e => {
-    const vs = visualStatus(e);
-    return vs === 'finalizada' || vs === 'aguardando_finalizacao';
-  });
-  _kpiLiberadas = notC.filter(e => visualStatus(e) === 'liberada');
-  _kpiPendentes = notC.filter(e => {
-    const vs = visualStatus(e);
-    return vs === 'aguardando_aprovador' || vs === 'aguardando_liberacao_deseg' || vs === 'em_andamento';
-  });
-
-  const set = (id: string, v: number) => { const el = document.getElementById(id); if (el) el.textContent = String(v); };
-  set('kpiTotal',      notC.length);
-  set('kpiRealizadas', _kpiRealizadas.length);
-  set('kpiLiberadas',  _kpiLiberadas.length);
-  set('kpiPendentes',  _kpiPendentes.length);
-  set('kpiCanceladas', _kpiCanceladas.length);
+  const all = getFiltered();
+  const cancelled = all.filter(e => isCancelled(e));
+  const evts = all.filter(e => !isCancelled(e));
+  const vs   = evts.map(e => visualStatus(e));
+  const set  = (id: string, v: number) => { const el = document.getElementById(id); if (el) el.textContent = String(v); };
+  set('kpiTotal',      evts.length);
+  set('kpiRealizadas', vs.filter(s => s === 'finalizada' || s === 'aguardando_finalizacao').length);
+  set('kpiLiberadas',  vs.filter(s => s === 'liberada').length);
+  set('kpiPendentes',  vs.filter(s => s === 'aguardando_aprovador' || s === 'aguardando_liberacao_deseg' || s === 'em_andamento').length);
+  set('kpiCanceladas', cancelled.length);
 }
 
 // ── Título do calendário ──────────────────────────────────────────────────────
@@ -470,46 +455,6 @@ export async function initCalendar(): Promise<void> {
   const backdrop = document.getElementById('eventModalBackdrop');
   document.getElementById('eventModalCloseBtn')?.addEventListener('click', () => backdrop?.classList.remove('open'));
   backdrop?.addEventListener('click', e => { if (e.target === backdrop) backdrop.classList.remove('open'); });
-
-  // Generic modal for KPI lists
-  function showEventsModal(heading: string, list: Evento[]): void {
-    const titleEl = document.getElementById('eventModalTitle');
-    const bodyEl  = document.getElementById('eventModalBody');
-    if (titleEl) titleEl.textContent = `${heading} (${list.length})`;
-    if (bodyEl) {
-      if (!list.length) {
-        bodyEl.innerHTML = '<p class="status-note">Nenhuma solicitação encontrada.</p>';
-      } else {
-        const fmt = (v: unknown) => {
-          if (!v) return '---';
-          const d = new Date(String(v));
-          return isNaN(d.getTime()) ? String(v) : d.toLocaleString('pt-BR');
-        };
-        const rows = list.map(e => {
-          const vs = visualStatus(e);
-          const sit = getSituacao(vs);
-          const badge = `<span style="background:${sit.cor_fundo};color:${sit.cor_texto};padding:2px 8px;border-radius:10px;font-size:.75rem">${sit.nome_display}</span>`;
-          return `<div class="event-info-item">
-            <strong>#</strong>${e.numero_solicitacao ?? '---'}<br>
-            <strong>Veículo</strong>${e.veiculo_principal ?? e.veiculos ?? '---'}<br>
-            <strong>Solicitante</strong>${e.solicitante_nome ?? '---'}<br>
-            <strong>Motorista</strong>${e.motorista_nome ?? '---'}<br>
-            <strong>Início</strong>${fmt(e.inicio_previsto)}<br>
-            <strong>Fim</strong>${fmt(e.fim_previsto)}<br>
-            <strong>Situação</strong>${badge}
-          </div>`;
-        }).join('');
-        bodyEl.innerHTML = rows;
-      }
-    }
-    backdrop?.classList.add('open');
-  }
-
-  // KPI click handlers
-  document.getElementById('kpiRealizadasCard')?.addEventListener('click', () => showEventsModal('Realizadas', _kpiRealizadas));
-  document.getElementById('kpiLiberadasCard')?.addEventListener('click', () => showEventsModal('Liberadas', _kpiLiberadas));
-  document.getElementById('kpiPendentesCard')?.addEventListener('click', () => showEventsModal('Pendentes/Autorizadas', _kpiPendentes));
-  document.getElementById('kpiCanceladasCard')?.addEventListener('click', () => showEventsModal('Canceladas', _kpiCanceladas));
 
   document.getElementById('unlockDriverReportBtn')?.addEventListener('click', () => {
     const pw  = (document.getElementById('driverReportPassword') as HTMLInputElement)?.value ?? '';
