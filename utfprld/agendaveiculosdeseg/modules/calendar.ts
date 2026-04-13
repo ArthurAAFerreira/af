@@ -283,7 +283,9 @@ function buildFCEvents() {
     const sit = getSituacao(vs);
     return {
       ...item,
-      title: (String(item.veiculo_principal ?? item.veiculos ?? 'Sem veículo')) +
+      title: (item.veiculo_principal || item.veiculos
+        ? String(item.veiculo_principal ?? item.veiculos)
+        : ('Sol.: ' + (item.solicitante_nome ?? 'Sem veículo'))) +
              (item.motorista_nome ? ' — ' + item.motorista_nome : ''),
       start: item.inicio_previsto,
       end:   item.fim_previsto,
