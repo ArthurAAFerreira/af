@@ -637,6 +637,7 @@
 
             if (!data || data.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px;">Nenhum repasse encontrado.</td></tr>';
+                return;
             } else {
                 const fmt = (v) => parseFloat(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 const fmtData = (d) => d ? new Date(d).toLocaleDateString('pt-BR') : '-';
