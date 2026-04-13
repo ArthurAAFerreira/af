@@ -32,8 +32,18 @@ function fmtDate(v: string | undefined): string {
   if (!v) return '—';
   return new Date(v).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
 }
-function kpi(icon: string, label: string, value: string | number, color = '#15386c'): string {
-  return `<div class="card" style="flex:1;min-width:130px;padding:14px 18px">
+function isCancelled(e: Evento): boolean {
+  return norm(e.situacao_normalizada ?? e.situacao).includes('cancelad');
+}
+function isPassedEnd(e: Evento): boolean {
+  if (!e.fim_previsto) return false;
+  return new Date(String(e.fim_previsto)).getTime() < Date.now();
+}
+
+function kpi(icon: string, label: string, value: string | number, color = '#15386c', id = ''): string {
+  const idAttr = id ? ` id="${id}"` : '';
+  const cursor = id ? 'cursor:pointer;' : '';
+  return `<div class="card"${idAttr} style="flex:1;min-width:130px;padding:14px 18px;${cursor}">
     <div style="font-size:.75rem;color:#6b7a99;font-weight:600;text-transform:uppercase;letter-spacing:.4px">${label}</div>
     <div style="font-size:1.8rem;font-weight:800;color:${color};margin:4px 0 2px">${value}</div>
     <i class="fa-solid ${icon}" style="color:${color};opacity:.35;font-size:1.1rem"></i>
@@ -85,19 +95,23 @@ const STATUS_BADGE_COLORS: Record<string, string> = {
 };
 
 function showVehicleModal(plate: string, events: Evento[]): void {
-  const filtered = events.filter(e => getVehicle(e) === plate);
+  showEventsModal(`${plate}`, events.filter(e => getVehicle(e) === plate));
+}
+
+function showEventsModal(heading: string, list: Evento[]): void {
   const title = document.getElementById('vehicleModalTitle');
   const body  = document.getElementById('vehicleModalBody');
-  if (title) title.textContent = `${plate} — ${filtered.length} solicitação(ões)`;
+  if (title) title.textContent = `${heading} — ${list.length} solicitação(ões)`;
   if (body) {
-    if (!filtered.length) {
+    if (!list.length) {
       body.innerHTML = '<p class="status-note">Nenhuma solicitação encontrada.</p>';
     } else {
-      const rows = filtered.map(e => {
+      const rows = list.map(e => {
         const st = getStatus(e);
         const badge = `<span style="background:${STATUS_BADGE_COLORS[st] ?? '#59647a'};color:#fff;padding:2px 8px;border-radius:10px;font-size:.75rem">${STATUS_LABELS[st] ?? st}</span>`;
         return `<tr>
           <td>${e.numero_solicitacao ?? '—'}</td>
+          <td>${getVehicle(e)}</td>
           <td>${e.solicitante_nome ?? '—'}</td>
           <td>${e.motorista_nome ?? '—'}</td>
           <td>${fmtDate(e.inicio_previsto)}</td>
@@ -106,7 +120,7 @@ function showVehicleModal(plate: string, events: Evento[]): void {
         </tr>`;
       }).join('');
       body.innerHTML = `<div style="overflow-x:auto"><table class="data-table">
-        <thead><tr><th>#</th><th>Solicitante</th><th>Motorista</th><th>Início</th><th>Fim</th><th>Situação</th></tr></thead>
+        <thead><tr><th>#</th><th>Veículo</th><th>Solicitante</th><th>Motorista</th><th>Início</th><th>Fim</th><th>Situação</th></tr></thead>
         <tbody>${rows}</tbody></table></div>`;
     }
   }
@@ -253,18 +267,31 @@ const STATUS_META: Record<string, { label: string; color: string }> = {
   em_andamento:               { label: 'Em Andamento',          color: '#246f85' },
 };
 
-function buildAguardandoTab(events: Evento[]): void {
-  const pending = events.filter(e => PENDING_STATUSES.includes(getStatus(e)));
-  const ag    = pending.filter(e => getStatus(e) === 'aguardando_aprovador').length;
-  const deseg = pending.filter(e => getStatus(e) === 'aguardando_liberacao_deseg').length;
-  const em    = pending.filter(e => getStatus(e) === 'em_andamento').length;
+function buildAguardandoTab(allEvents: Evento[]): void {
+  const notCancelled = allEvents.filter(e => !isCancelled(e));
+  const cancelled    = allEvents.filter(e => isCancelled(e));
+
+  const realizadas = notCancelled.filter(e => {
+    const st = getStatus(e);
+    return st === 'finalizada' || (st === 'liberada' && isPassedEnd(e));
+  });
+  const liberadas = notCancelled.filter(e => getStatus(e) === 'liberada' && !isPassedEnd(e));
+  const pending   = notCancelled.filter(e => PENDING_STATUSES.includes(getStatus(e)));
 
   const kpiEl = document.getElementById('kpi-aguardando');
-  if (kpiEl) kpiEl.innerHTML =
-    kpi('fa-hourglass-half', 'Total Pendentes', pending.length, '#c62828') +
-    kpi('fa-clock', 'Ag. Aprovador', ag, '#2f5fc4') +
-    kpi('fa-circle-half-stroke', 'Ag. DESEG', deseg, '#d08b00') +
-    kpi('fa-circle', 'Em Andamento', em, '#246f85');
+  if (kpiEl) {
+    kpiEl.innerHTML =
+      kpi('fa-car-side', 'Reservas no Filtro', notCancelled.length) +
+      kpi('fa-flag-checkered', 'Realizadas', realizadas.length, '#7e3aa9', 'kpi-realizadas') +
+      kpi('fa-circle-check', 'Liberadas', liberadas.length, '#12853b', 'kpi-liberadas') +
+      kpi('fa-hourglass-half', 'Pendentes/Autorizadas', pending.length, '#d08b00', 'kpi-pendentes') +
+      kpi('fa-ban', 'Canceladas', cancelled.length, '#c62828', 'kpi-canceladas');
+
+    document.getElementById('kpi-realizadas')?.addEventListener('click', () => showEventsModal('Realizadas', realizadas));
+    document.getElementById('kpi-liberadas')?.addEventListener('click', () => showEventsModal('Liberadas', liberadas));
+    document.getElementById('kpi-pendentes')?.addEventListener('click', () => showEventsModal('Pendentes/Autorizadas', pending));
+    document.getElementById('kpi-canceladas')?.addEventListener('click', () => showEventsModal('Canceladas', cancelled));
+  }
 
   const tbl = document.getElementById('table-aguardando');
   if (!tbl) return;
