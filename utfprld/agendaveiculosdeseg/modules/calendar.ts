@@ -345,6 +345,8 @@ function openModal(extProps: Record<string, unknown>): void {
     ['Início',      fmt(extProps.inicio_previsto)],
     ['Fim',         fmt(extProps.fim_previsto)],
     ['Status',      extProps.situacao],
+    ['Situação Normalizada', extProps.situacao_normalizada],
+    ['Cor aplicada',  getSituacao(visualStatus(extProps as unknown as Evento)).nome_display],
     ['Passageiros', extProps.quantidade_passageiros],
   ];
 
