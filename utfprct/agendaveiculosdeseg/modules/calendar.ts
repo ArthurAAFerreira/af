@@ -287,6 +287,7 @@ function buildFCEvents() {
              (item.motorista_nome ? ' — ' + item.motorista_nome : ''),
       start: item.inicio_previsto,
       end:   item.fim_previsto,
+      display: 'block',
       extendedProps: { ...item, visualStatus: vs },
       backgroundColor: sit.cor_fundo,
       borderColor:     sit.cor_borda,
