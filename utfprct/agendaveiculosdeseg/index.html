@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Agenda de Veículos DESEG · UTFPR-CT</title>
+  <title>Agenda de VeÃ­culos DESEG Â· UTFPR-CT</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
     .fc-event-modern { border-radius: 7px !important; padding: 2px 4px !important; box-shadow: 0 2px 5px rgba(11,35,74,0.2); }
@@ -34,16 +34,17 @@
     #legendRoot { display:flex; flex-direction:row; flex-wrap:wrap; gap:6px 20px; margin-bottom:10px; align-items:center; }
     #legendRoot span { display:inline-flex; align-items:center; gap:6px; font-size:.82rem; }
     #legendRoot .legend-dot { flex-shrink:0; width:12px; height:12px; border-radius:50%; }
-  </style>
-  <script type="module" crossorigin src="./assets/index-BJ2j44h8.js"></script>
+  </style>
+
+  <script type="module" crossorigin src="./assets/index-aepHESsI.js"></script>
   <link rel="modulepreload" crossorigin href="./assets/db-CO0SaSU0.js">
   <link rel="stylesheet" crossorigin href="./assets/db-Jj3_XipR.css">
 </head>
 <body>
 
 <header>
-  <h1><i class="fa-solid fa-calendar-days"></i> Agenda de Veículos DESEG · UTFPR-CT</h1>
-  <p>Visualização do calendário de veículos oficiais do campus</p>
+  <h1><i class="fa-solid fa-calendar-days"></i> Agenda de VeÃ­culos DESEG Â· UTFPR-CT</h1>
+  <p>VisualizaÃ§Ã£o do calendÃ¡rio de veÃ­culos oficiais do campus</p>
 </header>
 
 <!-- Nav injetado pelo JS -->
@@ -63,21 +64,37 @@
   <div class="kpi-grid">
     <div class="kpi-card">
       <div class="kpi-label"><i class="fa-solid fa-calendar-check"></i> Reservas no filtro</div>
-      <div id="kpiTotal" class="kpi-value">—</div>
+      <div id="kpiTotal" class="kpi-value">â€”</div>
     </div>
     <div class="kpi-card ok">
       <div class="kpi-label"><i class="fa-solid fa-circle-check"></i> Liberadas</div>
-      <div id="kpiLiberadas" class="kpi-value">—</div>
+      <div id="kpiLiberadas" class="kpi-value">â€”</div>
     </div>
     <div class="kpi-card warn">
       <div class="kpi-label"><i class="fa-solid fa-hourglass-half"></i> Pendentes/Autorizadas</div>
-      <div id="kpiPendentes" class="kpi-value">—</div>
+      <div id="kpiPendentes" class="kpi-value">â€”</div>
+    </div>
+    <div class="kpi-card" id="kpiRealizadasCard" style="cursor:pointer">
+      <div class="kpi-label"><i class="fa-solid fa-flag-checkered" style="color:#7e3aa9"></i> Realizadas</div>
+      <div id="kpiRealizadas" class="kpi-value" style="color:#7e3aa9">-</div>
+    </div>
+    <div class="kpi-card ok" id="kpiLiberadasCard" style="cursor:pointer">
+      <div class="kpi-label"><i class="fa-solid fa-circle-check"></i> Liberadas</div>
+      <div id="kpiLiberadas" class="kpi-value">-</div>
+    </div>
+    <div class="kpi-card warn" id="kpiPendentesCard" style="cursor:pointer">
+      <div class="kpi-label"><i class="fa-solid fa-hourglass-half"></i> Pendentes/Autorizadas</div>
+      <div id="kpiPendentes" class="kpi-value">-</div>
+    </div>
+    <div class="kpi-card" id="kpiCanceladasCard" style="cursor:pointer">
+      <div class="kpi-label"><i class="fa-solid fa-ban" style="color:#c62828"></i> Canceladas</div>
+      <div id="kpiCanceladas" class="kpi-value" style="color:#c62828">-</div>
     </div>
   </div>
 
   <div id="legendRoot" class="legend"></div>
 
-  <p class="status-note">Canceladas e devolvidas não aparecem no calendário.</p>
+  <p class="status-note">Canceladas e devolvidas nÃ£o aparecem no calendÃ¡rio.</p>
 
   <div id="calendarRoot"></div>
 
@@ -108,8 +125,8 @@
 <div id="eventModalBackdrop" class="modal-backdrop" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="eventModalTitle">
     <div class="modal-header">
-      <h3 id="eventModalTitle" class="modal-title">Detalhes da Solicitação</h3>
-      <button id="eventModalCloseBtn" class="modal-close" aria-label="Fechar">✕</button>
+      <h3 id="eventModalTitle" class="modal-title">Detalhes da SolicitaÃ§Ã£o</h3>
+      <button id="eventModalCloseBtn" class="modal-close" aria-label="Fechar">âœ•</button>
     </div>
     <div id="eventModalBody" class="modal-body" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px"></div>
   </div>
@@ -128,3 +145,4 @@
 
 </body>
 </html>
+
