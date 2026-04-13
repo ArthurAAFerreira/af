@@ -74,6 +74,53 @@ document.getElementById('unlockDriverReportBtn')?.addEventListener('click', () =
   }
 });
 
+// ── Vehicle detail modal ─────────────────────────────────────────────────────
+const STATUS_LABELS: Record<string, string> = {
+  liberada: 'Liberada', finalizada: 'Finalizada', aguardando_finalizacao: 'Ag. Finalização',
+  aguardando_aprovador: 'Ag. Aprovador', aguardando_liberacao_deseg: 'Ag. DESEG', em_andamento: 'Em Andamento',
+};
+const STATUS_BADGE_COLORS: Record<string, string> = {
+  liberada: '#12853b', finalizada: '#7e3aa9', aguardando_finalizacao: '#59647a',
+  aguardando_aprovador: '#2f5fc4', aguardando_liberacao_deseg: '#d08b00', em_andamento: '#246f85',
+};
+
+function showVehicleModal(plate: string, events: Evento[]): void {
+  const filtered = events.filter(e => getVehicle(e) === plate);
+  const title = document.getElementById('vehicleModalTitle');
+  const body  = document.getElementById('vehicleModalBody');
+  if (title) title.textContent = `${plate} — ${filtered.length} solicitação(ões)`;
+  if (body) {
+    if (!filtered.length) {
+      body.innerHTML = '<p class="status-note">Nenhuma solicitação encontrada.</p>';
+    } else {
+      const rows = filtered.map(e => {
+        const st = getStatus(e);
+        const badge = `<span style="background:${STATUS_BADGE_COLORS[st] ?? '#59647a'};color:#fff;padding:2px 8px;border-radius:10px;font-size:.75rem">${STATUS_LABELS[st] ?? st}</span>`;
+        return `<tr>
+          <td>${e.numero_solicitacao ?? '—'}</td>
+          <td>${e.solicitante_nome ?? '—'}</td>
+          <td>${e.motorista_nome ?? '—'}</td>
+          <td>${fmtDate(e.inicio_previsto)}</td>
+          <td>${fmtDate(e.fim_previsto)}</td>
+          <td>${badge}</td>
+        </tr>`;
+      }).join('');
+      body.innerHTML = `<div style="overflow-x:auto"><table class="data-table">
+        <thead><tr><th>#</th><th>Solicitante</th><th>Motorista</th><th>Início</th><th>Fim</th><th>Situação</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>`;
+    }
+  }
+  document.getElementById('vehicleModalBackdrop')?.classList.add('open');
+}
+
+document.getElementById('vehicleModalCloseBtn')?.addEventListener('click', () => {
+  document.getElementById('vehicleModalBackdrop')?.classList.remove('open');
+});
+document.getElementById('vehicleModalBackdrop')?.addEventListener('click', (e) => {
+  if ((e.target as HTMLElement).id === 'vehicleModalBackdrop')
+    document.getElementById('vehicleModalBackdrop')?.classList.remove('open');
+});
+
 // ── Tab 1 · Por Veículo ───────────────────────────────────────────────────────
 function buildVeiculosTab(events: Evento[]): void {
   const byVei = new Map<string, number>();
@@ -102,7 +149,7 @@ function buildVeiculosTab(events: Evento[]): void {
 
   const ctx = document.getElementById('chart-veiculos') as HTMLCanvasElement | null;
   if (ctx && top10.length) {
-    new Chart(ctx, {
+    const chart = new Chart(ctx, {
       type: 'bar',
       data: {
         labels: top10.map(([k]) => k),
@@ -111,6 +158,14 @@ function buildVeiculosTab(events: Evento[]): void {
       },
       options: { responsive: true, plugins: { legend: { display: false } },
         scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } },
+    });
+    ctx.style.cursor = 'pointer';
+    ctx.addEventListener('click', (evt) => {
+      const pts = chart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, false);
+      if (pts.length) {
+        const plate = top10[pts[0].index][0];
+        showVehicleModal(plate, events);
+      }
     });
   }
 
@@ -136,6 +191,13 @@ function buildVeiculosTab(events: Evento[]): void {
       ['Veículo', 'Total Saídas'],
       sorted.map(([veiculo, total]) => [veiculo, String(total)]),
     );
+    tbl.querySelectorAll<HTMLTableRowElement>('tbody tr').forEach(tr => {
+      tr.style.cursor = 'pointer';
+      tr.addEventListener('click', () => {
+        const plate = tr.cells[0]?.textContent?.trim() ?? '';
+        if (plate) showVehicleModal(plate, events);
+      });
+    });
   }
 }
 
