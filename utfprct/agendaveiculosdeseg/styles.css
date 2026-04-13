@@ -279,8 +279,11 @@ tbody td { padding: 8px 12px; color: #1a2a3a; vertical-align: middle; }
   background: #fff;
   border-radius: 14px;
   width: min(620px, 96vw);
-  max-height: 90vh;
-  overflow-y: auto;
+  max-width: 920px;
+  max-height: min(90vh, 860px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   box-shadow: 0 28px 60px rgba(4,15,40,0.48);
 }
 .modal-header {
@@ -309,7 +312,7 @@ tbody td { padding: 8px 12px; color: #1a2a3a; vertical-align: middle; }
   align-items: center;
   justify-content: center;
 }
-.modal-body { padding: 18px; }
+.modal-body { padding: 18px; overflow: auto; }
 .modal-footer { padding: 12px 18px; border-top: 1px solid var(--line); display: flex; gap: 8px; justify-content: flex-end; }
 
 /* ── Forms ── */

@@ -497,8 +497,12 @@ export async function initCalendar(): Promise<void> {
     backdrop?.classList.add('open');
   }
 
-  document.getElementById('kpiLiberadasCard')?.addEventListener('click', () => showEventsModal('Liberadas', _kpiLiberadas));
-  document.getElementById('kpiPendentesCard')?.addEventListener('click', () => showEventsModal('Pendentes/Autorizadas', _kpiPendentes));
+  const openLiberadas = () => showEventsModal('Liberadas', _kpiLiberadas);
+  const openPendentes = () => showEventsModal('Pendentes/Autorizadas', _kpiPendentes);
+  document.getElementById('kpiLiberadasCard')?.addEventListener('click', openLiberadas);
+  document.getElementById('kpiLiberadas')?.addEventListener('click', openLiberadas);
+  document.getElementById('kpiPendentesCard')?.addEventListener('click', openPendentes);
+  document.getElementById('kpiPendentes')?.addEventListener('click', openPendentes);
 
   document.getElementById('unlockDriverReportBtn')?.addEventListener('click', () => {
     const pw  = (document.getElementById('driverReportPassword') as HTMLInputElement)?.value ?? '';

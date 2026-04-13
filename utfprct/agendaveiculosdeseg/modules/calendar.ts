@@ -512,8 +512,12 @@ export async function initCalendar(): Promise<void> {
   // KPI click handlers
   document.getElementById('kpiRealizadas')?.addEventListener('click', () => showEventsModal('Realizadas', _kpiRealizadas));
   document.getElementById('kpiCanceladas')?.addEventListener('click', () => showEventsModal('Canceladas', _kpiCanceladas));
-  document.getElementById('kpiLiberadasCard')?.addEventListener('click', () => showEventsModal('Liberadas', _kpiLiberadas));
-  document.getElementById('kpiPendentesCard')?.addEventListener('click', () => showEventsModal('Pendentes/Autorizadas', _kpiPendentes));
+  const openLiberadas = () => showEventsModal('Liberadas', _kpiLiberadas);
+  const openPendentes = () => showEventsModal('Pendentes/Autorizadas', _kpiPendentes);
+  document.getElementById('kpiLiberadasCard')?.addEventListener('click', openLiberadas);
+  document.getElementById('kpiLiberadas')?.addEventListener('click', openLiberadas);
+  document.getElementById('kpiPendentesCard')?.addEventListener('click', openPendentes);
+  document.getElementById('kpiPendentes')?.addEventListener('click', openPendentes);
 
   document.getElementById('unlockDriverReportBtn')?.addEventListener('click', () => {
     const pw  = (document.getElementById('driverReportPassword') as HTMLInputElement)?.value ?? '';
