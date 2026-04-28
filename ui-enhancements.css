@@ -247,6 +247,43 @@ header p {
   margin-bottom: 0;
 }
 
+.enh-guide-html {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #dce9ff;
+}
+
+.enh-guide-html ol,
+.enh-guide-html ul {
+  margin: 6px 0 12px;
+  padding-left: 20px;
+}
+
+.enh-guide-html li {
+  margin-bottom: 4px;
+}
+
+.enh-guide-html p {
+  margin: 0 0 10px;
+}
+
+.enh-guide-html p:last-child {
+  margin-bottom: 0;
+}
+
+.enh-guide-html a {
+  color: #7ec8ff;
+  text-decoration: underline;
+}
+
+.enh-guide-html a:hover {
+  color: #ffffff;
+}
+
+.enh-guide-html strong {
+  color: #ffffff;
+}
+
 .enh-guide-image {
   margin: 0;
 }

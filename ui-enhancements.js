@@ -54,6 +54,15 @@
             };
           }
 
+          if (item.type === "html" && item.content) {
+            return {
+              type: "html",
+              label: item.label,
+              title: item.title || item.label,
+              content: item.content,
+            };
+          }
+
           return null;
         })
         .filter(Boolean);
@@ -118,7 +127,9 @@
   function getPageInstructionConfig() {
     const config = window.pageInstructionConfig || window.pageVideoConfig;
     const extraItems = normalizeInstructionItems(config);
-    const items = buildDefaultInstructionItems().concat(extraItems);
+    const items = (config && config.replaceDefaults)
+      ? extraItems
+      : buildDefaultInstructionItems().concat(extraItems);
 
     return {
       title: (config && config.title) || "Orientações",
@@ -247,6 +258,23 @@
         p.textContent = item.content;
         block.appendChild(p);
       }
+
+      refs.content.appendChild(block);
+      return;
+    }
+
+    if (item.type === "html") {
+      const block = document.createElement("div");
+      block.className = "enh-guide-text";
+
+      const title = document.createElement("h3");
+      title.textContent = item.title;
+      block.appendChild(title);
+
+      const body = document.createElement("div");
+      body.className = "enh-guide-html";
+      body.innerHTML = item.content;
+      block.appendChild(body);
 
       refs.content.appendChild(block);
       return;

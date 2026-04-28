@@ -151,93 +151,6 @@
         background-color: #003366 !important; /* Azul do seu cabeçalho */
         color: white !important;
     }
-
-    /* Orientações – tabs */
-    .orient-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      padding: 12px 12px 0;
-      background: #f0f6ff;
-      border-bottom: 2px solid #d0e4ff;
-    }
-
-    .orient-tab {
-      padding: 7px 13px;
-      border: none;
-      border-radius: 6px 6px 0 0;
-      background: #dce8fb;
-      color: #003366;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-    }
-
-    .orient-tab:hover,
-    .orient-tab.active {
-      background: #003366;
-      color: #fff;
-    }
-
-    .orient-panel {
-      padding: 16px 20px;
-    }
-
-    .orient-panel h3 {
-      color: #003366;
-      margin-top: 0;
-      font-size: 1rem;
-    }
-
-    .orient-panel ol,
-    .orient-panel ul {
-      padding-left: 20px;
-      line-height: 1.8;
-      color: #1f3050;
-    }
-
-    .orient-items-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 0.88rem;
-    }
-
-    .orient-items-table th {
-      background-color: #003366 !important;
-      color: white !important;
-      padding: 8px 10px;
-      text-align: left;
-    }
-
-    .orient-items-table td {
-      padding: 6px 10px;
-      border-bottom: 1px solid #e0ecff;
-    }
-
-    .orient-items-table tr:hover td {
-      background: #f0f8ff;
-    }
-
-    .orient-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 14px;
-      padding: 9px 16px;
-      border-radius: 8px;
-      background: #003366;
-      color: #fff;
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 600;
-      transition: background 0.2s;
-    }
-
-    .orient-link:hover {
-      background: #0055aa;
-    }
   </style>
 </head>
 
@@ -251,95 +164,6 @@
   </header>
 
   <div class="chat-container">
-
-    <!-- Orientações -->
-    <div class="chat-item">
-      <h2 onclick="toggleOrientacoes()">
-        <span><i class="fa-solid fa-circle-info" style="margin-right:8px"></i>Orientações</span>
-        <i class="fa-solid fa-chevron-down" id="icon-orientacoes"></i>
-      </h2>
-      <div class="chat-content" id="orientacoes-content">
-        <div class="orient-tabs">
-          <button class="orient-tab active" onclick="showOrientTab(this,'tab-geral')">Orientações Gerais</button>
-          <button class="orient-tab" onclick="showOrientTab(this,'tab-ugr')">UGRs UTFPR-CT no SCDP</button>
-          <button class="orient-tab" onclick="showOrientTab(this,'tab-saldo')">Empenhos – Saldos por UGR</button>
-          <button class="orient-tab" onclick="showOrientTab(this,'tab-detalhado')">Empenhos – Saldos Detalhados</button>
-          <button class="orient-tab" onclick="showOrientTab(this,'tab-despesas')">Despesas Pagas por UGR</button>
-          <button class="orient-tab" onclick="showOrientTab(this,'tab-processos')">Processos SEI por UGR</button>
-        </div>
-
-        <!-- Orientações Gerais -->
-        <div id="tab-geral" class="orient-panel">
-          <h3>Fluxo resumido de emissão de empenho</h3>
-          <ol>
-            <li>Realização da Requisição pela UGR através do <a href="https://sistemas2.utfpr.edu.br/home/sistemas-corporativos" target="_blank" rel="noopener noreferrer">Sistema Corporativo</a> e inclusão neste processo;</li>
-            <li>Envio do Processo ao DEOFI-CT;</li>
-            <li>Análise, encaminhamento e emissão do empenho pelo DEOFI-CT e suas Divisões Administrativas;</li>
-            <li>Atualização do SCDP; e</li>
-            <li>Retorno do Processo SEI à unidade.</li>
-          </ol>
-
-          <h3 style="margin-top:18px">Itens mais usados na Requisição</h3>
-          <table class="orient-items-table">
-            <thead>
-              <tr>
-                <th>Código</th>
-                <th>Descrição do Item</th>
-                <th>Subelemento</th>
-                <th>Descrição do Subelemento</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td>60462</td><td>Diárias</td><td>339014.14</td><td>Diárias – Pessoal Civil no País</td></tr>
-              <tr><td>60462</td><td>Diárias</td><td>339014.16</td><td>Diárias – Pessoal Civil Exterior</td></tr>
-              <tr><td>60462</td><td>Diárias</td><td>339036.02</td><td>Diárias a Colaboradores Eventuais no País</td></tr>
-              <tr><td>60462</td><td>Diárias</td><td>339036.03</td><td>Diárias a Colaboradores Eventuais no Exterior</td></tr>
-              <tr><td>20318</td><td>Passagens Para O País</td><td>339033.01</td><td>Passagens Para O País</td></tr>
-              <tr><td>13062</td><td>Passagens Para O Exterior</td><td>339033.02</td><td>Passagem para o Exterior</td></tr>
-              <tr><td>144819</td><td>Restituição Com Aquisição De Passagens Terrestres</td><td>339093.14</td><td>Ressarcimento De Passagens E Desp. C/Locomoção</td></tr>
-              <tr><td>125464</td><td>Repasse – Seguro Viagem</td><td>339039.69</td><td>Seguros Em Geral</td></tr>
-            </tbody>
-          </table>
-
-          <p style="margin-top:16px">
-            <a class="orient-link" href="demais-sistemas.html#orientacoes-gerais-empenho" target="_blank" rel="noopener noreferrer">
-              <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              Acesse a página Demais Sistemas e Orientações e verifique a seção Orientações Gerais para Requisição de Empenho
-            </a>
-          </p>
-        </div>
-
-        <!-- UGRs -->
-        <div id="tab-ugr" class="orient-panel" style="display:none">
-          <h3>UGRs UTFPR-CT no SCDP</h3>
-          <p style="color:#4a5c6e">Orientações específicas sobre esta consulta em breve.</p>
-        </div>
-
-        <!-- Saldos por UGR -->
-        <div id="tab-saldo" class="orient-panel" style="display:none">
-          <h3>Empenhos SCDP – Saldos por UGR</h3>
-          <p style="color:#4a5c6e">Orientações específicas sobre esta consulta em breve.</p>
-        </div>
-
-        <!-- Saldos Detalhados -->
-        <div id="tab-detalhado" class="orient-panel" style="display:none">
-          <h3>Empenhos SCDP – Saldos Detalhados por UGR</h3>
-          <p style="color:#4a5c6e">Orientações específicas sobre esta consulta em breve.</p>
-        </div>
-
-        <!-- Despesas -->
-        <div id="tab-despesas" class="orient-panel" style="display:none">
-          <h3>Despesas Pagas por UGR, por Subelemento</h3>
-          <p style="color:#4a5c6e">Orientações específicas sobre esta consulta em breve.</p>
-        </div>
-
-        <!-- Processos SEI -->
-        <div id="tab-processos" class="orient-panel" style="display:none">
-          <h3>Processos SEI por UGR</h3>
-          <p style="color:#4a5c6e">Orientações específicas sobre esta consulta em breve.</p>
-        </div>
-      </div>
-    </div>
 
     <div class="chat-item" id="chat-item-supabase">
        <h2 onclick="toggleSupabase('utfpr_ct_ugr_scdp')">
@@ -570,22 +394,45 @@
       tabelasCarregadas[viewName] = true;
     }
 
-    // --- 4. ORIENTAÇÕES ---
-    function toggleOrientacoes() {
-      const content = document.getElementById('orientacoes-content');
-      const icon = document.getElementById('icon-orientacoes');
-      const isHidden = content.style.display === 'none' || content.style.display === '';
-      content.style.display = isHidden ? 'block' : 'none';
-      icon.classList.toggle('fa-chevron-up', isHidden);
-      icon.classList.toggle('fa-chevron-down', !isHidden);
-    }
-
-    function showOrientTab(btn, tabId) {
-      document.querySelectorAll('.orient-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.orient-panel').forEach(p => p.style.display = 'none');
-      btn.classList.add('active');
-      document.getElementById(tabId).style.display = 'block';
-    }
+  </script>
+  <script>
+    window.pageInstructionConfig = {
+      title: 'Orientações',
+      replaceDefaults: true,
+      items: [
+        {
+          type: 'html',
+          label: 'Orientações Gerais',
+          title: 'Orientações Gerais',
+          content:
+            '<p><strong>Fluxo resumido de emissão de empenho:</strong></p>' +
+            '<ol>' +
+            '<li>Realização da Requisição pela UGR através do <a href="https://sistemas2.utfpr.edu.br/home/sistemas-corporativos" target="_blank" rel="noopener noreferrer">Sistema Corporativo</a> e inclusão neste processo;</li>' +
+            '<li>Envio do Processo ao DEOFI-CT;</li>' +
+            '<li>Análise, encaminhamento e emissão do empenho pelo DEOFI-CT e suas Divisões Administrativas;</li>' +
+            '<li>Atualização do SCDP; e</li>' +
+            '<li>Retorno do Processo SEI à unidade.</li>' +
+            '</ol>' +
+            '<p><strong>Itens mais usados na Requisição:</strong></p>' +
+            '<ul>' +
+            '<li>60462 – Diárias – 339014.14 – Diárias – Pessoal Civil no País</li>' +
+            '<li>60462 – Diárias – 339014.16 – Diárias – Pessoal Civil Exterior</li>' +
+            '<li>60462 – Diárias – 339036.02 – Diárias a Colaboradores Eventuais no País</li>' +
+            '<li>60462 – Diárias – 339036.03 – Diárias a Colaboradores Eventuais no Exterior</li>' +
+            '<li>20318 – Passagens Para O País – 339033.01 – Passagens Para O País</li>' +
+            '<li>13062 – Passagens Para O Exterior – 339033.02 – Passagem para o Exterior</li>' +
+            '<li>144819 – Restituição C/ Aquisição De Passagens Terrestres – 339093.14 – Ressarcimento De Passagens E Desp. C/Locomoção</li>' +
+            '<li>125464 – Repasse – Seguro Viagem – 339039.69 – Seguros Em Geral</li>' +
+            '</ul>' +
+            '<p><a href="demais-sistemas.html#orientacoes-gerais-empenho" target="_blank" rel="noopener noreferrer">↗ Acesse a página Demais Sistemas e Orientações e verifique a seção Orientações Gerais para Requisição de Empenho.</a></p>'
+        },
+        { type: 'text', label: 'UGRs UTFPR-CT no SCDP', title: 'UGRs UTFPR-CT no SCDP', content: 'Orientações específicas sobre esta consulta em breve.' },
+        { type: 'text', label: 'Empenhos SCDP – Saldos por UGR', title: 'Empenhos SCDP – Saldos por UGR', content: 'Orientações específicas sobre esta consulta em breve.' },
+        { type: 'text', label: 'Empenhos SCDP – Saldos Detalhados por UGR', title: 'Empenhos SCDP – Saldos Detalhados por UGR', content: 'Orientações específicas sobre esta consulta em breve.' },
+        { type: 'text', label: 'Despesas Pagas por UGR, por Subelemento', title: 'Despesas Pagas por UGR, por Subelemento', content: 'Orientações específicas sobre esta consulta em breve.' },
+        { type: 'text', label: 'Processos SEI por UGR', title: 'Processos SEI por UGR', content: 'Orientações específicas sobre esta consulta em breve.' }
+      ]
+    };
   </script>
   <script src="ui-enhancements.js"></script>
 </body>
